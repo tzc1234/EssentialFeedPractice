@@ -6,7 +6,7 @@ jobs:
       xcode: 14.3.1
     environment:
       FL_OUTPUT_DIR: output
-      FASTLANE_LANE: mac macTest
+      FASTLANE_LANE: macTest
     steps:
       - checkout
       - run:

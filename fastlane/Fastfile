@@ -6,21 +6,12 @@ platform :ios do
     setup_circle_ci
   end
 
-  desc "Run iOS Tests"
-  lane :iOSTest do
-    scan
-  end
-end
-
-platform :mac do
-  before_all do
-    setup_circle_ci
-  end
-
   desc "Run macOS Tests"
   lane :macTest do
     run_tests(
       scheme: "EssentialFeedPractice",
+      force_quit_simulator: true,
+      include_simulator_logs: false,
       clean: true
     )
   end
