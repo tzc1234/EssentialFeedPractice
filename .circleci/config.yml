@@ -9,7 +9,9 @@ jobs:
       FASTLANE_LANE: test
     steps:
       - checkout
-      - run: bundle install
+      - run:
+          name: Bundle Install
+          command: bundle install
       - run:
           name: Fastlane
           command: bundle exec fastlane $FASTLANE_LANE
