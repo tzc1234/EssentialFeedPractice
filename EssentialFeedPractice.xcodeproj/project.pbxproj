@@ -25,6 +25,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BE40972F2AADF4C800BB02CD /* EssentialFeedPractice.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedPractice.xctestplan; sourceTree = "<group>"; };
 		BE6989322AADC8430038B32C /* EssentialFeedPractice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeedPractice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE6989352AADC8430038B32C /* EssentialFeedPractice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EssentialFeedPractice.h; sourceTree = "<group>"; };
 		BE69893A2AADC8430038B32C /* EssentialFeedPracticeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedPracticeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,6 +56,7 @@
 		BE6989282AADC8430038B32C = {
 			isa = PBXGroup;
 			children = (
+				BE40972F2AADF4C800BB02CD /* EssentialFeedPractice.xctestplan */,
 				BE6989342AADC8430038B32C /* EssentialFeedPractice */,
 				BE69893E2AADC8430038B32C /* EssentialFeedPracticeTests */,
 				BE6989332AADC8430038B32C /* Products */,

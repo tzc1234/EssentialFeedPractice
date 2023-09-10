@@ -6,8 +6,12 @@ platform :ios do
     setup_circle_ci
   end
 
-  desc "Runs all the tests"
+  desc "Run EssentialFeedPractice Tests"
   lane :test do
-    scan
+    run_tests(
+      scheme: "EssentialFeedPractice",
+      configuration: "Debug",
+      clean: true
+    )
   end
 end
