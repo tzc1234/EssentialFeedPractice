@@ -14,5 +14,3 @@ FOUNDATION_EXPORT double EssentialFeedPracticeVersionNumber;
 FOUNDATION_EXPORT const unsigned char EssentialFeedPracticeVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <EssentialFeedPractice/PublicHeader.h>
-
-
