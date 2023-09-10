@@ -10,7 +10,7 @@ platform :ios do
   lane :test do
     run_tests(
       scheme: "EssentialFeedPractice",
-      device: "iPhone 14",
+      configuration: "Debug",
       clean: true
     )
   end
