@@ -6,11 +6,21 @@ platform :ios do
     setup_circle_ci
   end
 
-  desc "Run EssentialFeedPractice Tests"
-  lane :test do
+  desc "Run iOS Tests"
+  lane :iOSTest do
+    scan
+  end
+end
+
+platform :mac do
+  before_all do
+    setup_circle_ci
+  end
+
+  desc "Run macOS Tests"
+  lane :macTest do
     run_tests(
       scheme: "EssentialFeedPractice",
-      configuration: "Debug",
       clean: true
     )
   end
