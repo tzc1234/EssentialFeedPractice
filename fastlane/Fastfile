@@ -1,13 +1,12 @@
 # fastlane/Fastfile
-default_platform :ios
 
-platform :ios do
+platform :mac do
   before_all do
     setup_circle_ci
   end
 
-  desc "Run macOS Tests"
-  lane :macTest do
+  desc "Run Tests In Mac"
+  lane :test do
     run_tests(
       scheme: "EssentialFeedPractice",
       force_quit_simulator: true,
