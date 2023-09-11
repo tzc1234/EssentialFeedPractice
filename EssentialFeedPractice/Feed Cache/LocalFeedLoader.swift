@@ -38,6 +38,10 @@ public final class LocalFeedLoader {
             completion(result)
         }
     }
+    
+    public func load() {
+        store.retrieve()
+    }
 }
 
 private extension [FeedImage] {
