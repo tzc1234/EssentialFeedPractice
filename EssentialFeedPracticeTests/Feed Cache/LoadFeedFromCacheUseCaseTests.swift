@@ -59,6 +59,26 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    func test_load_deliversNoImagesOnExpiredCache() {
+        let now = Date()
+        let expiredDate = now.adding(days: -7).adding(seconds: -1)
+        let (sut, store) = makeSUT(currentDate: { now })
+        let feed = uniqueFeed()
+        
+        let exp = expectation(description: "Wait for load completion")
+        sut.load() { result in
+            switch result {
+            case let .success(feed):
+                XCTAssertEqual(feed, [])
+            case .failure:
+                XCTFail("Expect a success")
+            }
+            exp.fulfill()
+        }
+        store.completeRetrieval(with: feed.models, timestamp: expiredDate)
+        wait(for: [exp], timeout: 1)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init,
@@ -69,5 +89,15 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
+    }
+}
+
+private extension Date {
+    func adding(days: Int, calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
+        calendar.date(byAdding: .day, value: days, to: self)!
+    }
+    
+    func adding(seconds: TimeInterval) -> Date {
+        self + 1
     }
 }

@@ -40,7 +40,14 @@ public final class LocalFeedLoader {
     }
     
     public func load(completion: @escaping (Result<[FeedImage], Error>) -> Void) {
-        store.retrieve(completion: completion)
+        store.retrieve { result in
+            switch result {
+            case .success:
+                completion(.success([]))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
     }
 }
 
