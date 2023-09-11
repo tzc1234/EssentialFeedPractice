@@ -39,7 +39,9 @@ public final class LocalFeedLoader {
         }
     }
     
-    public func load(completion: @escaping (Result<[FeedImage], Error>) -> Void) {
+    public typealias LoadResult = Result<[FeedImage], Error>
+    
+    public func load(completion: @escaping (LoadResult) -> Void) {
         store.retrieve { [weak self] result in
             guard let self else { return }
             
