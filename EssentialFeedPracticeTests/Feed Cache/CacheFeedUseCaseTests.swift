@@ -74,6 +74,18 @@ final class CacheFeedUseCaseTests: XCTestCase {
         }
     }
     
+    func test_save_doesNotDeliverDeletionErrorWhenSUTInstanceIsDeallocated() {
+        let store = FeedStoreSpy()
+        var sut: LocalFeedLoader? = LocalFeedLoader(store: store)
+        
+        var receivedResult: Result<Void, Error>?
+        sut?.save([uniqueFeedImage()], completion: { receivedResult = $0 })
+        sut = nil
+        store.completeDeletion(with: anyNSError())
+        
+        XCTAssertNil(receivedResult)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init,
