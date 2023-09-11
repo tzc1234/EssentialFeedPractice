@@ -27,36 +27,18 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let retrievalError = anyNSError()
         
-        let exp = expectation(description: "Wait for load completion")
-        sut.load() { result in
-            switch result {
-            case .success:
-                XCTFail("Expect a failure")
-            case let .failure(error):
-                XCTAssertEqual(error as NSError, retrievalError)
-            }
-            exp.fulfill()
+        expect(sut, toCompleteWith: .failure(retrievalError)) {
+            store.completeRetrieval(with: retrievalError)
         }
-        store.completeRetrieval(with: retrievalError)
-        wait(for: [exp], timeout: 1)
     }
     
     func test_load_deliversNoImagesOnEmptyCache() {
         let (sut, store) = makeSUT()
         let emptyFeed = [FeedImage]()
         
-        let exp = expectation(description: "Wait for load completion")
-        sut.load() { result in
-            switch result {
-            case let .success(feed):
-                XCTAssertEqual(feed, [])
-            case .failure:
-                XCTFail("Expect a success")
-            }
-            exp.fulfill()
+        expect(sut, toCompleteWith: .success([])) {
+            store.completeRetrieval(with: emptyFeed)
         }
-        store.completeRetrieval(with: emptyFeed)
-        wait(for: [exp], timeout: 1)
     }
     
     func test_load_deliversNoImagesOnExpiredCache() {
@@ -65,18 +47,9 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT(currentDate: { now })
         let feed = uniqueFeed()
         
-        let exp = expectation(description: "Wait for load completion")
-        sut.load() { result in
-            switch result {
-            case let .success(feed):
-                XCTAssertEqual(feed, [])
-            case .failure:
-                XCTFail("Expect a success")
-            }
-            exp.fulfill()
+        expect(sut, toCompleteWith: .success([])) {
+            store.completeRetrieval(with: feed.models, timestamp: expiredDate)
         }
-        store.completeRetrieval(with: feed.models, timestamp: expiredDate)
-        wait(for: [exp], timeout: 1)
     }
     
     // MARK: - Helpers
@@ -89,6 +62,27 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func expect(_ sut: LocalFeedLoader,
+                        toCompleteWith expectedResult: Result<[FeedImage], Error>,
+                        action: () -> Void,
+                        file: StaticString = #filePath,
+                        line: UInt = #line) {
+        let exp = expectation(description: "Wait for load completion")
+        sut.load() { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case let (.success(receivedReed), .success(expectedFeed)):
+                XCTAssertEqual(receivedReed, expectedFeed, file: file, line: line)
+            case let (.failure(receivedError), .failure(expectedError)):
+                XCTAssertEqual(receivedError as NSError, expectedError as NSError, file: file, line: line)
+            default:
+                XCTFail("Expect \(expectedResult), got \(receivedResult) instead")
+            }
+            exp.fulfill()
+        }
+        action()
+        wait(for: [exp], timeout: 1)
     }
 }
 
