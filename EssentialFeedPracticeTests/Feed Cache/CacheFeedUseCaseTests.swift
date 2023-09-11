@@ -40,7 +40,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT(currentDate: { timestamp })
         let feed = uniqueFeed()
         
-        sut.save(feed.images) { _ in }
+        sut.save(feed.models) { _ in }
         store.completeDeletionSuccessfully()
         
         XCTAssertEqual(store.messages, [.deletion, .insertion(feed.locals, timestamp)])
@@ -79,7 +79,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store)
         
         var receivedResult: LocalFeedLoader.SaveResult?
-        sut?.save(uniqueFeed().images, completion: { receivedResult = $0 })
+        sut?.save(uniqueFeed().models, completion: { receivedResult = $0 })
         sut = nil
         store.completeDeletion(with: anyNSError())
         
@@ -91,7 +91,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store)
         
         var receivedResult: LocalFeedLoader.SaveResult?
-        sut?.save(uniqueFeed().images, completion: { receivedResult = $0 })
+        sut?.save(uniqueFeed().models, completion: { receivedResult = $0 })
         store.completeDeletionSuccessfully()
         sut = nil
         store.completeInsertion(with: anyNSError())
@@ -117,7 +117,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
                         file: StaticString = #filePath,
                         line: UInt = #line) {
         let exp = expectation(description: "Wait for save completion")
-        sut.save(uniqueFeed().images) { receivedResult in
+        sut.save(uniqueFeed().models) { receivedResult in
             switch (receivedResult, expectedResult) {
             case (.success, .success):
                 break
@@ -132,7 +132,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    private func uniqueFeed() -> (images: [FeedImage], locals: [LocalFeedImage]) {
+    private func uniqueFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
         let images = [uniqueFeedImage()]
         let locals = images.map {
             LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL)
