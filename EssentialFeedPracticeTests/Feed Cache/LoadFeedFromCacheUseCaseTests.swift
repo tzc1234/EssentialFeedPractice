@@ -52,6 +52,17 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         }
     }
     
+    func test_load_deliversNoImagesWhenCacheOnExpiration() {
+        let now = Date()
+        let expirationDate = now.adding(days: -7)
+        let (sut, store) = makeSUT(currentDate: { now })
+        let feed = uniqueFeed()
+        
+        expect(sut, toCompleteWith: .success([])) {
+            store.completeRetrieval(with: feed.models, timestamp: expirationDate)
+        }
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init,
