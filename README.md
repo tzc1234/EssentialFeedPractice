@@ -1,5 +1,6 @@
 # EssentialFeedPractice
 ## Practice the learnings from iOS Lead Essentials again.
+[![](https://circleci.com/gh/tzc1234/EssentialFeedPractice.svg?style=shield)](https://circleci.com/gh/tzc1234/EssentialFeedPractice)
 
 ## Use Cases
 
