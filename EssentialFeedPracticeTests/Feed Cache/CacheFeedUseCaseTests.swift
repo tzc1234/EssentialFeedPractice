@@ -108,60 +108,30 @@ final class CacheFeedUseCaseTests: XCTestCase {
     
     func test_save_failsOnDeletionError() {
         let (sut, store) = makeSUT()
-        let feed = [uniqueItem()]
         let deletionError = anyNSError()
         
-        let exp = expectation(description: "Wait for save completion")
-        sut.save(feed) { result in
-            switch result {
-            case .success:
-                XCTFail("Expect a failure, succeeded instead")
-            case let .failure(error):
-                XCTAssertEqual(error as NSError, deletionError)
-            }
-            exp.fulfill()
+        expect(sut, toCompleteWith: .failure(deletionError)) {
+            store.completeDeletion(with: deletionError)
         }
-        store.completeDeletion(with: deletionError)
-        wait(for: [exp], timeout: 1)
     }
     
     func test_save_failsOnInsertionError() {
         let (sut, store) = makeSUT()
-        let feed = [uniqueItem()]
         let insertionError = anyNSError()
         
-        let exp = expectation(description: "Wait for save completion")
-        sut.save(feed) { result in
-            switch result {
-            case .success:
-                XCTFail("Expect a failure, succeeded instead")
-            case let .failure(error):
-                XCTAssertEqual(error as NSError, insertionError)
-            }
-            exp.fulfill()
+        expect(sut, toCompleteWith: .failure(insertionError)) {
+            store.completeDeletionSuccessfully()
+            store.completeInsertion(with: insertionError)
         }
-        store.completeDeletionSuccessfully()
-        store.completeInsertion(with: insertionError)
-        wait(for: [exp], timeout: 1)
     }
     
     func test_save_succeedsOnSuccessfulCacheInsertion() {
         let (sut, store) = makeSUT()
-        let feed = [uniqueItem()]
         
-        let exp = expectation(description: "Wait for save completion")
-        sut.save(feed) { result in
-            switch result {
-            case .success:
-                break
-            case .failure:
-                XCTFail("Expect a success, failed instead")
-            }
-            exp.fulfill()
+        expect(sut, toCompleteWith: .success(())) {
+            store.completeDeletionSuccessfully()
+            store.completeInsertionSuccessfully()
         }
-        store.completeDeletionSuccessfully()
-        store.completeInsertionSuccessfully()
-        wait(for: [exp], timeout: 1)
     }
     
     // MARK: - Helpers
@@ -174,6 +144,27 @@ final class CacheFeedUseCaseTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func expect(_ sut: LocalFeedLoader,
+                        toCompleteWith expectedResult: Result<Void, Error>,
+                        action: () -> Void,
+                        file: StaticString = #filePath,
+                        line: UInt = #line) {
+        let exp = expectation(description: "Wait for save completion")
+        sut.save([uniqueItem()]) { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case (.success, .success):
+                break
+            case let (.failure(receivedError), .failure(expectedError)):
+                XCTAssertEqual(receivedError as NSError, expectedError as NSError)
+            default:
+                XCTFail("Expect \(expectedResult), got \(receivedResult) instead")
+            }
+            exp.fulfill()
+        }
+        action()
+        wait(for: [exp], timeout: 1)
     }
     
     private func uniqueItem() -> FeedImage {
