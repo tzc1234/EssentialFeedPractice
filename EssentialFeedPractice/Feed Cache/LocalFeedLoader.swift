@@ -22,7 +22,11 @@ public final class LocalFeedLoader {
             
             switch result {
             case .success:
-                self.store.insert(feed, timestamp: self.currentDate(), completion: completion)
+                self.store.insert(feed, timestamp: self.currentDate()) { [weak self] result in
+                    guard self != nil else { return }
+                    
+                    completion(result)
+                }
             case let .failure(error):
                 completion(.failure(error))
             }
