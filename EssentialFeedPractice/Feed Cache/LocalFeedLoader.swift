@@ -22,14 +22,18 @@ public final class LocalFeedLoader {
             
             switch result {
             case .success:
-                self.store.insert(feed, timestamp: self.currentDate()) { [weak self] result in
-                    guard self != nil else { return }
-                    
-                    completion(result)
-                }
+                self.cache(feed, with: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
+        }
+    }
+    
+    private func cache(_ feed: [FeedImage], with completion: @escaping (Result<Void, Error>) -> Void) {
+        store.insert(feed, timestamp: currentDate()) { [weak self] result in
+            guard self != nil else { return }
+            
+            completion(result)
         }
     }
 }
