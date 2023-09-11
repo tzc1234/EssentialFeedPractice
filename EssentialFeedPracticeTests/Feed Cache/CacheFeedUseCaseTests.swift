@@ -30,6 +30,10 @@ class FeedStore {
     func deleteCachedFeed() {
         messages.append(.deletion)
     }
+    
+    func completeDeletion(with error: Error, at index: Int = 0) {
+        
+    }
 }
 
 final class CacheFeedUseCaseTests: XCTestCase {
@@ -44,6 +48,17 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let feed = [uniqueItem()]
         
         sut.save(feed)
+        
+        XCTAssertEqual(store.messages, [.deletion])
+    }
+    
+    func test_save_doesNotRequestCacheInsertionOnDeletionError() {
+        let (sut, store) = makeSUT()
+        let feed = [uniqueItem()]
+        let deletionError = anyNSError()
+        
+        sut.save(feed)
+        store.completeDeletion(with: deletionError)
         
         XCTAssertEqual(store.messages, [.deletion])
     }
@@ -64,5 +79,9 @@ final class CacheFeedUseCaseTests: XCTestCase {
     
     private func anyURL() -> URL {
         URL(string: "https://any-url.com")!
+    }
+    
+    private func anyNSError() -> NSError {
+        NSError(domain: "any", code: 0)
     }
 }
