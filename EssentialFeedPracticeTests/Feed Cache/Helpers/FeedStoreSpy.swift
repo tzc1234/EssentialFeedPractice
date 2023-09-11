@@ -9,10 +9,12 @@ import Foundation
 import EssentialFeedPractice
 
 class FeedStoreSpy: FeedStore {
+    typealias RetrieveResult = Result<([LocalFeedImage], Date), Error>
+    
     private(set) var messages = [Message]()
     private var deletionCompletions = [(Result<Void, Error>) -> Void]()
     private var insertionCompletions = [(Result<Void, Error>) -> Void]()
-    private var retrievalCompletions = [(Result<([FeedImage], Date), Error>) -> Void]()
+    private var retrievalCompletions = [(RetrieveResult) -> Void]()
     
     enum Message: Equatable {
         case deletion
@@ -46,7 +48,7 @@ class FeedStoreSpy: FeedStore {
         insertionCompletions[index](.success(()))
     }
     
-    func retrieve(completion: @escaping (Result<([FeedImage], Date), Error>) -> Void) {
+    func retrieve(completion: @escaping (RetrieveResult) -> Void) {
         messages.append(.retrieval)
         retrievalCompletions.append(completion)
     }
@@ -55,7 +57,7 @@ class FeedStoreSpy: FeedStore {
         retrievalCompletions[index](.failure(error))
     }
     
-    func completeRetrieval(with feed: [FeedImage], timestamp: Date = .now, at index: Int = 0) {
+    func completeRetrieval(with feed: [LocalFeedImage], timestamp: Date, at index: Int = 0) {
         retrievalCompletions[index](.success((feed, timestamp)))
     }
 }

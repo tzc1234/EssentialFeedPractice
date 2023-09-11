@@ -40,8 +40,10 @@ public final class LocalFeedLoader {
     }
     
     public func load(completion: @escaping (Result<[FeedImage], Error>) -> Void) {
-        store.retrieve { result in
+        store.retrieve { [weak self] result in
             switch result {
+            case let .success((feed, timestamp)) where self?.isValid(timestamp) == true:
+                completion(.success(feed.toModels()))
             case .success:
                 completion(.success([]))
             case let .failure(error):
@@ -49,10 +51,25 @@ public final class LocalFeedLoader {
             }
         }
     }
+    
+    private func isValid(_ timestamp: Date) -> Bool {
+        let calendar = Calendar(identifier: .gregorian)
+        guard let expirationDate = calendar.date(byAdding: .day, value: -7, to: currentDate()) else {
+            return false
+        }
+        
+        return timestamp > expirationDate
+    }
 }
 
 private extension [FeedImage] {
     func toLocals() -> [LocalFeedImage] {
+        map { .init(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL) }
+    }
+}
+
+private extension [LocalFeedImage] {
+    func toModels() -> [FeedImage] {
         map { .init(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL) }
     }
 }

@@ -33,11 +33,13 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     }
     
     func test_load_deliversNoImagesOnEmptyCache() {
-        let (sut, store) = makeSUT()
-        let emptyFeed = [FeedImage]()
+        let now = Date()
+        let (sut, store) = makeSUT(currentDate: { now })
+        let emptyFeed = [LocalFeedImage]()
+        let nonExpiredDate = now.adding(days: -7).adding(seconds: 1)
         
         expect(sut, toCompleteWith: .success([])) {
-            store.completeRetrieval(with: emptyFeed)
+            store.completeRetrieval(with: emptyFeed, timestamp: nonExpiredDate)
         }
     }
     
@@ -48,7 +50,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let feed = uniqueFeed()
         
         expect(sut, toCompleteWith: .success([])) {
-            store.completeRetrieval(with: feed.models, timestamp: expiredDate)
+            store.completeRetrieval(with: feed.locals, timestamp: expiredDate)
         }
     }
     
@@ -59,7 +61,18 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let feed = uniqueFeed()
         
         expect(sut, toCompleteWith: .success([])) {
-            store.completeRetrieval(with: feed.models, timestamp: expirationDate)
+            store.completeRetrieval(with: feed.locals, timestamp: expirationDate)
+        }
+    }
+    
+    func test_load_deliversImagesOnNonExpiredCache() {
+        let now = Date()
+        let nonExpiredDate = now.adding(days: -7).adding(seconds: 1)
+        let (sut, store) = makeSUT(currentDate: { now })
+        let feed = uniqueFeed()
+        
+        expect(sut, toCompleteWith: .success(feed.models)) {
+            store.completeRetrieval(with: feed.locals, timestamp: nonExpiredDate)
         }
     }
     
@@ -88,7 +101,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
             case let (.failure(receivedError), .failure(expectedError)):
                 XCTAssertEqual(receivedError as NSError, expectedError as NSError, file: file, line: line)
             default:
-                XCTFail("Expect \(expectedResult), got \(receivedResult) instead")
+                XCTFail("Expect \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
             exp.fulfill()
         }
@@ -103,6 +116,6 @@ private extension Date {
     }
     
     func adding(seconds: TimeInterval) -> Date {
-        self + 1
+        self + seconds
     }
 }
