@@ -78,7 +78,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store)
         
-        var receivedResult: Result<Void, Error>?
+        var receivedResult: LocalFeedLoader.SaveResult?
         sut?.save([uniqueFeedImage()], completion: { receivedResult = $0 })
         sut = nil
         store.completeDeletion(with: anyNSError())
@@ -90,7 +90,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store)
         
-        var receivedResult: Result<Void, Error>?
+        var receivedResult: LocalFeedLoader.SaveResult?
         sut?.save([uniqueFeedImage()], completion: { receivedResult = $0 })
         store.completeDeletionSuccessfully()
         sut = nil
@@ -112,7 +112,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
     }
     
     private func expect(_ sut: LocalFeedLoader,
-                        toCompleteWith expectedResult: Result<Void, Error>,
+                        toCompleteWith expectedResult: LocalFeedLoader.SaveResult,
                         action: () -> Void,
                         file: StaticString = #filePath,
                         line: UInt = #line) {

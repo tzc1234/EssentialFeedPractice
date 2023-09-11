@@ -16,7 +16,9 @@ public final class LocalFeedLoader {
         self.currentDate = currentDate
     }
     
-    public func save(_ feed: [FeedImage], completion: @escaping (Result<Void, Error>) -> Void) {
+    public typealias SaveResult = Result<Void, Error>
+    
+    public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
         store.deleteCachedFeed { [weak self] result in
             guard let self else { return }
             
