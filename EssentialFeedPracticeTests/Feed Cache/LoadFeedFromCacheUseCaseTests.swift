@@ -32,7 +32,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         }
     }
     
-    func test_load_deliversNoImagesOnEmptyCache() {
+    func test_load_deliversNoImagesOnNonExpiredEmptyCache() {
         let now = Date()
         let (sut, store) = makeSUT(currentDate: { now })
         let emptyFeed = [LocalFeedImage]()
