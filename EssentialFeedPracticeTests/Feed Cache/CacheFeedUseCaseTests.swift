@@ -17,7 +17,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
     
     func test_save_requestCacheDeletion() {
         let (sut, store) = makeSUT()
-        let feed = [uniqueItem()]
+        let feed = [uniqueFeedImage()]
         
         sut.save(feed) { _ in }
         
@@ -26,7 +26,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
     
     func test_save_doesNotRequestCacheInsertionOnDeletionError() {
         let (sut, store) = makeSUT()
-        let feed = [uniqueItem()]
+        let feed = [uniqueFeedImage()]
         let deletionError = anyNSError()
         
         sut.save(feed) { _ in }
@@ -38,7 +38,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
     func test_save_requestsNewCacheInsertionWithTimestampOnSuccessfulDeletion() {
         let timestamp = Date()
         let (sut, store) = makeSUT(currentDate: { timestamp })
-        let feed = [uniqueItem()]
+        let feed = [uniqueFeedImage()]
         
         sut.save(feed) { _ in }
         store.completeDeletionSuccessfully()
@@ -92,7 +92,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
                         file: StaticString = #filePath,
                         line: UInt = #line) {
         let exp = expectation(description: "Wait for save completion")
-        sut.save([uniqueItem()]) { receivedResult in
+        sut.save([uniqueFeedImage()]) { receivedResult in
             switch (receivedResult, expectedResult) {
             case (.success, .success):
                 break
@@ -107,7 +107,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    private func uniqueItem() -> FeedImage {
+    private func uniqueFeedImage() -> FeedImage {
         .init(id: UUID(), description: "any", location: "any", imageURL: anyURL())
     }
     
