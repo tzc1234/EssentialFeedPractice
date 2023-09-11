@@ -31,11 +31,6 @@ class LocalFeedLoader {
     }
 }
 
-protocol FeedStore {
-    func deleteCachedFeed(completion: @escaping (Result<Void, Error>) -> Void)
-    func insert(_ feed: [FeedImage], timestamp: Date, completion: @escaping (Result<Void, Error>) -> Void)
-}
-
 final class CacheFeedUseCaseTests: XCTestCase {
     func test_init_doesNotMessageStore() {
         let (_, store) = makeSUT()

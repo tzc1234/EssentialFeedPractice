@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE2499F52AAF31A700C2FF25 /* FeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2499F42AAF31A700C2FF25 /* FeedStore.swift */; };
 		BE680F502AAF0F2200F90355 /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE680F4F2AAF0F2200F90355 /* XCTestCase+MemoryLeakTracking.swift */; };
 		BE69893B2AADC8430038B32C /* EssentialFeedPractice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE6989322AADC8430038B32C /* EssentialFeedPractice.framework */; };
 		BE6989402AADC8430038B32C /* CacheFeedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE69893F2AADC8430038B32C /* CacheFeedUseCaseTests.swift */; };
@@ -25,6 +26,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BE2499F42AAF31A700C2FF25 /* FeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStore.swift; sourceTree = "<group>"; };
 		BE40972F2AADF4C800BB02CD /* EssentialFeedPractice.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedPractice.xctestplan; sourceTree = "<group>"; };
 		BE680F4F2AAF0F2200F90355 /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 		BE6989322AADC8430038B32C /* EssentialFeedPractice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeedPractice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -53,6 +55,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BE2499F62AAF31DB00C2FF25 /* Feed Cache */ = {
+			isa = PBXGroup;
+			children = (
+				BE2499F42AAF31A700C2FF25 /* FeedStore.swift */,
+			);
+			path = "Feed Cache";
+			sourceTree = "<group>";
+		};
 		BE680F4C2AAF071100F90355 /* Feed Cache */ = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +104,7 @@
 			children = (
 				BE69894A2AADC9740038B32C /* FeedImage.swift */,
 				BE69894C2AADD09C0038B32C /* FeedLoader.swift */,
+				BE2499F62AAF31DB00C2FF25 /* Feed Cache */,
 			);
 			path = EssentialFeedPractice;
 			sourceTree = "<group>";
@@ -216,6 +227,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE69894D2AADD09C0038B32C /* FeedLoader.swift in Sources */,
+				BE2499F52AAF31A700C2FF25 /* FeedStore.swift in Sources */,
 				BE69894B2AADC9740038B32C /* FeedImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
