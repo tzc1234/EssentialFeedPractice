@@ -36,7 +36,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let now = Date()
         let (sut, store) = makeSUT(currentDate: { now })
         let emptyFeed = [LocalFeedImage]()
-        let nonExpiredDate = now.adding(days: -7).adding(seconds: 1)
+        let nonExpiredDate = now.minusMaxCacheAgeInDays().adding(seconds: 1)
         
         expect(sut, toCompleteWith: .success([])) {
             store.completeRetrieval(with: emptyFeed, timestamp: nonExpiredDate)
@@ -45,7 +45,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     func test_load_deliversNoImagesOnExpiredCache() {
         let now = Date()
-        let expiredDate = now.adding(days: -7).adding(seconds: -1)
+        let expiredDate = now.minusMaxCacheAgeInDays().adding(seconds: -1)
         let (sut, store) = makeSUT(currentDate: { now })
         let feed = uniqueFeed()
         
@@ -56,7 +56,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     func test_load_deliversNoImagesWhenCacheOnExpiration() {
         let now = Date()
-        let expirationDate = now.adding(days: -7)
+        let expirationDate = now.minusMaxCacheAgeInDays()
         let (sut, store) = makeSUT(currentDate: { now })
         let feed = uniqueFeed()
         
@@ -67,7 +67,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     func test_load_deliversImagesOnNonExpiredCache() {
         let now = Date()
-        let nonExpiredDate = now.adding(days: -7).adding(seconds: 1)
+        let nonExpiredDate = now.minusMaxCacheAgeInDays().adding(seconds: 1)
         let (sut, store) = makeSUT(currentDate: { now })
         let feed = uniqueFeed()
         
@@ -111,7 +111,11 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
 }
 
 private extension Date {
-    func adding(days: Int, calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
+    func minusMaxCacheAgeInDays() -> Date {
+        adding(days: -7)
+    }
+    
+    private func adding(days: Int, calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
         calendar.date(byAdding: .day, value: days, to: self)!
     }
     
