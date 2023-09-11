@@ -46,11 +46,6 @@ class FeedStore {
         deletionCompletions.append(completion)
     }
     
-    func insert(_ feed: [FeedImage], timestamp: Date, completion: @escaping (Result<Void, Error>) -> Void) {
-        messages.append(.insertion(feed, timestamp))
-        insertionCompletions.append(completion)
-    }
-    
     func completeDeletion(with error: Error, at index: Int = 0) {
         deletionCompletions[index](.failure(error))
     }
@@ -59,8 +54,17 @@ class FeedStore {
         deletionCompletions[index](.success(()))
     }
     
+    func insert(_ feed: [FeedImage], timestamp: Date, completion: @escaping (Result<Void, Error>) -> Void) {
+        messages.append(.insertion(feed, timestamp))
+        insertionCompletions.append(completion)
+    }
+    
     func completeInsertion(with error: Error, at index: Int = 0) {
         insertionCompletions[index](.failure(error))
+    }
+    
+    func completeInsertionSuccessfully(at index: Int = 0) {
+        insertionCompletions[index](.success(()))
     }
 }
 
@@ -138,6 +142,25 @@ final class CacheFeedUseCaseTests: XCTestCase {
         }
         store.completeDeletionSuccessfully()
         store.completeInsertion(with: insertionError)
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_save_succeedsOnSuccessfulCacheInsertion() {
+        let (sut, store) = makeSUT()
+        let feed = [uniqueItem()]
+        
+        let exp = expectation(description: "Wait for save completion")
+        sut.save(feed) { result in
+            switch result {
+            case .success:
+                break
+            case .failure:
+                XCTFail("Expect a success, failed instead")
+            }
+            exp.fulfill()
+        }
+        store.completeDeletionSuccessfully()
+        store.completeInsertionSuccessfully()
         wait(for: [exp], timeout: 1)
     }
     
