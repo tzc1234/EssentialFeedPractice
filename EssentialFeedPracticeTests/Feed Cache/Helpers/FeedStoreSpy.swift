@@ -12,6 +12,7 @@ class FeedStoreSpy: FeedStore {
     private(set) var messages = [Message]()
     private var deletionCompletions = [(Result<Void, Error>) -> Void]()
     private var insertionCompletions = [(Result<Void, Error>) -> Void]()
+    private var retrievalCompletions = [(Result<Void, Error>) -> Void]()
     
     enum Message: Equatable {
         case deletion
@@ -45,7 +46,12 @@ class FeedStoreSpy: FeedStore {
         insertionCompletions[index](.success(()))
     }
     
-    func retrieve() {
+    func retrieve(completion: @escaping (Result<Void, Error>) -> Void) {
         messages.append(.retrieval)
+        retrievalCompletions.append(completion)
+    }
+    
+    func completeRetrieval(with error: Error, at index: Int = 0) {
+        retrievalCompletions[index](.failure(error))
     }
 }

@@ -10,5 +10,5 @@ import Foundation
 public protocol FeedStore {
     func deleteCachedFeed(completion: @escaping (Result<Void, Error>) -> Void)
     func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping (Result<Void, Error>) -> Void)
-    func retrieve()
+    func retrieve(completion: @escaping (Result<Void, Error>) -> Void)
 }
