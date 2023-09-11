@@ -41,8 +41,10 @@ public final class LocalFeedLoader {
     
     public func load(completion: @escaping (Result<[FeedImage], Error>) -> Void) {
         store.retrieve { [weak self] result in
+            guard let self else { return }
+            
             switch result {
-            case let .success((feed, timestamp)) where self?.isValid(timestamp) == true:
+            case let .success((feed, timestamp)) where FeedCachePolicy.isValid(timestamp, against: self.currentDate()):
                 completion(.success(feed.toModels()))
             case .success:
                 completion(.success([]))
@@ -50,15 +52,6 @@ public final class LocalFeedLoader {
                 completion(.failure(error))
             }
         }
-    }
-    
-    private func isValid(_ timestamp: Date) -> Bool {
-        let calendar = Calendar(identifier: .gregorian)
-        guard let expirationDate = calendar.date(byAdding: .day, value: -7, to: currentDate()) else {
-            return false
-        }
-        
-        return timestamp > expirationDate
     }
 }
 
