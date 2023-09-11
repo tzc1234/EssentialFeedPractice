@@ -16,23 +16,41 @@ class LocalFeedLoader {
     }
     
     func save(_ feed: [FeedImage]) {
-        store.deleteCachedFeed()
+        store.deleteCachedFeed { [weak self] result in
+            switch result {
+            case .success:
+                self?.store.insert(feed)
+            case .failure:
+                break
+            }
+        }
     }
 }
 
 class FeedStore {
     private(set) var messages = [Message]()
+    private var deletionCompletions = [(Result<Void, Error>) -> Void]()
     
     enum Message: Equatable {
         case deletion
+        case insertion
     }
     
-    func deleteCachedFeed() {
+    func deleteCachedFeed(completion: @escaping (Result<Void, Error>) -> Void) {
         messages.append(.deletion)
+        deletionCompletions.append(completion)
+    }
+    
+    func insert(_ feed: [FeedImage]) {
+        messages.append(.insertion)
     }
     
     func completeDeletion(with error: Error, at index: Int = 0) {
-        
+        deletionCompletions[index](.failure(error))
+    }
+    
+    func completeDeletionSuccessfully(at index: Int = 0) {
+        deletionCompletions[index](.success(()))
     }
 }
 
@@ -61,6 +79,16 @@ final class CacheFeedUseCaseTests: XCTestCase {
         store.completeDeletion(with: deletionError)
         
         XCTAssertEqual(store.messages, [.deletion])
+    }
+    
+    func test_save_requestsNewCacheInsertionOnSuccessfulDeletion() {
+        let (sut, store) = makeSUT()
+        let feed = [uniqueItem()]
+        
+        sut.save(feed)
+        store.completeDeletionSuccessfully()
+        
+        XCTAssertEqual(store.messages, [.deletion, .insertion])
     }
     
     // MARK: - Helpers
