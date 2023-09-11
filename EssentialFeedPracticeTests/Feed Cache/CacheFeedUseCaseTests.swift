@@ -122,9 +122,9 @@ final class CacheFeedUseCaseTests: XCTestCase {
             case (.success, .success):
                 break
             case let (.failure(receivedError), .failure(expectedError)):
-                XCTAssertEqual(receivedError as NSError, expectedError as NSError)
+                XCTAssertEqual(receivedError as NSError, expectedError as NSError, file: file, line: line)
             default:
-                XCTFail("Expect \(expectedResult), got \(receivedResult) instead")
+                XCTFail("Expect \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
             exp.fulfill()
         }
