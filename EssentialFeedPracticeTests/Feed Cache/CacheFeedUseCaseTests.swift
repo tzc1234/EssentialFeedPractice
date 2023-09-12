@@ -17,19 +17,19 @@ final class CacheFeedUseCaseTests: XCTestCase {
     
     func test_save_requestCacheDeletion() {
         let (sut, store) = makeSUT()
-        let feed = [uniqueFeedImage()]
+        let feed = uniqueFeed()
         
-        sut.save(feed) { _ in }
+        sut.save(feed.models) { _ in }
         
         XCTAssertEqual(store.messages, [.deletion])
     }
     
     func test_save_doesNotRequestCacheInsertionOnDeletionError() {
         let (sut, store) = makeSUT()
-        let feed = [uniqueFeedImage()]
+        let feed = uniqueFeed()
         let deletionError = anyNSError()
         
-        sut.save(feed) { _ in }
+        sut.save(feed.models) { _ in }
         store.completeDeletion(with: deletionError)
         
         XCTAssertEqual(store.messages, [.deletion])
@@ -122,33 +122,13 @@ final class CacheFeedUseCaseTests: XCTestCase {
             case (.success, .success):
                 break
             case let (.failure(receivedError), .failure(expectedError)):
-                XCTAssertEqual(receivedError as NSError, expectedError as NSError)
+                XCTAssertEqual(receivedError as NSError, expectedError as NSError, file: file, line: line)
             default:
-                XCTFail("Expect \(expectedResult), got \(receivedResult) instead")
+                XCTFail("Expect \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
             exp.fulfill()
         }
         action()
         wait(for: [exp], timeout: 1)
-    }
-    
-    private func uniqueFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
-        let images = [uniqueFeedImage()]
-        let locals = images.map {
-            LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL)
-        }
-        return (images, locals)
-    }
-    
-    private func uniqueFeedImage() -> FeedImage {
-        .init(id: UUID(), description: "any", location: "any", imageURL: anyURL())
-    }
-    
-    private func anyURL() -> URL {
-        URL(string: "https://any-url.com")!
-    }
-    
-    private func anyNSError() -> NSError {
-        NSError(domain: "any", code: 0)
     }
 }

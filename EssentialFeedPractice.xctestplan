@@ -9,7 +9,15 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:EssentialFeedPractice.xcodeproj",
+          "identifier" : "BE6989312AADC8430038B32C",
+          "name" : "EssentialFeedPractice"
+        }
+      ]
+    }
   },
   "testTargets" : [
     {
