@@ -109,6 +109,18 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.retrieval])
     }
     
+    func test_load_hasNoSideEffectsWhenCacheOnExpiration() {
+        let now = Date()
+        let (sut, store) = makeSUT(currentDate: { now })
+        let expirationDate = now.minusMaxCacheAgeInDays()
+        let feed = uniqueFeed()
+        
+        sut.load { _ in }
+        store.completeRetrieval(with: feed.locals, timestamp: expirationDate)
+        
+        XCTAssertEqual(store.messages, [.retrieval])
+    }
+    
     func test_load_doesNotDeliverResultAfterSUTInstanceIsDeallocated() {
         let store = FeedStoreSpy()
         var sut: LocalFeedLoader? = LocalFeedLoader(store: store)
