@@ -25,12 +25,10 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     }
     
     func test_validateCache_doesNotDeleteCacheOnEmptyCache() {
-        let now = Date()
-        let nonExpiredDate = now.minusMaxCacheAgeInDays().adding(seconds: 1)
-        let (sut, store) = makeSUT(currentDate: { now })
+        let (sut, store) = makeSUT()
         
         sut.validateCache()
-        store.completeRetrieval(with: [], timestamp: nonExpiredDate)
+        store.completeRetrievalWithEmptyCache()
         
         XCTAssertEqual(store.messages, [.retrieval])
     }

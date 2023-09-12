@@ -32,14 +32,11 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         }
     }
     
-    func test_load_deliversNoImagesOnNonExpiredEmptyCache() {
-        let now = Date()
-        let (sut, store) = makeSUT(currentDate: { now })
-        let emptyFeed = [LocalFeedImage]()
-        let nonExpiredDate = now.minusMaxCacheAgeInDays().adding(seconds: 1)
+    func test_load_deliversNoImagesOnEmptyCache() {
+        let (sut, store) = makeSUT()
         
         expect(sut, toCompleteWith: .success([])) {
-            store.completeRetrieval(with: emptyFeed, timestamp: nonExpiredDate)
+            store.completeRetrievalWithEmptyCache()
         }
     }
     
@@ -86,13 +83,10 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     }
     
     func test_load_hasNoSideEffectsOnEmptyCache() {
-        let now = Date()
-        let (sut, store) = makeSUT(currentDate: { now })
-        let nonExpiredDate = now.minusMaxCacheAgeInDays().adding(seconds: 1)
-        let emptyFeed = [LocalFeedImage]()
+        let (sut, store) = makeSUT()
         
         sut.load { _ in }
-        store.completeRetrieval(with: emptyFeed, timestamp: nonExpiredDate)
+        store.completeRetrievalWithEmptyCache()
         
         XCTAssertEqual(store.messages, [.retrieval])
     }
