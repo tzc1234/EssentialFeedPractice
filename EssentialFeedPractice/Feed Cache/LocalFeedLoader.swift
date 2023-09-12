@@ -42,6 +42,16 @@ extension LocalFeedLoader {
     }
 }
 
+extension LocalFeedLoader {
+    public func validateCache() {
+        store.retrieve { [weak self] result in
+            self?.store.deleteCachedFeed { result in
+                
+            }
+        }
+    }
+}
+
 extension LocalFeedLoader: FeedLoader {
     public typealias LoadResult = FeedLoader.Result
     
