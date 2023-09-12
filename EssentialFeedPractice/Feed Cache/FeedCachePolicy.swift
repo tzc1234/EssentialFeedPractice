@@ -11,7 +11,7 @@ final class FeedCachePolicy {
     private static let calendar = Calendar(identifier: .gregorian)
     private static let maxCacheAgeByDays = 7
     
-    static func isValid(_ timestamp: Date, against date: Date) -> Bool {
+    static func validate(_ timestamp: Date, against date: Date) -> Bool {
         guard let expirationDate = calendar.date(byAdding: .day, value: -maxCacheAgeByDays, to: date) else {
             return false
         }

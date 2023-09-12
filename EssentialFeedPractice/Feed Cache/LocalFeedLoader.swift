@@ -46,7 +46,7 @@ public final class LocalFeedLoader {
             guard let self else { return }
             
             switch result {
-            case let .success((feed, timestamp)) where FeedCachePolicy.isValid(timestamp, against: self.currentDate()):
+            case let .success((feed, timestamp)) where FeedCachePolicy.validate(timestamp, against: self.currentDate()):
                 completion(.success(feed.toModels()))
             case .success:
                 completion(.success([]))
