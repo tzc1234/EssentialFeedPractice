@@ -9,8 +9,10 @@ import Foundation
 
 extension Date {
     func minusMaxCacheAgeInDays() -> Date {
-        adding(days: -7)
+        adding(days: -feedCacheMaxAgeInDays)
     }
+    
+    private var feedCacheMaxAgeInDays: Int { 7 }
     
     private func adding(days: Int, calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
         calendar.date(byAdding: .day, value: days, to: self)!
