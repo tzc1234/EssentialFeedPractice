@@ -42,19 +42,6 @@ extension LocalFeedLoader {
     }
 }
 
-extension LocalFeedLoader {
-    public func validateCache() {
-        store.retrieve { [weak self] result in
-            switch result {
-            case .success((_, _)):
-                break
-            case .failure:
-                self?.store.deleteCachedFeed { _ in }
-            }
-        }
-    }
-}
-
 extension LocalFeedLoader: FeedLoader {
     public typealias LoadResult = FeedLoader.Result
     
@@ -69,6 +56,22 @@ extension LocalFeedLoader: FeedLoader {
                 completion(.success([]))
             case let .failure(error):
                 completion(.failure(error))
+            }
+        }
+    }
+}
+
+extension LocalFeedLoader {
+    public func validateCache() {
+        store.retrieve { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case let .success((_, timestamp)) where !FeedCachePolicy.validate(timestamp, against: self.currentDate()):
+                self.store.deleteCachedFeed { _ in }
+            case .success: break
+            case .failure:
+                self.store.deleteCachedFeed { _ in }
             }
         }
     }
