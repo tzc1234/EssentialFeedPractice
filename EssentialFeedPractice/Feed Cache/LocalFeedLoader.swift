@@ -15,7 +15,9 @@ public final class LocalFeedLoader {
         self.store = store
         self.currentDate = currentDate
     }
-    
+}
+
+extension LocalFeedLoader {
     public typealias SaveResult = Result<Void, Error>
     
     public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
@@ -38,8 +40,10 @@ public final class LocalFeedLoader {
             completion(result)
         }
     }
-    
-    public typealias LoadResult = Result<[FeedImage], Error>
+}
+
+extension LocalFeedLoader: FeedLoader {
+    public typealias LoadResult = FeedLoader.Result
     
     public func load(completion: @escaping (LoadResult) -> Void) {
         store.retrieve { [weak self] result in
