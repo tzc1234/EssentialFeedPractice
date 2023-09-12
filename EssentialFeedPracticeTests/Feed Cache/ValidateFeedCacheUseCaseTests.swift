@@ -59,6 +59,18 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.retrieval, .deletion])
     }
     
+    func test_validateCache_deletesCacheOnExpiredCache() {
+        let now = Date()
+        let expiredDate = now.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let (sut, store) = makeSUT(currentDate: { now })
+        let feed = uniqueFeed()
+        
+        sut.validateCache()
+        store.completeRetrieval(with: feed.locals, timestamp: expiredDate)
+        
+        XCTAssertEqual(store.messages, [.retrieval, .deletion])
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init,
