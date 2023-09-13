@@ -95,7 +95,7 @@ final class CodableFeedStoreTests: XCTestCase {
         
         insert((feed, timestamp), into: sut)
         
-        expect(sut, toRetrieve: .success(.some((feed, timestamp))))
+        expect(sut, toRetrieve: .success((feed, timestamp)))
     }
     
     func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
@@ -105,7 +105,7 @@ final class CodableFeedStoreTests: XCTestCase {
         
         insert((feed, timestamp), into: sut)
         
-        expect(sut, toRetrieveTwice: .success(.some((feed, timestamp))))
+        expect(sut, toRetrieveTwice: .success((feed, timestamp)))
     }
     
     func test_retrieve_deliversFailureOnRetrievalError() {
@@ -126,6 +126,20 @@ final class CodableFeedStoreTests: XCTestCase {
         expect(sut, toRetrieveTwice: .failure(anyNSError()))
     }
     
+    func test_insert_overridesPreviouslyInsertedCacheValue() {
+        let sut = makeSUT()
+        
+        let firstInsertionError = insert((uniqueFeed().locals, Date()), into: sut)
+        XCTAssertNil(firstInsertionError)
+        
+        let latestFeed = uniqueFeed().locals
+        let latestTimestamp = Date()
+        let latestInsertionError = insert((latestFeed, latestTimestamp), into: sut)
+        
+        XCTAssertNil(latestInsertionError)
+        expect(sut, toRetrieve: .success((latestFeed, latestTimestamp)))
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(storeURL: URL? = nil,
@@ -136,19 +150,21 @@ final class CodableFeedStoreTests: XCTestCase {
         return sut
     }
     
-    private func insert(_ cache: (feed: [LocalFeedImage], timestamp: Date), into sut: CodableFeedStore,
-                        file: StaticString = #filePath, line: UInt = #line) {
+    @discardableResult
+    private func insert(_ cache: (feed: [LocalFeedImage], timestamp: Date), into sut: CodableFeedStore) -> Error? {
+        var retrievalError: Error?
         let exp = expectation(description: "Wait for cache insertion")
         sut.insert(cache.feed, timestamp: cache.timestamp) { result in
             switch result {
             case .success:
                 break
-            case .failure:
-                XCTFail("Expect a success", file: file, line: line)
+            case let .failure(error):
+                retrievalError = error
             }
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1)
+        return retrievalError
     }
     
     private func expect(_ sut: CodableFeedStore,
