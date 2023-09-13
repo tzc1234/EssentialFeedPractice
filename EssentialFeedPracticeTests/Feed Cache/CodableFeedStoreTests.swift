@@ -114,8 +114,10 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     func test_delete_deliversFailureOnDeletionError() {
-        let noDeletePermissionURL = cachesDirectory()
-        let sut = makeSUT(storeURL: noDeletePermissionURL)
+        let stub = FileManager.removeItemAlwaysFailingStub()
+        stub.startIntercepting()
+        let sut = makeSUT()
+        insert((uniqueFeed().locals, Date()), into: sut)
         
         XCTAssertNotNil(deleteCache(from: sut))
     }
@@ -207,8 +209,38 @@ final class CodableFeedStoreTests: XCTestCase {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
             .appending(path: "\(String(describing: self)).store")
     }
+}
+
+private extension FileManager {
+    static func removeItemAlwaysFailingStub() -> Stub {
+        .init(source: #selector(FileManager.removeItem(at:)), destination: #selector(Stub.removeItem))
+    }
     
-    private func cachesDirectory() -> URL {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    class Stub: NSObject {
+        private let source: Selector
+        private let destination: Selector
+
+        init(source: Selector, destination: Selector) {
+            self.source = source
+            self.destination = destination
+        }
+
+        @objc func removeItem(at URL: URL) throws {
+            throw anyNSError()
+        }
+
+        func startIntercepting() {
+            method_exchangeImplementations(
+                class_getInstanceMethod(FileManager.self, source)!,
+                class_getInstanceMethod(Stub.self, destination)!
+            )
+        }
+
+        deinit {
+            method_exchangeImplementations(
+                class_getInstanceMethod(Stub.self, destination)!,
+                class_getInstanceMethod(FileManager.self, source)!
+            )
+        }
     }
 }
