@@ -54,7 +54,7 @@ public final class CodableFeedStore: FeedStore {
             
             do {
                 let decoded = try JSONDecoder().decode(Cache.self, from: data)
-                completion(.success(.some((decoded.localFeed, decoded.timestamp))))
+                completion(.success((decoded.localFeed, decoded.timestamp)))
             } catch {
                 completion(.failure(error))
             }
@@ -64,7 +64,8 @@ public final class CodableFeedStore: FeedStore {
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertCompletion) {
         queue.async(flags: .barrier) { [storeURL] in
             do {
-                let encoded = try JSONEncoder().encode(Cache(feed: feed.map(CodableFeedImage.init), timestamp: timestamp))
+                let cache = Cache(feed: feed.map(CodableFeedImage.init), timestamp: timestamp)
+                let encoded = try JSONEncoder().encode(cache)
                 try encoded.write(to: storeURL)
                 completion(.success(()))
             } catch {
