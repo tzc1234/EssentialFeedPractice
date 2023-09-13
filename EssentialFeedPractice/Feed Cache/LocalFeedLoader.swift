@@ -50,12 +50,30 @@ extension LocalFeedLoader: FeedLoader {
             guard let self else { return }
             
             switch result {
-            case let .success((feed, timestamp)) where FeedCachePolicy.validate(timestamp, against: self.currentDate()):
+            case let .success(.some((feed, timestamp)))
+                where FeedCachePolicy.validate(timestamp, against: self.currentDate()):
                 completion(.success(feed.toModels()))
             case .success:
                 completion(.success([]))
             case let .failure(error):
                 completion(.failure(error))
+            }
+        }
+    }
+}
+
+extension LocalFeedLoader {
+    public func validateCache() {
+        store.retrieve { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case let .success(.some(cache))
+                where !FeedCachePolicy.validate(cache.timestamp, against: self.currentDate()):
+                self.store.deleteCachedFeed { _ in }
+            case .success: break
+            case .failure:
+                self.store.deleteCachedFeed { _ in }
             }
         }
     }
