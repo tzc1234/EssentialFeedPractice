@@ -89,14 +89,7 @@ final class CodableFeedStoreTests: XCTestCase {
         let feed = uniqueFeed().locals
         let timestamp = Date()
         
-        let exp = expectation(description: "Wait for cache insertion")
-        sut.insert(feed, timestamp: timestamp) { insertResult in
-            if case let .failure(error) = insertResult {
-                XCTAssertNil(error)
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1)
+        insert((feed, timestamp), into: sut)
         
         expect(sut, toRetrieve: .success(.some((feed, timestamp))))
     }
@@ -106,14 +99,7 @@ final class CodableFeedStoreTests: XCTestCase {
         let feed = uniqueFeed().locals
         let timestamp = Date()
         
-        let exp = expectation(description: "Wait for cache insertion")
-        sut.insert(feed, timestamp: timestamp) { insertResult in
-            if case let .failure(error) = insertResult {
-                XCTAssertNil(error)
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1)
+        insert((feed, timestamp), into: sut)
         
         expect(sut, toRetrieveTwice: .success(.some((feed, timestamp))))
     }
@@ -124,6 +110,21 @@ final class CodableFeedStoreTests: XCTestCase {
         let sut = CodableFeedStore(storeURL: testSpecificStoreURL())
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func insert(_ cache: (feed: [LocalFeedImage], timestamp: Date), into sut: CodableFeedStore,
+                        file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "Wait for cache insertion")
+        sut.insert(cache.feed, timestamp: cache.timestamp) { result in
+            switch result {
+            case .success:
+                break
+            case .failure:
+                XCTFail("Expect a success", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
     }
     
     private func expect(_ sut: CodableFeedStore,
