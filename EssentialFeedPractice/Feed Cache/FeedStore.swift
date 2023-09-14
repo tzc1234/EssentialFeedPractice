@@ -9,10 +9,11 @@ import Foundation
 
 public protocol FeedStore {
     typealias CachedFeed = (feed: [LocalFeedImage], timestamp: Date)
+    typealias RetrieveResult = Result<CachedFeed?, Error>
     
     typealias DeleteCompletion = (Result<Void, Error>) -> Void
     typealias InsertCompletion = (Result<Void, Error>) -> Void
-    typealias RetrieveCompletion = (Result<CachedFeed?, Error>) -> Void
+    typealias RetrieveCompletion = (RetrieveResult) -> Void
     
     /// The completion handler can be invoked in any thread.
     /// Clients are responsible to dispatch to appropriate threads, if needed.
