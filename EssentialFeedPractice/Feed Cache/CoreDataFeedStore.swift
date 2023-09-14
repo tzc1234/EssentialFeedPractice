@@ -108,7 +108,7 @@ class ManagedCache: NSManagedObject {
     }
     
     static func find(by context: NSManagedObjectContext) throws -> ManagedCache? {
-        let request = NSFetchRequest<ManagedCache>(entityName: "ManagedCache")
+        let request = NSFetchRequest<ManagedCache>(entityName: String(describing: Self.self))
         request.returnsObjectsAsFaults = false
         request.fetchLimit = 1
         return try context.fetch(request).first
