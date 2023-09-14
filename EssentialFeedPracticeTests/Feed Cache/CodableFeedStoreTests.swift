@@ -123,24 +123,16 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         let stub = FileManager.removeItemAlwaysFailingStub()
         stub.startIntercepting()
         let sut = makeSUT()
-        insert((uniqueFeed().locals, Date()), into: sut)
         
-        let deletionError = deleteCache(from: sut)
-        
-        XCTAssertNotNil(deletionError)
+        assertThatDeleteDeliversErrorOnDeletionError(on: sut)
     }
     
     func test_delete_hasNoSideEffectsOnDeletionError() {
         let stub = FileManager.removeItemAlwaysFailingStub()
         stub.startIntercepting()
         let sut = makeSUT()
-        let feed = uniqueFeed().locals
-        let timestamp = Date()
-        insert((feed, timestamp), into: sut)
         
-        deleteCache(from: sut)
-        
-        expect(sut, toRetrieve: .success((feed, timestamp)))
+        assertThatDeleteHasNoSideEffectsOnDeletionError(on: sut)
     }
     
     func test_storeSideEffects_runSerially() {
