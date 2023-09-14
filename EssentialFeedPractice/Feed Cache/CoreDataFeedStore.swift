@@ -17,7 +17,32 @@ public class CoreDataFeedStore: FeedStore {
     }
     
     public func retrieve(completion: @escaping RetrieveCompletion) {
-        completion(.success(.none))
+        context.perform { [context] in
+            let request = NSFetchRequest<ManagedCache>(entityName: "ManagedCache")
+            request.returnsObjectsAsFaults = false
+            request.fetchLimit = 1
+            
+            do {
+                guard let managedCache = try context.fetch(request).first else {
+                    completion(.success(.none))
+                    return
+                }
+                        
+                let feed = managedCache.feed
+                    .compactMap { $0 as? ManagedFeedImage }
+                    .map { image in
+                        LocalFeedImage(
+                            id: image.id,
+                            description: image.imageDescription,
+                            location: image.location,
+                            imageURL: image.url)
+                }
+                
+                completion(.success((feed, managedCache.timestamp)))
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
     
     public func deleteCachedFeed(completion: @escaping DeleteCompletion) {
@@ -25,7 +50,25 @@ public class CoreDataFeedStore: FeedStore {
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertCompletion) {
-        
+        context.perform { [context] in
+            let managedCache = ManagedCache(context: context)
+            managedCache.timestamp = timestamp
+            managedCache.feed = NSOrderedSet(array: feed.map { local in
+                let managed = ManagedFeedImage(context: context)
+                managed.id = local.id
+                managed.imageDescription = local.description
+                managed.location = local.location
+                managed.url = local.imageURL
+                return managed
+            })
+            
+            do {
+                try context.save()
+                completion(.success(()))
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
 }
 
