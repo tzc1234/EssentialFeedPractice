@@ -39,14 +39,7 @@ public class CoreDataFeedStore: FeedStore {
         context.perform { [context] in
             let managedCache = ManagedCache(context: context)
             managedCache.timestamp = timestamp
-            managedCache.feed = NSOrderedSet(array: feed.map { local in
-                let managed = ManagedFeedImage(context: context)
-                managed.id = local.id
-                managed.imageDescription = local.description
-                managed.location = local.location
-                managed.url = local.url
-                return managed
-            })
+            managedCache.feed = feed.toManagedFeed(in: context)
             
             do {
                 try context.save()
@@ -89,6 +82,19 @@ extension CoreDataFeedStore {
         }
         
         return model
+    }
+}
+
+private extension [LocalFeedImage] {
+    func toManagedFeed(in context: NSManagedObjectContext) -> NSOrderedSet {
+        NSOrderedSet(array: map { local in
+            let managed = ManagedFeedImage(context: context)
+            managed.id = local.id
+            managed.imageDescription = local.description
+            managed.location = local.location
+            managed.url = local.url
+            return managed
+        })
     }
 }
 
