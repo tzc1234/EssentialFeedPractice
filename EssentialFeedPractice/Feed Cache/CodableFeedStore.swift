@@ -21,17 +21,17 @@ public final class CodableFeedStore: FeedStore {
         private let id: UUID
         private let description: String?
         private let location: String?
-        private let imageURL: URL
+        private let url: URL
         
         init(_ model: LocalFeedImage) {
             self.id = model.id
             self.description = model.description
             self.location = model.location
-            self.imageURL = model.imageURL
+            self.url = model.url
         }
         
         var local: LocalFeedImage {
-            .init(id: id, description: description, location: location, imageURL: imageURL)
+            .init(id: id, description: description, location: location, url: url)
         }
     }
     

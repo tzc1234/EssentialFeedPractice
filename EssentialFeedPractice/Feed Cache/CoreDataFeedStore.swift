@@ -31,7 +31,7 @@ public class CoreDataFeedStore: FeedStore {
                             id: image.id,
                             description: image.imageDescription,
                             location: image.location,
-                            imageURL: image.url)
+                            url: image.url)
                 }
                 
                 completion(.success((feed, managedCache.timestamp)))
@@ -54,7 +54,7 @@ public class CoreDataFeedStore: FeedStore {
                 managed.id = local.id
                 managed.imageDescription = local.description
                 managed.location = local.location
-                managed.url = local.imageURL
+                managed.url = local.url
                 return managed
             })
             
