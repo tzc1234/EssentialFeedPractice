@@ -99,7 +99,8 @@ final class CodableFeedStoreTests: XCTestCase {
     func test_delete_hasNoSideEffectsOnEmptyCache() {
         let sut = makeSUT()
         
-        XCTAssertNil(deleteCache(from: sut))
+        let deletionError = deleteCache(from: sut)
+        XCTAssertNil(deletionError)
         
         expect(sut, toRetrieve: .success(.none))
     }
@@ -108,7 +109,8 @@ final class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT()
         insert((uniqueFeed().locals, Date()), into: sut)
         
-        XCTAssertNil(deleteCache(from: sut))
+        let deletionError = deleteCache(from: sut)
+        XCTAssertNil(deletionError)
         
         expect(sut, toRetrieve: .success(.none))
     }
@@ -119,7 +121,9 @@ final class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT()
         insert((uniqueFeed().locals, Date()), into: sut)
         
-        XCTAssertNotNil(deleteCache(from: sut))
+        let deletionError = deleteCache(from: sut)
+        
+        XCTAssertNotNil(deletionError)
     }
     
     func test_storeSideEffects_runSerially() {
