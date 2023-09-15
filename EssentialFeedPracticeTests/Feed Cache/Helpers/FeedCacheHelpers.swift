@@ -19,11 +19,11 @@ func anyURL() -> URL {
 func uniqueFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
     let images = [uniqueFeedImage()]
     let locals = images.map {
-        LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, imageURL: $0.imageURL)
+        LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
     }
     return (images, locals)
 }
 
 private func uniqueFeedImage() -> FeedImage {
-    .init(id: UUID(), description: "any", location: "any", imageURL: anyURL())
+    .init(id: UUID(), description: "any description", location: "any location", url: anyURL())
 }

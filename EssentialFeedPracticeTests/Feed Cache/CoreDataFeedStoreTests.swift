@@ -1,26 +1,14 @@
 //
-//  CodableFeedStoreTests.swift
+//  CoreDataFeedStoreTests.swift
 //  EssentialFeedPracticeTests
 //
-//  Created by Tsz-Lung on 13/09/2023.
+//  Created by Tsz-Lung on 14/09/2023.
 //
 
 import XCTest
 import EssentialFeedPractice
 
-final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
-    override func setUp() {
-        super.setUp()
-        
-        setupEmptyStoreState()
-    }
-    
-    override func tearDown() {
-        super.tearDown()
-        
-        undoStoreSideEffects()
-    }
-    
+final class CoreDataFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
         
@@ -46,19 +34,17 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     }
     
     func test_retrieve_deliversFailureOnRetrievalError() {
-        let storeURL = testSpecificStoreURL()
-        let sut = makeSUT(storeURL: storeURL)
-        
-        try! "invalid data".write(to: storeURL, atomically: false, encoding: .utf8)
+        let stub = NSManagedObjectContext.alwaysFailingFetchStub()
+        stub.startIntercepting()
+        let sut = makeSUT()
         
         assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
     }
     
     func test_retrieve_hasNoSideEffectsOnRetrievalError() {
-        let storeURL = testSpecificStoreURL()
-        let sut = makeSUT(storeURL: storeURL)
-        
-        try! "invalid data".write(to: storeURL, atomically: false, encoding: .utf8)
+        let stub = NSManagedObjectContext.alwaysFailingFetchStub()
+        stub.startIntercepting()
+        let sut = makeSUT()
         
         assertThatRetrieveHasNoSideEffectsOnRetrievalError(on: sut)
     }
@@ -82,15 +68,17 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     }
     
     func test_insert_deliversErrorOnInsertionError() {
-        let invalidStoreURL = URL(string: "invalid://store-url")!
-        let sut = makeSUT(storeURL: invalidStoreURL)
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
+        stub.startIntercepting()
+        let sut = makeSUT()
         
         assertThatInsertDeliversErrorOnInsertionError(on: sut)
     }
     
     func test_insert_hasNoSideEffectsOnInsertionError() {
-        let invalidStoreURL = URL(string: "invalid://store-url")!
-        let sut = makeSUT(storeURL: invalidStoreURL)
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
+        stub.startIntercepting()
+        let sut = makeSUT()
         
         assertThatInsertHasNoSideEffectsOnInsertionError(on: sut)
     }
@@ -120,19 +108,27 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     }
     
     func test_delete_deliversErrorOnDeletionError() {
-        let stub = FileManager.removeItemAlwaysFailingStub()
-        stub.startIntercepting()
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
         let sut = makeSUT()
+        insert((uniqueFeed().locals, Date()), into: sut)
+        stub.startIntercepting()
         
-        assertThatDeleteDeliversErrorOnDeletionError(on: sut)
+        let deletionError = deleteCache(from: sut)
+        
+        XCTAssertNotNil(deletionError)
     }
     
     func test_delete_hasNoSideEffectsOnDeletionError() {
-        let stub = FileManager.removeItemAlwaysFailingStub()
-        stub.startIntercepting()
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
         let sut = makeSUT()
+        let feed = uniqueFeed().locals
+        let timestamp = Date()
+        insert((feed, timestamp), into: sut)
+        stub.startIntercepting()
         
-        assertThatDeleteHasNoSideEffectsOnDeletionError(on: sut)
+        deleteCache(from: sut)
+        
+        expect(sut, toRetrieve: .success((feed, timestamp)))
     }
     
     func test_storeSideEffects_runSerially() {
@@ -143,39 +139,34 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     
     // MARK: - Helpers
     
-    private func makeSUT(storeURL: URL? = nil,
-                         file: StaticString = #filePath,
-                         line: UInt = #line) -> FeedStore {
-        let sut = CodableFeedStore(storeURL: storeURL ?? testSpecificStoreURL())
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> FeedStore {
+        let sut = try! CoreDataFeedStore(storeURL: URL(filePath: "/dev/null"))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
-    
-    private func setupEmptyStoreState() {
-        deleteStoreArtifacts()
-    }
-    
-    private func undoStoreSideEffects() {
-        deleteStoreArtifacts()
-    }
-    
-    private func deleteStoreArtifacts() {
-        try? FileManager.default.removeItem(at: testSpecificStoreURL())
-    }
-    
-    private func testSpecificStoreURL() -> URL {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-            .appending(path: "\(String(describing: self)).store")
-    }
 }
 
-private extension FileManager {
-    static func removeItemAlwaysFailingStub() -> Stub {
-        .init(source: #selector(FileManager.removeItem(at:)), destination: #selector(Stub.removeItem))
+private extension NSManagedObjectContext {
+    static func alwaysFailingFetchStub() -> Stub {
+        .init(
+            source: #selector(NSManagedObjectContext.execute(_:)),
+            destination: #selector(Stub.execute(_:))
+        )
     }
     
-    class Stub: MethodSwizzlingStub<FileManager> {
-        @objc func removeItem(at URL: URL) throws {
+    static func alwaysFailingSaveStub() -> Stub {
+        .init(
+            source: #selector(NSManagedObjectContext.save),
+            destination: #selector(Stub.save)
+        )
+    }
+    
+    class Stub: MethodSwizzlingStub<NSManagedObjectContext> {
+        @objc func execute(_: Any) throws {
+            throw anyNSError()
+        }
+        
+        @objc func save() throws {
             throw anyNSError()
         }
     }
