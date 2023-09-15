@@ -8,7 +8,7 @@ platform :mac do
   desc "Run Tests In Mac"
   lane :test do
     run_tests(
-      scheme: "EssentialFeedPractice",
+      scheme: "macOS_CI",
       force_quit_simulator: true,
       include_simulator_logs: false,
       clean: true
