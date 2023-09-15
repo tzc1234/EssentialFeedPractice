@@ -29,22 +29,10 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:EssentialFeedPracticeTests/EssentialFeedPracticeTests.xctestplan"
+            reference = "container:macOS_CI.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BE6989392AADC8430038B32C"
-               BuildableName = "EssentialFeedPracticeTests.xctest"
-               BlueprintName = "EssentialFeedPracticeTests"
-               ReferencedContainer = "container:EssentialFeedPractice.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
