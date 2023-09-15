@@ -42,7 +42,11 @@ final class CoreDataFeedStoreTests: XCTestCase, FailableRetrieveFeedStoreSpecs {
     }
     
     func test_retrieve_hasNoSideEffectsOnRetrievalError() {
+        let stub = NSManagedObjectContext.alwaysFailingFetchStub()
+        stub.startIntercepting()
+        let sut = makeSUT()
         
+        assertThatRetrieveHasNoSideEffectsOnRetrievalError(on: sut)
     }
     
     func test_insert_deliversNoErrorOnEmptyCache() {
