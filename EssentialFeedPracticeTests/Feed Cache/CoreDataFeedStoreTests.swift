@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeedPractice
 
-final class CoreDataFeedStoreTests: XCTestCase, FailableRetrieveFeedStoreSpecs, FailableInsertFeedStoreSpecs {
+final class CoreDataFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
         
@@ -105,6 +105,17 @@ final class CoreDataFeedStoreTests: XCTestCase, FailableRetrieveFeedStoreSpecs, 
         let sut = makeSUT()
         
         assertThatDeleteEmptiesPreviouslyInsertedCache(on: sut)
+    }
+    
+    func test_delete_deliversErrorOnDeletionError() {
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
+        let sut = makeSUT()
+        insert((uniqueFeed().locals, Date()), into: sut)
+        stub.startIntercepting()
+        
+        let deletionError = deleteCache(from: sut)
+        
+        XCTAssertNotNil(deletionError)
     }
     
     func test_storeSideEffects_runSerially() {
