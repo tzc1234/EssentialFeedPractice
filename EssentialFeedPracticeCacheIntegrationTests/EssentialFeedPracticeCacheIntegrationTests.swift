@@ -32,19 +32,22 @@ final class EssentialFeedPracticeCacheIntegrationTests: XCTestCase {
         let sutToPerformLoad = makeSUT()
         let feed = uniqueFeed().models
         
-        let saveExp = expectation(description: "Wait for save completion")
-        sutToPerformSave.save(feed) { result in
-            switch result {
-            case .success:
-                break
-            case let .failure(error):
-                XCTFail("Expect a success, got \(error) instead")
-            }
-            saveExp.fulfill()
-        }
-        wait(for: [saveExp], timeout: 1)
+        save(feed, with: sutToPerformSave)
         
         expect(sutToPerformLoad, toLoad: feed)
+    }
+    
+    func test_save_overridesFeedSavedOnASeparateInstance() {
+        let sutToPerformFirstSave = makeSUT()
+        let sutToPerformLastSave = makeSUT()
+        let sutToPerformLoad = makeSUT()
+        let firstFeed = uniqueFeed().models
+        let latestFeed = uniqueFeed().models
+        
+        save(firstFeed, with: sutToPerformFirstSave)
+        save(latestFeed, with: sutToPerformLastSave)
+        
+        expect(sutToPerformLoad, toLoad: latestFeed)
     }
     
     // MARK: - Helpers
@@ -55,6 +58,21 @@ final class EssentialFeedPracticeCacheIntegrationTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func save(_ feed: [FeedImage], with sut: LocalFeedLoader,
+                      file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "Wait for save completion")
+        sut.save(feed) { result in
+            switch result {
+            case .success:
+                break
+            case let .failure(error):
+                XCTFail("Expect a success, got \(error) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
     }
     
     private func expect(_ sut: LocalFeedLoader, toLoad feed: [FeedImage],
