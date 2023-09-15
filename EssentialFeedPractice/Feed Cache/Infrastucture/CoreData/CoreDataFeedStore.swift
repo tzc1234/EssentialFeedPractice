@@ -53,6 +53,7 @@ public class CoreDataFeedStore: FeedStore {
                 try ManagedCache.find(by: context).map(context.delete).map(context.save)
                 completion(.success(()))
             } catch {
+                context.rollback()
                 completion(.failure(error))
             }
         }

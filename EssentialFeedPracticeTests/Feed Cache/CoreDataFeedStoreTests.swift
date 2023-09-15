@@ -118,6 +118,19 @@ final class CoreDataFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         XCTAssertNotNil(deletionError)
     }
     
+    func test_delete_hasNoSideEffectsOnDeletionError() {
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
+        let sut = makeSUT()
+        let feed = uniqueFeed().locals
+        let timestamp = Date()
+        insert((feed, timestamp), into: sut)
+        stub.startIntercepting()
+        
+        deleteCache(from: sut)
+        
+        expect(sut, toRetrieve: .success((feed, timestamp)))
+    }
+    
     func test_storeSideEffects_runSerially() {
         let sut = makeSUT()
         
