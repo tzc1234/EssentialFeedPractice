@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeedPractice
 
-final class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
+final class CoreDataFeedStoreTests: XCTestCase, FailableRetrieveFeedStoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
         
@@ -31,6 +31,18 @@ final class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
         let sut = makeSUT()
         
         assertThatRetrieveHasNoSideEffectsOnNonEmptyCache(on: sut)
+    }
+    
+    func test_retrieve_deliversFailureOnRetrievalError() {
+        let stub = NSManagedObjectContext.alwaysFailingFetchStub()
+        stub.startIntercepting()
+        let sut = makeSUT()
+        
+        assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
+    }
+    
+    func test_retrieve_hasNoSideEffectsOnRetrievalError() {
+        
     }
     
     func test_insert_deliversNoErrorOnEmptyCache() {
@@ -87,5 +99,20 @@ final class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
         let sut = try! CoreDataFeedStore(storeURL: URL(filePath: "/dev/null"))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+}
+
+private extension NSManagedObjectContext {
+    static func alwaysFailingFetchStub() -> Stub {
+        .init(
+            source: #selector(NSManagedObjectContext.execute(_:)),
+            destination: #selector(Stub.execute(_:))
+        )
+    }
+    
+    class Stub: MethodSwizzlingStub<NSManagedObjectContext> {
+        @objc func execute(_: Any) throws {
+            throw anyNSError()
+        }
     }
 }
