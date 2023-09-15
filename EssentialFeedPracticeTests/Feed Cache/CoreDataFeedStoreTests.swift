@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeedPractice
 
-final class CoreDataFeedStoreTests: XCTestCase, FailableRetrieveFeedStoreSpecs {
+final class CoreDataFeedStoreTests: XCTestCase, FailableRetrieveFeedStoreSpecs, FailableInsertFeedStoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
         
@@ -67,6 +67,18 @@ final class CoreDataFeedStoreTests: XCTestCase, FailableRetrieveFeedStoreSpecs {
         assertThatInsertOverridesPreviouslyInsertedCacheValue(on: sut)
     }
     
+    func test_insert_deliversErrorOnInsertionError() {
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
+        stub.startIntercepting()
+        let sut = makeSUT()
+        
+        assertThatInsertDeliversErrorOnInsertionError(on: sut)
+    }
+    
+    func test_insert_hasNoSideEffectsOnInsertionError() {
+        
+    }
+    
     func test_delete_deliversNoErrorOnEmptyCache() {
         let sut = makeSUT()
         
@@ -114,8 +126,19 @@ private extension NSManagedObjectContext {
         )
     }
     
+    static func alwaysFailingSaveStub() -> Stub {
+        .init(
+            source: #selector(NSManagedObjectContext.save),
+            destination: #selector(Stub.save)
+        )
+    }
+    
     class Stub: MethodSwizzlingStub<NSManagedObjectContext> {
         @objc func execute(_: Any) throws {
+            throw anyNSError()
+        }
+        
+        @objc func save() throws {
             throw anyNSError()
         }
     }
