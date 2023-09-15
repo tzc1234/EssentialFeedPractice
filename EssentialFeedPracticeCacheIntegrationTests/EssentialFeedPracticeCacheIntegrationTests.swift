@@ -9,6 +9,18 @@ import XCTest
 import EssentialFeedPractice
 
 final class EssentialFeedPracticeCacheIntegrationTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        
+        setupEmptyStoreState()
+    }
+    
+    override func tearDown() {
+        super.tearDown()
+        
+        undoStoreSideEffects()
+    }
+    
     func test_load_deliversEmptyFeedOnEmptyCache() {
         let sut = makeSUT()
         
@@ -33,6 +45,18 @@ final class EssentialFeedPracticeCacheIntegrationTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func setupEmptyStoreState() {
+        deleteCacheStoreArtefacts()
+    }
+    
+    private func undoStoreSideEffects() {
+        deleteCacheStoreArtefacts()
+    }
+    
+    private func deleteCacheStoreArtefacts() {
+        try? FileManager.default.removeItem(at: testSpecificStoreURL())
     }
     
     private func testSpecificStoreURL() -> URL {
