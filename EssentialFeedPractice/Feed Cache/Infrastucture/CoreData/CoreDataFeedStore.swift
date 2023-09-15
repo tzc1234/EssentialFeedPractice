@@ -110,38 +110,3 @@ private extension [LocalFeedImage] {
         })
     }
 }
-
-@objc(ManagedCache)
-class ManagedCache: NSManagedObject {
-    @NSManaged var timestamp: Date
-    @NSManaged var feed: NSOrderedSet
-    
-    var localFeed: [LocalFeedImage] {
-        feed.compactMap { $0 as? ManagedFeedImage }.map(\.local)
-    }
-    
-    static func newUniqueInstance(in context: NSManagedObjectContext) throws -> ManagedCache {
-        try find(by: context).map(context.delete)
-        return ManagedCache(context: context)
-    }
-    
-    static func find(by context: NSManagedObjectContext) throws -> ManagedCache? {
-        let request = NSFetchRequest<ManagedCache>(entityName: String(describing: Self.self))
-        request.returnsObjectsAsFaults = false
-        request.fetchLimit = 1
-        return try context.fetch(request).first
-    }
-}
-
-@objc(ManagedFeedImage)
-class ManagedFeedImage: NSManagedObject {
-    @NSManaged var id: UUID
-    @NSManaged var imageDescription: String?
-    @NSManaged var location: String?
-    @NSManaged var url: URL
-    @NSManaged var cache: ManagedCache
-    
-    var local: LocalFeedImage {
-        .init(id: id, description: imageDescription, location: location, url: url)
-    }
-}
