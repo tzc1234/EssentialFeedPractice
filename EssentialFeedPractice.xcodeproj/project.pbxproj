@@ -64,7 +64,7 @@
 		BE2499F42AAF31A700C2FF25 /* FeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStore.swift; sourceTree = "<group>"; };
 		BE2499F72AAF323D00C2FF25 /* LocalFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFeedLoader.swift; sourceTree = "<group>"; };
 		BE2499F92AAF329E00C2FF25 /* FeedStoreSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStoreSpy.swift; sourceTree = "<group>"; };
-		BE40972F2AADF4C800BB02CD /* EssentialFeedPractice.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedPractice.xctestplan; sourceTree = "<group>"; };
+		BE40972F2AADF4C800BB02CD /* EssentialFeedPracticeTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedPracticeTests.xctestplan; sourceTree = "<group>"; };
 		BE66BDCA2AB1A600005424EB /* CodableFeedStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableFeedStoreTests.swift; sourceTree = "<group>"; };
 		BE680F4F2AAF0F2200F90355 /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 		BE6989322AADC8430038B32C /* EssentialFeedPractice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeedPractice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -170,7 +170,6 @@
 		BE6989282AADC8430038B32C = {
 			isa = PBXGroup;
 			children = (
-				BE40972F2AADF4C800BB02CD /* EssentialFeedPractice.xctestplan */,
 				BE6989342AADC8430038B32C /* EssentialFeedPractice */,
 				BE69893E2AADC8430038B32C /* EssentialFeedPracticeTests */,
 				BE1AF42F2AB497B900120182 /* EssentialFeedPracticeCacheIntegrationTests */,
@@ -200,6 +199,7 @@
 		BE69893E2AADC8430038B32C /* EssentialFeedPracticeTests */ = {
 			isa = PBXGroup;
 			children = (
+				BE40972F2AADF4C800BB02CD /* EssentialFeedPracticeTests.xctestplan */,
 				BE680F4C2AAF071100F90355 /* Feed Cache */,
 			);
 			path = EssentialFeedPracticeTests;
