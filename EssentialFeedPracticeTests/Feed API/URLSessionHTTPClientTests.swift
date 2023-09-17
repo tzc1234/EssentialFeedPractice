@@ -25,10 +25,7 @@ class URLSessionHTTPClient {
 
 final class URLSessionHTTPClientTests: XCTestCase {
     func test_get_requestsFromURL() {
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [URLProtocolStub.self]
-        let session = URLSession(configuration: configuration)
-        let sut = URLSessionHTTPClient(session: session)
+        let sut = makeSUT()
         let url = anyURL()
         
         let exp = expectation(description: "Wait for completion")
@@ -43,10 +40,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
     }
     
     func test_get_failsOnRequestError() {
-        let configuration = URLSessionConfiguration.ephemeral
-        configuration.protocolClasses = [URLProtocolStub.self]
-        let session = URLSession(configuration: configuration)
-        let sut = URLSessionHTTPClient(session: session)
+        let sut = makeSUT()
         URLProtocolStub.stub(error: anyNSError())
         
         let exp = expectation(description: "Wait for completion")
@@ -64,6 +58,15 @@ final class URLSessionHTTPClientTests: XCTestCase {
     }
     
     // MARK: - Helpers
+    
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> URLSessionHTTPClient {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [URLProtocolStub.self]
+        let session = URLSession(configuration: configuration)
+        let sut = URLSessionHTTPClient(session: session)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
+    }
     
     private class URLProtocolStub: URLProtocol {
         struct Stub {
