@@ -14,9 +14,11 @@ class URLSessionHTTPClient {
         self.session = session
     }
     
-    func get(from url: URL) {
-        session.dataTask(with: url) { _,_,_ in
-            
+    func get(from url: URL, completion: @escaping (Result<Any, Error>) -> Void) {
+        session.dataTask(with: url) { _,_, error in
+            if let error {
+                completion(.failure(error))
+            }
         }.resume()
     }
 }
@@ -35,7 +37,28 @@ final class URLSessionHTTPClientTests: XCTestCase {
             XCTAssertEqual(request.httpMethod, "GET")
             exp.fulfill()
         }
-        sut.get(from: url)
+        sut.get(from: url) { _ in}
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_get_failsOnRequestError() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [URLProtocolStub.self]
+        let session = URLSession(configuration: configuration)
+        let sut = URLSessionHTTPClient(session: session)
+        URLProtocolStub.stub(error: anyNSError())
+        
+        let exp = expectation(description: "Wait for completion")
+        sut.get(from: anyURL()) { result in
+            switch result {
+            case .success:
+                XCTFail("Expect a failure")
+            case .failure:
+                break
+            }
+            exp.fulfill()
+        }
         
         wait(for: [exp], timeout: 1)
     }
@@ -43,7 +66,16 @@ final class URLSessionHTTPClientTests: XCTestCase {
     // MARK: - Helpers
     
     private class URLProtocolStub: URLProtocol {
+        struct Stub {
+            let error: Error?
+        }
+        
         static var observer: ((URLRequest) -> Void)?
+        static var stub: Stub?
+        
+        static func stub(error: Error) {
+            stub = .init(error: error)
+        }
         
         override class func canInit(with request: URLRequest) -> Bool {
             true
@@ -54,8 +86,14 @@ final class URLSessionHTTPClientTests: XCTestCase {
         }
         
         override func startLoading() {
-            client?.urlProtocolDidFinishLoading(self)
+            let stub = Self.stub
             
+            if let error = stub?.error {
+                client?.urlProtocol(self, didFailWithError: error)
+            } else {
+                client?.urlProtocolDidFinishLoading(self)
+            }
+
             Self.observer?(request)
         }
         
