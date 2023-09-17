@@ -24,6 +24,18 @@ class URLSessionHTTPClient {
 }
 
 final class URLSessionHTTPClientTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        
+        URLProtocolStub.reset()
+    }
+    
+    override func tearDown() {
+        super.tearDown()
+        
+        URLProtocolStub.reset()
+    }
+    
     func test_get_requestsFromURL() {
         let sut = makeSUT()
         let url = anyURL()
@@ -75,6 +87,11 @@ final class URLSessionHTTPClientTests: XCTestCase {
         
         static var observer: ((URLRequest) -> Void)?
         static var stub: Stub?
+        
+        static func reset() {
+            observer = nil
+            stub = nil
+        }
         
         static func stub(error: Error) {
             stub = .init(error: error)
