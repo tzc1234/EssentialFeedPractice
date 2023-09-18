@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class URLSessionHTTPClient {
+public final class URLSessionHTTPClient: HTTPClient {
     private let session: URLSession
     
     public init(session: URLSession) {
@@ -16,7 +16,7 @@ public final class URLSessionHTTPClient {
     
     struct UnexpectedRepresentationError: Error {}
     
-    public func get(from url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) {
+    public func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
         session.dataTask(with: url) { data, response, error in
             if let data, let httpResponse = response as? HTTPURLResponse {
                 completion(.success((data, httpResponse)))
