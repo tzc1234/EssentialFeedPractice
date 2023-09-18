@@ -22,11 +22,23 @@ class RemoteFeedLoader: FeedLoader {
         case invalidData
     }
     
+    private struct RemoteFeed: Decodable {
+        let item: [RemoteFeedImage]
+    }
+    
+    private struct RemoteFeedImage: Decodable {
+        
+    }
+    
     func load(completion: @escaping (FeedLoader.Result) -> Void) {
         client.get(from: url) { result in
             switch result {
-            case .success((_, _)):
-                completion(.failure(Error.invalidData))
+            case let .success((data, response)):
+                if response.statusCode == 200, let _ = try? JSONDecoder().decode(RemoteFeed.self, from: data) {
+                    completion(.success([]))
+                } else {
+                    completion(.failure(Error.invalidData))
+                }
             case .failure:
                 completion(.failure(Error.connectivity))
             }
@@ -80,6 +92,17 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         }
     }
     
+    func test_load_deliversEmptyFeedWhenReceivedEmptyItemsDataFromClient() {
+        let (sut, client) = makeSUT()
+        
+        let json: [String: Any] = ["item": [Any]()]
+        let emptyItemsData = try! JSONSerialization.data(withJSONObject: json)
+        
+        expect(sut, toCompleteWith: .success([]), when: {
+            client.complete(with: emptyItemsData)
+        })
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(url: URL? = nil,
@@ -100,8 +123,8 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         let exp = expectation(description: "Wait for completion")
         sut.load { receivedResult in
             switch (receivedResult, expectedResult) {
-            case (.success, .success):
-                XCTFail("Expect a failure, got \(receivedResult) instead", file: file, line: line)
+            case let (.success(receivedFeed), .success(expectedFeed)):
+                XCTAssertEqual(receivedFeed, expectedFeed, file: file, line: line)
             case let (.failure(receivedError as RemoteFeedLoader.Error),
                 .failure(expectedError as RemoteFeedLoader.Error)):
                 XCTAssertEqual(receivedError, expectedError, file: file, line: line)
