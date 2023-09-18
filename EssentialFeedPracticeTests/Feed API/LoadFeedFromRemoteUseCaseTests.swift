@@ -70,7 +70,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     
     func test_load_deliversInvalidDataErrorWhenNon200ResponseFromClient() {
         let (sut, client) = makeSUT()
-        let non200Response = HTTPURLResponse(url: anyURL(), statusCode: 100, httpVersion: nil, headerFields: nil)!
+        let non200Response = HTTPURLResponse(statusCode: 100)
         
         expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), when: {
             client.complete(with: anyData(), response: non200Response)
@@ -127,8 +127,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         }
         
         func complete(with data: Data, at index: Int = 0) {
-            let response = HTTPURLResponse(url: anyURL(), statusCode: 200, httpVersion: nil, headerFields: nil)!
-            complete(with: data, response: response, at: index)
+            complete(with: data, response: HTTPURLResponse(statusCode: 200), at: index)
         }
         
         func complete(with data: Data, response: HTTPURLResponse, at index: Int = 0) {
