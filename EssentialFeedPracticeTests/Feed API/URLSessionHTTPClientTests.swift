@@ -161,7 +161,12 @@ final class URLSessionHTTPClientTests: XCTestCase {
             let observer: ((URLRequest) -> Void)?
         }
         
-        static var stub: Stub?
+        private static let queue = DispatchQueue(label: "URLProtocolStub.queue")
+        private static var _stub: Stub?
+        static var stub: Stub? {
+            get { queue.sync { _stub } }
+            set { queue.sync { _stub = newValue } }
+        }
         
         static func reset() {
             stub = nil
