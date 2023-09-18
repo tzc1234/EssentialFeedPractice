@@ -105,9 +105,10 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     
     func test_load_deliversEmptyFeedWhenReceivedEmptyItemsDataFromClient() {
         let (sut, client) = makeSUT()
+        let emptyFeed = [FeedImage]()
         let emptyItemsData = makeJSONData([])
         
-        expect(sut, toCompleteWith: .success([]), when: {
+        expect(sut, toCompleteWith: .success(emptyFeed), when: {
             client.complete(with: emptyItemsData)
         })
     }
@@ -115,10 +116,28 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_load_deliversOneFeedImageWhenReceivedOneItemDataFromClient() {
         let (sut, client) = makeSUT()
         let items = [makeFeedItem(url: URL(string: "https://an-url.com")!)]
+        let feed = items.map(\.image)
         let oneItemData = makeJSONData(items.map(\.json))
         
-        expect(sut, toCompleteWith: .success(items.map(\.image)), when: {
+        expect(sut, toCompleteWith: .success(feed), when: {
             client.complete(with: oneItemData)
+        })
+    }
+    
+    func test_load_deliversFeedWhenReceivedMultipleItemsDataFromClient() {
+        let (sut, client) = makeSUT()
+        let items = [
+            makeFeedItem(url: URL(string: "https://an-url.com")!),
+            makeFeedItem(
+                description: "an description",
+                location: "a location",
+                url: URL(string: "https://another-url.com")!)
+        ]
+        let feed = items.map(\.image)
+        let itemsData = makeJSONData(items.map(\.json))
+        
+        expect(sut, toCompleteWith: .success(feed), when: {
+            client.complete(with: itemsData)
         })
     }
     
