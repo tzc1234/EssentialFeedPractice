@@ -6,28 +6,7 @@
 //
 
 import XCTest
-
-class URLSessionHTTPClient {
-    private let session: URLSession
-    
-    init(session: URLSession) {
-        self.session = session
-    }
-    
-    struct UnexpectedRepresentationError: Error {}
-    
-    func get(from url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) {
-        session.dataTask(with: url) { data, response, error in
-            if let data, let httpResponse = response as? HTTPURLResponse {
-                completion(.success((data, httpResponse)))
-            } else if let error {
-                completion(.failure(error))
-            } else {
-                completion(.failure(UnexpectedRepresentationError()))
-            }
-        }.resume()
-    }
-}
+import EssentialFeedPractice
 
 final class URLSessionHTTPClientTests: XCTestCase {
     override func setUp() {
