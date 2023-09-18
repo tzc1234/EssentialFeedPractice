@@ -86,6 +86,24 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    func test_load_deliversInvalidDataErrorWhenNon200ResponseFromClient() {
+        let (sut, client) = makeSUT()
+        let non200Response = HTTPURLResponse(url: anyURL(), statusCode: 100, httpVersion: nil, headerFields: nil)!
+        
+        let exp = expectation(description: "Wait for completion")
+        sut.load { result in
+            switch result {
+            case .success:
+                XCTFail("Expect an error, got \(result) instead")
+            case let .failure(error):
+                XCTAssertEqual(error as? RemoteFeedLoader.Error, .invalidData)
+            }
+            exp.fulfill()
+        }
+        client.complete(with: anyData(), response: non200Response)
+        wait(for: [exp], timeout: 1)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(url: URL? = nil,
@@ -115,6 +133,10 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         
         func complete(with data: Data, at index: Int = 0) {
             let response = HTTPURLResponse(url: anyURL(), statusCode: 200, httpVersion: nil, headerFields: nil)!
+            complete(with: data, response: response, at: index)
+        }
+        
+        func complete(with data: Data, response: HTTPURLResponse, at index: Int = 0) {
             completions[index](.success((data, response)))
         }
         
