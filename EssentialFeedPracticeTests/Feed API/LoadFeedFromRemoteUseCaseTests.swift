@@ -8,58 +8,6 @@
 import XCTest
 import EssentialFeedPractice
 
-class RemoteFeedLoader: FeedLoader {
-    private let client: HTTPClient
-    private let url: URL
-    
-    init(client: HTTPClient, url: URL) {
-        self.client = client
-        self.url = url
-    }
-    
-    enum Error: Swift.Error {
-        case connectivity
-        case invalidData
-    }
-    
-    private struct Root: Decodable {
-        let items: [RemoteFeedImage]
-        
-        var feed: [FeedImage] {
-            items.map(\.feedImage)
-        }
-    }
-    
-    private struct RemoteFeedImage: Decodable {
-        let id: UUID
-        let description: String?
-        let location: String?
-        let image: URL
-        
-        var feedImage: FeedImage {
-            FeedImage(id: id, description: description, location: location, url: image)
-        }
-    }
-    
-    func load(completion: @escaping (FeedLoader.Result) -> Void) {
-        client.get(from: url) { [weak self] result in
-            guard self != nil else { return }
-            
-            switch result {
-            case let .success((data, response)):
-                if response.statusCode == 200, let root = try? JSONDecoder().decode(Root.self, from: data) {
-                    completion(.success(root.feed))
-                } else {
-                    completion(.failure(Error.invalidData))
-                }
-            case .failure:
-                completion(.failure(Error.connectivity))
-            }
-        }
-        
-    }
-}
-
 final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_init_doesNotRequestFromClientUponCreation() {
         let (_, client) = makeSUT()
