@@ -22,20 +22,31 @@ class RemoteFeedLoader: FeedLoader {
         case invalidData
     }
     
-    private struct RemoteFeed: Decodable {
-        let item: [RemoteFeedImage]
+    private struct Root: Decodable {
+        let items: [RemoteFeedImage]
+        
+        var feed: [FeedImage] {
+            items.map(\.feedImage)
+        }
     }
     
     private struct RemoteFeedImage: Decodable {
+        let id: UUID
+        let description: String?
+        let location: String?
+        let image: URL
         
+        var feedImage: FeedImage {
+            FeedImage(id: id, description: description, location: location, url: image)
+        }
     }
     
     func load(completion: @escaping (FeedLoader.Result) -> Void) {
         client.get(from: url) { result in
             switch result {
             case let .success((data, response)):
-                if response.statusCode == 200, let _ = try? JSONDecoder().decode(RemoteFeed.self, from: data) {
-                    completion(.success([]))
+                if response.statusCode == 200, let root = try? JSONDecoder().decode(Root.self, from: data) {
+                    completion(.success(root.feed))
                 } else {
                     completion(.failure(Error.invalidData))
                 }
@@ -95,11 +106,30 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_load_deliversEmptyFeedWhenReceivedEmptyItemsDataFromClient() {
         let (sut, client) = makeSUT()
         
-        let json: [String: Any] = ["item": [Any]()]
+        let json: [String: Any] = ["items": [Any]()]
         let emptyItemsData = try! JSONSerialization.data(withJSONObject: json)
         
         expect(sut, toCompleteWith: .success([]), when: {
             client.complete(with: emptyItemsData)
+        })
+    }
+    
+    func test_load_deliversOneFeedImageWhenReceivedOneItemDataFromClient() {
+        let (sut, client) = makeSUT()
+        
+        let feedImage = FeedImage(id: UUID(), description: "any description", location: "any location", url: anyURL())
+        let json: [String: Any] = ["items": [
+            [
+                "id": feedImage.id.uuidString,
+                "description": feedImage.description,
+                "location": feedImage.location,
+                "image": feedImage.url.absoluteString
+            ]
+        ]]
+        let oneItemData = try! JSONSerialization.data(withJSONObject: json)
+        
+        expect(sut, toCompleteWith: .success([feedImage]), when: {
+            client.complete(with: oneItemData)
         })
     }
     
