@@ -19,11 +19,19 @@ class RemoteFeedLoader: FeedLoader {
     
     enum Error: Swift.Error {
         case connectivity
+        case invalidData
     }
     
     func load(completion: @escaping (FeedLoader.Result) -> Void) {
-        client.get(from: url) { _ in }
-        completion(.failure(Error.connectivity))
+        client.get(from: url) { result in
+            switch result {
+            case .success((_, _)):
+                completion(.failure(Error.invalidData))
+            case .failure:
+                completion(.failure(Error.connectivity))
+            }
+        }
+        
     }
 }
 
@@ -60,6 +68,24 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    func test_load_deliversInvalidDataErrorWhenReceivedInvalidDataFromClient() {
+        let (sut, client) = makeSUT()
+        let invalidData = Data("invalid data".utf8)
+        
+        let exp = expectation(description: "Wait for completion")
+        sut.load { result in
+            switch result {
+            case .success:
+                XCTFail("Expect an error, got \(result) instead")
+            case let .failure(error):
+                XCTAssertEqual(error as? RemoteFeedLoader.Error, .invalidData)
+            }
+            exp.fulfill()
+        }
+        client.complete(with: invalidData)
+        wait(for: [exp], timeout: 1)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(url: URL? = nil,
@@ -85,6 +111,11 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         
         func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
             messages.append((url, completion))
+        }
+        
+        func complete(with data: Data, at index: Int = 0) {
+            let response = HTTPURLResponse(url: anyURL(), statusCode: 200, httpVersion: nil, headerFields: nil)!
+            completions[index](.success((data, response)))
         }
         
         func complete(with error: Error, at index: Int = 0) {
