@@ -105,9 +105,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     
     func test_load_deliversEmptyFeedWhenReceivedEmptyItemsDataFromClient() {
         let (sut, client) = makeSUT()
-        
-        let json: [String: Any] = ["items": [Any]()]
-        let emptyItemsData = try! JSONSerialization.data(withJSONObject: json)
+        let emptyItemsData = makeJSONData([])
         
         expect(sut, toCompleteWith: .success([]), when: {
             client.complete(with: emptyItemsData)
@@ -116,19 +114,10 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     
     func test_load_deliversOneFeedImageWhenReceivedOneItemDataFromClient() {
         let (sut, client) = makeSUT()
+        let items = [makeFeedItem(url: URL(string: "https://an-url.com")!)]
+        let oneItemData = makeJSONData(items.map(\.json))
         
-        let feedImage = FeedImage(id: UUID(), description: "any description", location: "any location", url: anyURL())
-        let json: [String: Any] = ["items": [
-            [
-                "id": feedImage.id.uuidString,
-                "description": feedImage.description,
-                "location": feedImage.location,
-                "image": feedImage.url.absoluteString
-            ]
-        ]]
-        let oneItemData = try! JSONSerialization.data(withJSONObject: json)
-        
-        expect(sut, toCompleteWith: .success([feedImage]), when: {
+        expect(sut, toCompleteWith: .success(items.map(\.image)), when: {
             client.complete(with: oneItemData)
         })
     }
@@ -143,6 +132,25 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
+    }
+    
+    private func makeFeedItem(id: UUID = UUID(),
+                              description: String? = nil,
+                              location: String? = nil,
+                              url: URL) -> (image: FeedImage, json: [String: Any]) {
+        let image = FeedImage(id: id, description: description, location: location, url: url)
+        let json: [String: Any] = [
+            "id": image.id.uuidString,
+            "description": image.description,
+            "location": image.location,
+            "image": image.url.absoluteString
+        ].compactMapValues { $0 }
+        return (image, json)
+    }
+    
+    private func makeJSONData(_ items: [[String: Any]]) -> Data {
+        let json: [String: Any] = ["items": items]
+        return try! JSONSerialization.data(withJSONObject: json)
     }
     
     private func expect(_ sut: RemoteFeedLoader,
