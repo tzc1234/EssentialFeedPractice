@@ -128,10 +128,6 @@ final class URLSessionHTTPClientTests: XCTestCase {
         HTTPURLResponse(url: anyURL(), statusCode: 200, httpVersion: nil, headerFields: nil)!
     }
     
-    private func anyData() -> Data {
-        Data("any data".utf8)
-    }
-    
     private class URLProtocolStub: URLProtocol {
         struct Stub {
             let data: Data?
