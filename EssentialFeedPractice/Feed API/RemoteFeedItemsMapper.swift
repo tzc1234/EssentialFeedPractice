@@ -10,30 +10,15 @@ import Foundation
 enum RemoteFeedItemsMapper {
     private struct Root: Decodable {
         let items: [RemoteFeedImage]
-        
-        var feed: [FeedImage] {
-            items.map(\.feedImage)
-        }
     }
     
-    private struct RemoteFeedImage: Decodable {
-        let id: UUID
-        let description: String?
-        let location: String?
-        let image: URL
-        
-        var feedImage: FeedImage {
-            FeedImage(id: id, description: description, location: location, url: image)
-        }
-    }
+    private static let okCode = 200
     
-    static func map(_ data: Data, response: HTTPURLResponse) throws -> [FeedImage] {
+    static func map(_ data: Data, response: HTTPURLResponse) throws -> [RemoteFeedImage] {
         guard response.statusCode == okCode, let root = try? JSONDecoder().decode(Root.self, from: data) else {
             throw RemoteFeedLoader.Error.invalidData
         }
         
-        return root.feed
+        return root.items
     }
-    
-    private static let okCode = 200
 }
