@@ -24,16 +24,14 @@ class RemoteFeedLoader: FeedLoader {
 
 final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_init_doesNotRequestFromClientUponCreation() {
-        let client = ClientSpy()
-        _ = RemoteFeedLoader(client: client, url: anyURL())
+        let (_, client) = makeSUT()
         
         XCTAssertEqual(client.requestCallCount, 0)
     }
     
     func test_load_requestsFromURL() {
-        let client = ClientSpy()
-        let url = anyURL()
-        let sut = RemoteFeedLoader(client: client, url: url)
+        let url = URL(string: "https://an-url.com")!
+        let (sut, client) = makeSUT(url: url)
         
         sut.load { _ in }
         
@@ -41,6 +39,16 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     }
     
     // MARK: - Helpers
+    
+    private func makeSUT(url: URL? = nil,
+                         file: StaticString = #filePath,
+                         line: UInt = #line) -> (sut: RemoteFeedLoader, client: ClientSpy) {
+        let client = ClientSpy()
+        let sut = RemoteFeedLoader(client: client, url: url ?? anyURL())
+        trackForMemoryLeaks(client, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return (sut, client)
+    }
     
     private class ClientSpy: HTTPClient {
         private(set) var loggedURLs = [URL]()
