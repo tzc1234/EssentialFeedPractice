@@ -54,54 +54,27 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_load_deliversConnectivityErrorOnClientError() {
         let (sut, client) = makeSUT()
         
-        let exp = expectation(description: "Wait for completion")
-        sut.load { result in
-            switch result {
-            case .success:
-                XCTFail("Expect an error, got \(result) instead")
-            case let .failure(error):
-                XCTAssertEqual(error as? RemoteFeedLoader.Error, .connectivity)
-            }
-            exp.fulfill()
-        }
-        client.complete(with: anyNSError())
-        wait(for: [exp], timeout: 1)
+        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.connectivity), when: {
+            client.complete(with: anyNSError())
+        })
     }
     
     func test_load_deliversInvalidDataErrorWhenReceivedInvalidDataFromClient() {
         let (sut, client) = makeSUT()
         let invalidData = Data("invalid data".utf8)
         
-        let exp = expectation(description: "Wait for completion")
-        sut.load { result in
-            switch result {
-            case .success:
-                XCTFail("Expect an error, got \(result) instead")
-            case let .failure(error):
-                XCTAssertEqual(error as? RemoteFeedLoader.Error, .invalidData)
-            }
-            exp.fulfill()
-        }
-        client.complete(with: invalidData)
-        wait(for: [exp], timeout: 1)
+        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), when: {
+            client.complete(with: invalidData)
+        })
     }
     
     func test_load_deliversInvalidDataErrorWhenNon200ResponseFromClient() {
         let (sut, client) = makeSUT()
         let non200Response = HTTPURLResponse(url: anyURL(), statusCode: 100, httpVersion: nil, headerFields: nil)!
         
-        let exp = expectation(description: "Wait for completion")
-        sut.load { result in
-            switch result {
-            case .success:
-                XCTFail("Expect an error, got \(result) instead")
-            case let .failure(error):
-                XCTAssertEqual(error as? RemoteFeedLoader.Error, .invalidData)
-            }
-            exp.fulfill()
-        }
-        client.complete(with: anyData(), response: non200Response)
-        wait(for: [exp], timeout: 1)
+        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), when: {
+            client.complete(with: anyData(), response: non200Response)
+        })
     }
     
     // MARK: - Helpers
@@ -114,6 +87,28 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
+    }
+    
+    private func expect(_ sut: RemoteFeedLoader,
+                        toCompleteWith expectedResult: FeedLoader.Result,
+                        when action: () -> Void,
+                        file: StaticString = #filePath,
+                        line: UInt = #line) {
+        let exp = expectation(description: "Wait for completion")
+        sut.load { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case (.success, .success):
+                XCTFail("Expect a failure, got \(receivedResult) instead", file: file, line: line)
+            case let (.failure(receivedError as RemoteFeedLoader.Error),
+                .failure(expectedError as RemoteFeedLoader.Error)):
+                XCTAssertEqual(receivedError, expectedError, file: file, line: line)
+            default:
+                XCTFail("Expect \(expectedResult), got \(receivedResult) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        action()
+        wait(for: [exp], timeout: 1)
     }
     
     private class ClientSpy: HTTPClient {
