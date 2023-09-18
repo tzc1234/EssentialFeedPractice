@@ -31,7 +31,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_init_doesNotRequestFromClientUponCreation() {
         let (_, client) = makeSUT()
         
-        XCTAssertEqual(client.requestCallCount, 0)
+        XCTAssertTrue(client.loggedURLs.isEmpty)
     }
     
     func test_load_requestsFromURL() {
@@ -73,16 +73,18 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     }
     
     private class ClientSpy: HTTPClient {
-        private(set) var completions = [(HTTPClient.Result) -> Void]()
-        private(set) var loggedURLs = [URL]()
+        private(set) var messages = [(url: URL, completion: (HTTPClient.Result) -> Void)]()
         
-        var requestCallCount: Int {
-            loggedURLs.count
+        var loggedURLs: [URL] {
+            messages.map(\.url)
+        }
+        
+        private var completions: [(HTTPClient.Result) -> Void] {
+            messages.map(\.completion)
         }
         
         func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
-            loggedURLs.append(url)
-            completions.append(completion)
+            messages.append((url, completion))
         }
         
         func complete(with error: Error, at index: Int = 0) {
