@@ -17,8 +17,13 @@ class RemoteFeedLoader: FeedLoader {
         self.url = url
     }
     
+    enum Error: Swift.Error {
+        case connectivity
+    }
+    
     func load(completion: @escaping (FeedLoader.Result) -> Void) {
         client.get(from: url) { _ in }
+        completion(.failure(Error.connectivity))
     }
 }
 
@@ -38,6 +43,23 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         XCTAssertEqual(client.loggedURLs, [url])
     }
     
+    func test_load_deliversConnectivityErrorOnClientError() {
+        let (sut, client) = makeSUT()
+        
+        let exp = expectation(description: "Wait for completion")
+        sut.load { result in
+            switch result {
+            case .success:
+                XCTFail("Expect an error, got \(result) instead")
+            case let .failure(error):
+                XCTAssertEqual(error as? RemoteFeedLoader.Error, .connectivity)
+            }
+            exp.fulfill()
+        }
+        client.complete(with: anyNSError())
+        wait(for: [exp], timeout: 1)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(url: URL? = nil,
@@ -51,6 +73,7 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     }
     
     private class ClientSpy: HTTPClient {
+        private(set) var completions = [(HTTPClient.Result) -> Void]()
         private(set) var loggedURLs = [URL]()
         
         var requestCallCount: Int {
@@ -59,6 +82,11 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         
         func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
             loggedURLs.append(url)
+            completions.append(completion)
+        }
+        
+        func complete(with error: Error, at index: Int = 0) {
+            completions[index](.failure(error))
         }
     }
 }
