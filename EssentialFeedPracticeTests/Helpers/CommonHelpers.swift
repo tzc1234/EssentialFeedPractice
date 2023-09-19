@@ -27,3 +27,7 @@ func uniqueFeed() -> (models: [FeedImage], locals: [LocalFeedImage]) {
 private func uniqueFeedImage() -> FeedImage {
     .init(id: UUID(), description: "any description", location: "any location", url: anyURL())
 }
+
+func anyData() -> Data {
+    Data("any data".utf8)
+}
