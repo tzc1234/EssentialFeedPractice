@@ -33,6 +33,13 @@
         "identifier" : "BE6989392AADC8430038B32C",
         "name" : "EssentialFeedPracticeTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:EssentialFeedPractice.xcodeproj",
+        "identifier" : "BE70B1E22AB9932500F30F90",
+        "name" : "EssentialFeedPracticeAPIEndToEndTests"
+      }
     }
   ],
   "version" : 1
