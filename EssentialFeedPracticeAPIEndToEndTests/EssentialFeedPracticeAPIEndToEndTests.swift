@@ -11,7 +11,7 @@ import EssentialFeedPractice
 final class EssentialFeedPracticeAPIEndToEndTests: XCTestCase {
     func test_endToEndTestServerGETFeed_matchesFixedTestAccountData() {
         let testServerURL = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
-        let client = URLSessionHTTPClient(session: URLSession.shared)
+        let client = URLSessionHTTPClient()
         let loader = RemoteFeedLoader(client: client, url: testServerURL)
         
         let exp = expectation(description: "Wait for completion")
@@ -20,7 +20,7 @@ final class EssentialFeedPracticeAPIEndToEndTests: XCTestCase {
             receivedResult = result
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 7)
         
         switch receivedResult {
         case let .success(feed):
