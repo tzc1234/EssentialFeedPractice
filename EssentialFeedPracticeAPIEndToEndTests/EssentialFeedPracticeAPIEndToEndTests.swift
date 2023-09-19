@@ -30,9 +30,11 @@ final class EssentialFeedPracticeAPIEndToEndTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func getFeedResult() -> FeedLoader.Result? {
+    private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) -> FeedLoader.Result? {
         let client = URLSessionHTTPClient()
         let loader = RemoteFeedLoader(client: client, url: testServerURL())
+        trackForMemoryLeaks(client, file: file, line: line)
+        trackForMemoryLeaks(loader, file: file, line: line)
         
         let exp = expectation(description: "Wait for completion")
         var receivedResult: FeedLoader.Result?
@@ -40,7 +42,7 @@ final class EssentialFeedPracticeAPIEndToEndTests: XCTestCase {
             receivedResult = result
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 7)
+        wait(for: [exp], timeout: 10)
         return receivedResult
     }
     
