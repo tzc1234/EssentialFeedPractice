@@ -14,20 +14,39 @@ struct FeedImageViewModel {
 }
 
 class FeedViewController: UITableViewController {
-    private var feed = FeedImageViewModel.prototypeFeed
+    private lazy var refresh: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        refresh.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        return refresh
+    }()
+    
+    private var feed = [FeedImageViewModel]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = "Feed"
         configureTable()
+        handleRefresh()
     }
     
-    func configureTable() {
+    private func configureTable() {
+        tableView.refreshControl = refresh
         tableView.register(FeedImageCell.self, forCellReuseIdentifier: "FeedImageCell")
         tableView.separatorStyle = .none
         tableView.tableHeaderView = .init(frame: CGRect(x: 0, y: 0, width: 0, height: 16))
         tableView.tableFooterView = .init(frame: CGRect(x: 0, y: 0, width: 0, height: 16))
+    }
+    
+    @objc private func handleRefresh() {
+        refreshControl?.beginRefreshing()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            if self.feed.isEmpty {
+                self.feed = FeedImageViewModel.prototypeFeed
+                self.tableView.reloadData()
+            }
+            self.refreshControl?.endRefreshing()
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -44,7 +63,11 @@ class FeedViewController: UITableViewController {
 extension FeedImageCell {
     func configure(_ model: FeedImageViewModel) {
         descriptionLabel.text = model.description
+        descriptionLabel.isHidden = model.description == nil
         locationLabel.text = model.location
+        locationContainer.isHidden = model.location == nil
         feedImageView.image = UIImage(named: model.imageName)
+        
+        fadeIn(UIImage(named: model.imageName))
     }
 }

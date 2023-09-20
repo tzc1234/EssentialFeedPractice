@@ -14,6 +14,7 @@
 		BE6913052ABAFE750031BE35 /* FeedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6913042ABAFE750031BE35 /* FeedImageCell.swift */; };
 		BE6913072ABB15520031BE35 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6913062ABB15520031BE35 /* FeedViewController.swift */; };
 		BE6913092ABB20190031BE35 /* FeedImageViewModel+PrototypeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6913082ABB20190031BE35 /* FeedImageViewModel+PrototypeData.swift */; };
+		BE69130B2ABB2BE60031BE35 /* ShimmeringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE69130A2ABB2BE60031BE35 /* ShimmeringView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		BE6913042ABAFE750031BE35 /* FeedImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageCell.swift; sourceTree = "<group>"; };
 		BE6913062ABB15520031BE35 /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		BE6913082ABB20190031BE35 /* FeedImageViewModel+PrototypeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedImageViewModel+PrototypeData.swift"; sourceTree = "<group>"; };
+		BE69130A2ABB2BE60031BE35 /* ShimmeringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmeringView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				BE6913062ABB15520031BE35 /* FeedViewController.swift */,
 				BE6913042ABAFE750031BE35 /* FeedImageCell.swift */,
 				BE6913082ABB20190031BE35 /* FeedImageViewModel+PrototypeData.swift */,
+				BE69130A2ABB2BE60031BE35 /* ShimmeringView.swift */,
 				BE6912F72ABAFC520031BE35 /* Assets.xcassets */,
 				BE6912F92ABAFC520031BE35 /* LaunchScreen.storyboard */,
 				BE6912FC2ABAFC520031BE35 /* Info.plist */,
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE6913092ABB20190031BE35 /* FeedImageViewModel+PrototypeData.swift in Sources */,
+				BE69130B2ABB2BE60031BE35 /* ShimmeringView.swift in Sources */,
 				BE6912EF2ABAFC520031BE35 /* AppDelegate.swift in Sources */,
 				BE6913052ABAFE750031BE35 /* FeedImageCell.swift in Sources */,
 				BE6913072ABB15520031BE35 /* FeedViewController.swift in Sources */,

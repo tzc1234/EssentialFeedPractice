@@ -49,8 +49,8 @@ class FeedImageCell: UITableViewCell {
         return lbl
     }()
     
-    private(set) lazy var imageContainerView: UIView = {
-        let v = UIView()
+    private(set) lazy var imageContainer: ShimmeringView = {
+        let v = ShimmeringView()
         v.backgroundColor = .systemGray4
         v.layer.cornerRadius = 22
         v.clipsToBounds = true
@@ -79,26 +79,33 @@ class FeedImageCell: UITableViewCell {
         
         selectionStyle = .none
         configureLayout()
+        beginLoading()
     }
     
     required init?(coder: NSCoder) { nil }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        beginLoading()
+    }
+    
+    private func beginLoading() {
+        feedImageView.alpha = 0
+        imageContainer.startShimmering()
+    }
+    
     private func configureLayout() {
         pinBackgroundView.addSubview(pinImageView)
-        imageContainerView.addSubview(feedImageView)
+        imageContainer.addSubview(feedImageView)
         
         locationContainer.addArrangedSubview(pinBackgroundView)
         locationContainer.addArrangedSubview(locationLabel)
         
         outmostStackView.addArrangedSubview(locationContainer)
-        outmostStackView.addArrangedSubview(imageContainerView)
+        outmostStackView.addArrangedSubview(imageContainer)
         outmostStackView.addArrangedSubview(descriptionLabel)
         contentView.addSubview(outmostStackView)
-        
-        let outmostTop = outmostStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6)
-        outmostTop.priority = .init(999)
-        let outmostBottom = outmostStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6)
-        outmostBottom.priority = .init(999)
         
         NSLayoutConstraint.activate([
             pinImageView.widthAnchor.constraint(equalToConstant: 10),
@@ -114,16 +121,41 @@ class FeedImageCell: UITableViewCell {
             
             feedImageView.widthAnchor.constraint(equalTo: feedImageView.heightAnchor),
             
-            imageContainerView.leadingAnchor.constraint(equalTo: feedImageView.leadingAnchor),
-            imageContainerView.trailingAnchor.constraint(equalTo: feedImageView.trailingAnchor),
-            imageContainerView.topAnchor.constraint(equalTo: feedImageView.topAnchor),
-            imageContainerView.bottomAnchor.constraint(equalTo: feedImageView.bottomAnchor),
-            imageContainerView.widthAnchor.constraint(equalTo: outmostStackView.widthAnchor),
+            imageContainer.leadingAnchor.constraint(equalTo: feedImageView.leadingAnchor),
+            imageContainer.trailingAnchor.constraint(equalTo: feedImageView.trailingAnchor),
+            imageContainer.topAnchor.constraint(equalTo: feedImageView.topAnchor),
+            imageContainer.bottomAnchor.constraint(equalTo: feedImageView.bottomAnchor),
+            imageContainer.widthAnchor.constraint(equalTo: outmostStackView.widthAnchor),
             
             outmostStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             outmostStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            outmostTop,
-            outmostBottom
+            outmostStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6)
+                .set { $0.priority = .init(999) },
+            outmostStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6)
+                .set { $0.priority = .init(999) }
         ])
+    }
+    
+    func fadeIn(_ image: UIImage?) {
+        feedImageView.image = image
+        
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 1.25,
+            options: [],
+            animations: {
+                self.feedImageView.alpha = 1
+            }, completion: { completed in
+                if completed {
+                    self.imageContainer.stopShimmering()
+                }
+            })
+    }
+}
+
+private extension NSLayoutConstraint {
+    func set(_ action: (NSLayoutConstraint) -> Void) -> NSLayoutConstraint {
+        action(self)
+        return self
     }
 }
