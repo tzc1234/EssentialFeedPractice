@@ -7,7 +7,15 @@
 
 import UIKit
 
+struct FeedImageViewModel {
+    let description: String?
+    let location: String?
+    let imageName: String
+}
+
 class FeedViewController: UITableViewController {
+    private var feed = FeedImageViewModel.prototypeFeed
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,11 +31,20 @@ class FeedViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        feed.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FeedImageCell") as! FeedImageCell
+        cell.configure(feed[indexPath.row])
         return cell
+    }
+}
+
+extension FeedImageCell {
+    func configure(_ model: FeedImageViewModel) {
+        descriptionLabel.text = model.description
+        locationLabel.text = model.location
+        feedImageView.image = UIImage(named: model.imageName)
     }
 }

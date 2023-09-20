@@ -53,6 +53,7 @@ class FeedImageCell: UITableViewCell {
         let v = UIView()
         v.backgroundColor = .systemGray4
         v.layer.cornerRadius = 22
+        v.clipsToBounds = true
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()
