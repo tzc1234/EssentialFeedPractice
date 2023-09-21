@@ -29,12 +29,14 @@ final class FeedViewController: UITableViewController {
     override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
         
-        refreshControl?.beginRefreshing()
         load()
     }
     
     @objc private func load() {
-        loader.load { _ in }
+        refreshControl?.beginRefreshing()
+        loader.load { [weak self] _ in
+            self?.refreshControl?.endRefreshing()
+        }
     }
 }
 
@@ -74,6 +76,17 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.refreshControl?.isRefreshing, true)
     }
     
+    func test_viewIsAppearing_hidesLoadingIndicatorOnLoaderCompletion() {
+        let (sut, loader) = makeSUT()
+        let stub = UIRefreshControl.MethodSwizzlingStub()
+        stub.startIntercepting()
+        
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading()
+        
+        XCTAssertEqual(sut.refreshControl?.isRefreshing, false)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath,
@@ -86,10 +99,18 @@ final class FeedViewControllerTests: XCTestCase {
     }
     
     private class LoaderSpy: FeedLoader {
-        private(set) var loadCallCount = 0
+        private var completions = [(FeedLoader.Result) -> Void]()
+        
+        var loadCallCount: Int {
+            completions.count
+        }
         
         func load(completion: @escaping (FeedLoader.Result) -> Void) {
-            loadCallCount += 1
+            completions.append(completion)
+        }
+        
+        func completeFeedLoading(at index: Int = 0) {
+            completions[index](.success([]))
         }
     }
 }
