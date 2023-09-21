@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   test-only:
     macos:
-      xcode: 14.3.1
+      xcode: 15.0.0
     environment:
       FL_OUTPUT_DIR: output
       FASTLANE_LANE: mac test
