@@ -24,6 +24,12 @@ final class FeedViewController: UITableViewController {
         
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
+    }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        refreshControl?.beginRefreshing()
         load()
     }
     
@@ -39,23 +45,33 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadCallCount, 0)
     }
     
-    func test_viewDidLoad_loadsFeed() {
+    func test_viewIsAppearing_loadsFeed() {
         let (sut, loader) = makeSUT()
         
-        sut.loadViewIfNeeded()
+        sut.simulateViewIsAppearing()
         
         XCTAssertEqual(loader.loadCallCount, 1)
     }
     
     func test_pullToRefresh_loadsFeed() {
         let (sut, loader) = makeSUT()
-        sut.loadViewIfNeeded()
+        sut.simulateViewIsAppearing()
         
         sut.refreshControl?.simulatePullToRefresh()
         XCTAssertEqual(loader.loadCallCount, 2)
         
         sut.refreshControl?.simulatePullToRefresh()
         XCTAssertEqual(loader.loadCallCount, 3)
+    }
+    
+    func test_viewIsAppearing_showsLoadingIndicator() {
+        let (sut, _) = makeSUT()
+        let stub = UIRefreshControl.MethodSwizzlingStub()
+        stub.startIntercepting()
+        
+        sut.simulateViewIsAppearing()
+        
+        XCTAssertEqual(sut.refreshControl?.isRefreshing, true)
     }
     
     // MARK: - Helpers
@@ -78,13 +94,72 @@ final class FeedViewControllerTests: XCTestCase {
     }
 }
 
+extension UIViewController {
+    func simulateViewIsAppearing() {
+        beginAppearanceTransition(true, animated: false)
+        endAppearanceTransition()
+    }
+}
+
 private extension UIRefreshControl {
+    class MethodSwizzlingStub: NSObject {
+        struct MethodPair {
+            let source: Selector
+            let destination: Selector
+        }
+        
+        @objc private(set) var isRefreshing = false
+        
+        private let destinationClass = UIRefreshControl.self
+        private let methodPairs = [
+            MethodPair(
+                source: #selector(getter: isRefreshing),
+                destination: #selector(getter: UIRefreshControl.isRefreshing)
+            ),
+            MethodPair(
+                source: #selector(beginRefreshing),
+                destination: #selector(UIRefreshControl.beginRefreshing)
+            ),
+            MethodPair(
+                source: #selector(endRefreshing),
+                destination: #selector(UIRefreshControl.endRefreshing)
+            )
+        ]
+        
+        override init() {}
+
+        @objc func beginRefreshing() {
+            isRefreshing = true
+        }
+        
+        @objc func endRefreshing() {
+            isRefreshing = false
+        }
+        
+        func startIntercepting() {
+            methodPairs.forEach { pair in
+                method_exchangeImplementations(
+                    class_getInstanceMethod(Self.self, pair.source)!,
+                    class_getInstanceMethod(destinationClass, pair.destination)!
+                )
+            }
+        }
+
+        deinit {
+            methodPairs.forEach { pair in
+                method_exchangeImplementations(
+                    class_getInstanceMethod(destinationClass, pair.destination)!,
+                    class_getInstanceMethod(Self.self, pair.source)!
+                )
+            }
+        }
+    }
+    
     func simulatePullToRefresh() {
         allTargets.forEach{ target in
-            actions(forTarget: target, forControlEvent: .valueChanged)?
-                .forEach { action in
-                    (target as NSObject).perform(Selector(action))
-                }
+            actions(forTarget: target, forControlEvent: .valueChanged)?.forEach { action in
+                (target as NSObject).perform(Selector(action))
+            }
         }
     }
 }
