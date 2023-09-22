@@ -9,6 +9,12 @@ import UIKit
 import EssentialFeedPractice
 
 public final class FeedViewController: UITableViewController {
+    private var models = [FeedImage]() {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    
     private let loader: FeedLoader
     
     public init(loader: FeedLoader) {
@@ -23,6 +29,7 @@ public final class FeedViewController: UITableViewController {
         
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
+        tableView.register(FeedImageCell.self, forCellReuseIdentifier: "cell")
     }
     
     public override func viewIsAppearing(_ animated: Bool) {
@@ -33,8 +40,23 @@ public final class FeedViewController: UITableViewController {
     
     @objc private func load() {
         refreshControl?.beginRefreshing()
-        loader.load { [weak self] _ in
+        loader.load { [weak self] result in
+            self?.models = (try? result.get()) ?? []
             self?.refreshControl?.endRefreshing()
         }
+    }
+    
+    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        models.count
+    }
+    
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! FeedImageCell
+        let model = models[indexPath.row]
+        cell.locationContainer.isHidden = (model.location == nil)
+        cell.locationLabel.text = model.location
+        cell.descriptionLabel.isHidden = (model.description == nil)
+        cell.descriptionLabel.text = model.description
+        return cell
     }
 }
