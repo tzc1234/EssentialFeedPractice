@@ -8,6 +8,10 @@
 import UIKit
 import EssentialFeedPractice
 
+public protocol FeedImageDataLoader {
+    func loadImage(from url: URL)
+}
+
 public final class FeedViewController: UITableViewController {
     private var models = [FeedImage]() {
         didSet {
@@ -15,10 +19,12 @@ public final class FeedViewController: UITableViewController {
         }
     }
     
-    private let loader: FeedLoader
+    private let feedLoader: FeedLoader
+    private let imageLoader: FeedImageDataLoader
     
-    public init(loader: FeedLoader) {
-        self.loader = loader
+    public init(feedLoader: FeedLoader, imageLoader: FeedImageDataLoader) {
+        self.feedLoader = feedLoader
+        self.imageLoader = imageLoader
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -40,7 +46,7 @@ public final class FeedViewController: UITableViewController {
     
     @objc private func load() {
         refreshControl?.beginRefreshing()
-        loader.load { [weak self] result in
+        feedLoader.load { [weak self] result in
             if let feed = try? result.get() {
                 self?.models = feed
             }
@@ -59,6 +65,9 @@ public final class FeedViewController: UITableViewController {
         cell.locationLabel.text = model.location
         cell.descriptionLabel.isHidden = (model.description == nil)
         cell.descriptionLabel.text = model.description
+        
+        imageLoader.loadImage(from: model.url)
+        
         return cell
     }
 }
