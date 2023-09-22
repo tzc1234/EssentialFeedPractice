@@ -56,6 +56,7 @@
 		BEF6DEA92ABD88250088BABB /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6DEA82ABD88250088BABB /* FeedViewController.swift */; };
 		BEF6DEAA2ABD89290088BABB /* MethodSwizzlingStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE79166A2AB45C3C001B4C48 /* MethodSwizzlingStub.swift */; };
 		BEF6DEAC2ABDB93D0088BABB /* FeedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6DEAB2ABDB93D0088BABB /* FeedImageCell.swift */; };
+		BEF6DEAD2ABDC8B70088BABB /* CommonHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC19CDE2AAF5C1A00926CD2 /* CommonHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -688,6 +689,7 @@
 			files = (
 				BEF6DEAA2ABD89290088BABB /* MethodSwizzlingStub.swift in Sources */,
 				BE248B732ABC5151008EDB4E /* FeedViewControllerTests.swift in Sources */,
+				BEF6DEAD2ABDC8B70088BABB /* CommonHelpers.swift in Sources */,
 				BE4C3EA22ABC784800260A94 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
