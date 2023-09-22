@@ -54,6 +54,7 @@
 		BEC19CDF2AAF5C1A00926CD2 /* CommonHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC19CDE2AAF5C1A00926CD2 /* CommonHelpers.swift */; };
 		BEE03CC32AB72A5A00C60F6D /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE03CC22AB72A5A00C60F6D /* URLSessionHTTPClientTests.swift */; };
 		BEF6DEA92ABD88250088BABB /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6DEA82ABD88250088BABB /* FeedViewController.swift */; };
+		BEF6DEAA2ABD89290088BABB /* MethodSwizzlingStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE79166A2AB45C3C001B4C48 /* MethodSwizzlingStub.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -284,7 +285,6 @@
 			children = (
 				BE2499F92AAF329E00C2FF25 /* FeedStoreSpy.swift */,
 				BE91D3462AB06119009B1EC2 /* Date+TestHelpers.swift */,
-				BE79166A2AB45C3C001B4C48 /* MethodSwizzlingStub.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -423,6 +423,7 @@
 			children = (
 				BEC19CDE2AAF5C1A00926CD2 /* CommonHelpers.swift */,
 				BE680F4F2AAF0F2200F90355 /* XCTestCase+MemoryLeakTracking.swift */,
+				BE79166A2AB45C3C001B4C48 /* MethodSwizzlingStub.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -681,6 +682,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEF6DEAA2ABD89290088BABB /* MethodSwizzlingStub.swift in Sources */,
 				BE248B732ABC5151008EDB4E /* FeedViewControllerTests.swift in Sources */,
 				BE4C3EA22ABC784800260A94 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);

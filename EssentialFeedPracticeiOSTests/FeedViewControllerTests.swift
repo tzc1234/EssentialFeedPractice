@@ -27,7 +27,7 @@ final class FeedViewControllerTests: XCTestCase {
     
     func test_loadingFeedIndicator_isVisibleWhileLoadingFeed() {
         let (sut, loader) = makeSUT()
-        let stub = UIRefreshControl.MethodSwizzlingStub()
+        let stub = UIRefreshControl.refreshingStub()
         stub.startIntercepting()
         
         sut.simulateViewIsAppearing()
@@ -87,56 +87,32 @@ extension FeedViewController {
 }
 
 private extension UIRefreshControl {
-    class MethodSwizzlingStub: NSObject {
-        struct MethodPair {
-            let source: Selector
-            let destination: Selector
-        }
-        
-        @objc private(set) var isRefreshing = false
-        
-        private let destinationClass = UIRefreshControl.self
-        private let methodPairs = [
-            MethodPair(
-                source: #selector(getter: isRefreshing),
+    static func refreshingStub() -> Stub {
+        Stub(methodPairs: [
+            .init(
+                source: #selector(getter: Stub.isRefreshing),
                 destination: #selector(getter: UIRefreshControl.isRefreshing)
             ),
-            MethodPair(
-                source: #selector(beginRefreshing),
+            .init(
+                source: #selector(Stub.beginRefreshing),
                 destination: #selector(UIRefreshControl.beginRefreshing)
             ),
-            MethodPair(
-                source: #selector(endRefreshing),
+            .init(
+                source: #selector(Stub.endRefreshing),
                 destination: #selector(UIRefreshControl.endRefreshing)
             )
-        ]
+        ])
+    }
+    
+    class Stub: MethodSwizzlingStub<UIRefreshControl> {
+        @objc private(set) var isRefreshing = false
         
-        override init() {}
-
         @objc func beginRefreshing() {
             isRefreshing = true
         }
         
         @objc func endRefreshing() {
             isRefreshing = false
-        }
-        
-        func startIntercepting() {
-            methodPairs.forEach { pair in
-                method_exchangeImplementations(
-                    class_getInstanceMethod(Self.self, pair.source)!,
-                    class_getInstanceMethod(destinationClass, pair.destination)!
-                )
-            }
-        }
-
-        deinit {
-            methodPairs.forEach { pair in
-                method_exchangeImplementations(
-                    class_getInstanceMethod(destinationClass, pair.destination)!,
-                    class_getInstanceMethod(Self.self, pair.source)!
-                )
-            }
         }
     }
     
