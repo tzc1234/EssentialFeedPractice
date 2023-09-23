@@ -490,16 +490,6 @@ private extension UIRefreshControl {
     }
 }
 
-extension UIControl {
-    func simulate(event: UIControl.Event) {
-        allTargets.forEach { target in
-            actions(forTarget: target, forControlEvent: event)?.forEach { action in
-                (target as NSObject).perform(Selector(action))
-            }
-        }
-    }
-}
-
 extension UIImage {
     static func make(withColor color: UIColor) -> UIImage {
         let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
