@@ -78,27 +78,28 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FeedImageCell.identifier) as! FeedImageCell
         let model = models[indexPath.row]
-        cell.locationContainer.isHidden = (model.location == nil)
-        cell.locationLabel.text = model.location
-        cell.descriptionLabel.isHidden = (model.description == nil)
-        cell.descriptionLabel.text = model.description
-        cell.feedImageView.image = nil
-        cell.feedImageRetryButton.isHidden = true
+        configure(cell, with: model)
         
-        cell.feedImageContainer.isShimmering = true
-        let loadImage = { [weak self] in
-            guard let self else { return }
-            
-            self.startTask(for: cell, at: indexPath)
+        cell.onRetry = { [weak self] in
+            self?.startTask(for: cell, at: indexPath)
         }
-        
-        cell.onRetry = loadImage
-        loadImage()
+        startTask(for: cell, at: indexPath)
         
         return cell
     }
     
+    private func configure(_ cell: FeedImageCell, with model: FeedImage) {
+        cell.locationContainer.isHidden = (model.location == nil)
+        cell.locationLabel.text = model.location
+        cell.descriptionLabel.isHidden = (model.description == nil)
+        cell.descriptionLabel.text = model.description
+    }
+    
     private func startTask(for cell: FeedImageCell, at indexPath: IndexPath) {
+        cell.feedImageView.image = nil
+        cell.feedImageRetryButton.isHidden = true
+        cell.feedImageContainer.isShimmering = true
+        
         let url = models[indexPath.row].url
         imageLoaderTask[indexPath] = imageLoader.loadImage(from: url) { [weak cell] result in
             let data = try? result.get()
@@ -115,8 +116,8 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
-            let model = models[indexPath.row]
-            imageLoaderTask[indexPath] = imageLoader.loadImage(from: model.url) { _ in }
+            let url = models[indexPath.row].url
+            imageLoaderTask[indexPath] = imageLoader.loadImage(from: url) { _ in }
         }
     }
     
