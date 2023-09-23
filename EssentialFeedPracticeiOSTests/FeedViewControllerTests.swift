@@ -183,6 +183,27 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(view?.isShowingRetryAction, true, "Expect a retry action once image loading complete with an invalid image data")
     }
     
+    func test_feedImageViewRetryAction_retriesImageLoad() {
+        let image0 = makeImage(url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(url: URL(string: "https://url-1.com")!)
+        let (sut, loader) = makeSUT()
+        
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(with: [image0, image1])
+        
+        let view0 = sut.simulateFeedImageViewVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewVisible(at: 1)
+        
+        loader.completeImageLoadingWithError(at: 0)
+        loader.completeImageLoadingWithError(at: 1)
+        XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url], "Expect only 2 image URL requests before the retries")
+        
+        view0?.simulateRetryAction()
+        XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url], "Expect 3rd image URL request after 1st view retry action")
+        
+        view1?.simulateRetryAction()
+        XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url, image1.url], "Expect 4th image URL request after 2nd view retry action")
+    }
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath,
@@ -380,6 +401,10 @@ extension FeedImageCell {
     var isShowingRetryAction: Bool {
         !feedImageRetryButton.isHidden
     }
+    
+    func simulateRetryAction() {
+        feedImageRetryButton.simulate(event: .touchUpInside)
+    }
 }
 
 private extension UIRefreshControl {
@@ -413,8 +438,14 @@ private extension UIRefreshControl {
     }
     
     func simulatePullToRefresh() {
-        allTargets.forEach{ target in
-            actions(forTarget: target, forControlEvent: .valueChanged)?.forEach { action in
+        simulate(event: .valueChanged)
+    }
+}
+
+extension UIControl {
+    func simulate(event: UIControl.Event) {
+        allTargets.forEach { target in
+            actions(forTarget: target, forControlEvent: event)?.forEach { action in
                 (target as NSObject).perform(Selector(action))
             }
         }
