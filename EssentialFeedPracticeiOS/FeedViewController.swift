@@ -19,6 +19,12 @@ public protocol FeedImageDataLoader {
 }
 
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
+    private lazy var _refreshControl: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        refresh.addTarget(self, action: #selector(load), for: .valueChanged)
+        return refresh
+    }()
+    
     private var models = [FeedImage]() {
         didSet {
             tableView.reloadData()
@@ -40,8 +46,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
+        refreshControl = _refreshControl
         configureTableView()
     }
     
