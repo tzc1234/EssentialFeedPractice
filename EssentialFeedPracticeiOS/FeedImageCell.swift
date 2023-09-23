@@ -8,6 +8,8 @@
 import UIKit
 
 public final class FeedImageCell: UITableViewCell {
+    static var identifier: String { "\(String(describing: Self.self))" }
+    
     public let locationContainer = UIView()
     public let locationLabel = UILabel()
     public let descriptionLabel = UILabel()

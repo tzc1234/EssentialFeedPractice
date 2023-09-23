@@ -51,7 +51,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     private func configureTableView() {
-        tableView.register(FeedImageCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.identifier)
         tableView.prefetchDataSource = self
     }
     
@@ -76,7 +76,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! FeedImageCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: FeedImageCell.identifier) as! FeedImageCell
         let model = models[indexPath.row]
         cell.locationContainer.isHidden = (model.location == nil)
         cell.locationLabel.text = model.location
