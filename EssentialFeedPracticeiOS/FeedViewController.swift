@@ -42,6 +42,10 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
+        configureTableView()
+    }
+    
+    private func configureTableView() {
         tableView.register(FeedImageCell.self, forCellReuseIdentifier: "cell")
         tableView.prefetchDataSource = self
     }
