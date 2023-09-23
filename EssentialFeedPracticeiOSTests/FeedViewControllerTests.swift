@@ -420,37 +420,3 @@ extension FeedViewController {
     
     private var feedImageSection: Int { 0 }
 }
-
-extension FeedImageCell {
-    var isShowingLocation: Bool {
-        !locationContainer.isHidden
-    }
-    
-    var isShowingDescription: Bool {
-        !descriptionLabel.isHidden
-    }
-    
-    var locationText: String? {
-        locationLabel.text
-    }
-    
-    var descriptionText: String? {
-        descriptionLabel.text
-    }
-    
-    var isShowingLoadingIndicator: Bool {
-        feedImageContainer.isShimmering
-    }
-    
-    var renderedImage: Data? {
-        feedImageView.image?.pngData()
-    }
-    
-    var isShowingRetryAction: Bool {
-        !feedImageRetryButton.isHidden
-    }
-    
-    func simulateRetryAction() {
-        feedImageRetryButton.simulate(event: .touchUpInside)
-    }
-}
