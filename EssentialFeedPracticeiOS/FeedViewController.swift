@@ -95,6 +95,12 @@ public final class FeedViewController: UITableViewController {
         cell.descriptionLabel.text = model.description
     }
     
+    public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let cell = cell as? FeedImageCell else { return }
+        
+        startTask(for: cell, at: indexPath)
+    }
+    
     private func startTask(for cell: FeedImageCell, at indexPath: IndexPath) {
         cell.feedImageView.image = nil
         cell.feedImageRetryButton.isHidden = true
