@@ -96,7 +96,9 @@ public final class FeedViewController: UITableViewController {
     }
     
     public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard let cell = cell as? FeedImageCell else { return }
+        guard let cell = cell as? FeedImageCell, imageLoaderTask[indexPath] == nil else {
+            return
+        }
         
         startTask(for: cell, at: indexPath)
     }

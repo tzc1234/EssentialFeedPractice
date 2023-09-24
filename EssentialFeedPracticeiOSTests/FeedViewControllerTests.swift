@@ -121,6 +121,20 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [image.url, image.url], "Expect a reload of cancelled image URL request once the view becomes visible again")
     }
     
+    func test_feedImageView_doesNotLoadImageIfItIsAlreadyLoadingWhenVisibleAgain() {
+        let image = makeImage(url: URL(string: "https://url-0.com")!)
+        let (sut, loader) = makeSUT()
+        
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(with: [image])
+        
+        let view = sut.simulateFeedImageViewVisible(at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect an image URL request once the view becomes visible")
+        
+        sut.simulateFeedImageViewVisibleAgain(for: view!, at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect no image URL request state change once the view becomes visible again")
+    }
+    
     func test_feedImageViewLoadingIndicator_isVisibleWhileLoadingImage() {
         let (sut, loader) = makeSUT()
         
