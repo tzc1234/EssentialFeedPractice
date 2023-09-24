@@ -15,3 +15,18 @@ platform :mac do
     )
   end
 end
+
+platform :ios do
+  before_all do
+    setup_circle_ci
+  end
+
+  desc "Run Tests On iOS Simulator"
+  lane :test do
+    run_tests(
+      scheme: "iOS_CI",
+      device: "iPhone 15",
+      clean: true
+    )
+  end
+end
