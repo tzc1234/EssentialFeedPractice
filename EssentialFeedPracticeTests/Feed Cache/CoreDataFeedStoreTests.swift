@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import CoreData
 import EssentialFeedPractice
 
 final class CoreDataFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
@@ -148,17 +149,21 @@ final class CoreDataFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
 
 private extension NSManagedObjectContext {
     static func alwaysFailingFetchStub() -> Stub {
-        .init(
-            source: #selector(NSManagedObjectContext.execute(_:)),
-            destination: #selector(Stub.execute(_:))
-        )
+        Stub(methodPairs: [
+            .init(
+                source: #selector(NSManagedObjectContext.execute(_:)),
+                destination: #selector(Stub.execute(_:))
+            )
+        ])
     }
     
     static func alwaysFailingSaveStub() -> Stub {
-        .init(
-            source: #selector(NSManagedObjectContext.save),
-            destination: #selector(Stub.save)
-        )
+        Stub(methodPairs: [
+            .init(
+                source: #selector(NSManagedObjectContext.save),
+                destination: #selector(Stub.save)
+            )
+        ])
     }
     
     class Stub: MethodSwizzlingStub<NSManagedObjectContext> {

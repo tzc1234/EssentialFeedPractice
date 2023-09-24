@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BE6989312AADC8430038B32C"
-               BuildableName = "EssentialFeedPractice.framework"
-               BlueprintName = "EssentialFeedPractice"
+               BlueprintIdentifier = "BE248B652ABC5151008EDB4E"
+               BuildableName = "EssentialFeedPracticeiOS.framework"
+               BlueprintName = "EssentialFeedPracticeiOS"
                ReferencedContainer = "container:EssentialFeedPractice.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,7 +29,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:EssentialFeedPracticeTests/EssentialFeedPracticeTests.xctestplan"
+            reference = "container:EssentialFeedPracticeiOSTests/EssentialFeedPracticeiOS.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -38,9 +38,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BE6989392AADC8430038B32C"
-               BuildableName = "EssentialFeedPracticeTests.xctest"
-               BlueprintName = "EssentialFeedPracticeTests"
+               BlueprintIdentifier = "BE248B6C2ABC5151008EDB4E"
+               BuildableName = "EssentialFeedPracticeiOSTests.xctest"
+               BlueprintName = "EssentialFeedPracticeiOSTests"
                ReferencedContainer = "container:EssentialFeedPractice.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -66,9 +66,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "BE6989312AADC8430038B32C"
-            BuildableName = "EssentialFeedPractice.framework"
-            BlueprintName = "EssentialFeedPractice"
+            BlueprintIdentifier = "BE248B652ABC5151008EDB4E"
+            BuildableName = "EssentialFeedPracticeiOS.framework"
+            BlueprintName = "EssentialFeedPracticeiOS"
             ReferencedContainer = "container:EssentialFeedPractice.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
