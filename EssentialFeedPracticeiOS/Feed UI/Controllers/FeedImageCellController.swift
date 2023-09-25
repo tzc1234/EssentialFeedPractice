@@ -40,14 +40,26 @@ final class FeedImageCellController {
         cell?.descriptionLabel.text = model.description
     }
     
-    func startTask(for cell: UITableViewCell? = nil) {
-        if let cell, isTheSameCellAlreadyReferencing(cell) {
+    func startTask(for cell: UITableViewCell) {
+        if isAlreadyReferencingTheSame(cell) {
             return
         }
         
-        self.cell?.feedImageView.image = nil
-        self.cell?.feedImageRetryButton.isHidden = true
-        self.cell?.feedImageContainer.isShimmering = true
+        if let cell = cell as? FeedImageCell {
+            self.cell = cell
+        }
+        
+        startTask()
+    }
+    
+    private func isAlreadyReferencingTheSame(_ cell: UITableViewCell) -> Bool {
+        self.cell === cell
+    }
+    
+    private func startTask() {
+        cell?.feedImageView.image = nil
+        cell?.feedImageRetryButton.isHidden = true
+        cell?.feedImageContainer.isShimmering = true
         
         task = imageLoader.loadImage(from: model.url) { [weak self] result in
             let data = try? result.get()
@@ -56,10 +68,6 @@ final class FeedImageCellController {
             self?.cell?.feedImageRetryButton.isHidden = image != nil
             self?.cell?.feedImageContainer.isShimmering = false
         }
-    }
-    
-    private func isTheSameCellAlreadyReferencing(_ cell: UITableViewCell) -> Bool {
-        self.cell === cell
     }
     
     func preLoad() {

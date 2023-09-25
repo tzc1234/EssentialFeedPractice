@@ -135,6 +135,27 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect no image URL request state change once the view becomes visible again")
     }
     
+    func test_feedImageView_rendersImageWhileViewVisibleAgainOnDifferentPosition() {
+        let image0 = makeImage(url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(url: URL(string: "https://url-1.com")!)
+        let (sut, loader) = makeSUT()
+        
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(with: [image0, image1])
+        
+        let view0 = sut.simulateFeedImageViewNotVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewNotVisible(at: 1)
+        XCTAssertEqual(loader.cancelledImageURLs, [image0.url, image1.url], "Expect 2 cancelled image URL requests once the views become not visible")
+        
+        sut.simulateFeedImageViewVisibleAgain(for: view1!, at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url], "Expect a new image URL request once the 2nd view becomes visible again on 1st position")
+        
+        let imageData = UIImage.make(withColor: .red).pngData()!
+        loader.completeImageLoading(with: imageData, at: 2)
+        XCTAssertNil(view0?.renderedImage, "Expect no image rendered on 1st view once the 2nd image loading completes successfully")
+        XCTAssertEqual(view1?.renderedImage, imageData, "Expect 2nd view rendered the loaded image once the 2nd image loading completes successfully")
+    }
+    
     func test_feedImageViewLoadingIndicator_isVisibleWhileLoadingImage() {
         let (sut, loader) = makeSUT()
         
