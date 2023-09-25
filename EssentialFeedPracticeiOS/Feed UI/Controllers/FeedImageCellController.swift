@@ -9,6 +9,9 @@ import UIKit
 import EssentialFeedPractice
 
 final class FeedImageCellController {
+    static let cellClass: AnyClass = FeedImageCell.self
+    static let cellIdentifier = FeedImageCell.identifier
+    
     private var cell: FeedImageCell?
     private var task: FeedImageDataLoaderTask?
     

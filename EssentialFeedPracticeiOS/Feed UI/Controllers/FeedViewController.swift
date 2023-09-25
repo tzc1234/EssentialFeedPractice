@@ -40,7 +40,8 @@ public final class FeedViewController: UITableViewController {
     }
     
     private func configureTableView() {
-        tableView.register(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.identifier)
+        tableView.register(FeedImageCellController.cellClass,
+                           forCellReuseIdentifier: FeedImageCellController.cellIdentifier)
         tableView.prefetchDataSource = self
     }
     
