@@ -8,16 +8,6 @@
 import UIKit
 import EssentialFeedPractice
 
-public protocol FeedImageDataLoaderTask {
-    func cancel()
-}
-
-public protocol FeedImageDataLoader {
-    typealias Result = Swift.Result<Data, Error>
-    
-    func loadImage(from url: URL, completion: @escaping (Result) -> Void) -> FeedImageDataLoaderTask
-}
-
 public final class FeedViewController: UITableViewController {
     private lazy var _refreshControl: UIRefreshControl = {
         let refresh = UIRefreshControl()
