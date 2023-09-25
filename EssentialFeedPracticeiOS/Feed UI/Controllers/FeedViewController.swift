@@ -9,12 +9,6 @@ import UIKit
 import EssentialFeedPractice
 
 public final class FeedViewController: UITableViewController {
-    private lazy var _refreshControl: UIRefreshControl = {
-        let refresh = UIRefreshControl()
-        refresh.addTarget(self, action: #selector(load), for: .valueChanged)
-        return refresh
-    }()
-    
     private var models = [FeedImage]() {
         didSet {
             tableView.reloadData()
@@ -22,10 +16,12 @@ public final class FeedViewController: UITableViewController {
     }
     private var imageLoaderTask = [IndexPath: FeedImageDataLoaderTask]()
     
+    private let refreshController: FeedRefreshViewController
     private let feedLoader: FeedLoader
     private let imageLoader: FeedImageDataLoader
     
     public init(feedLoader: FeedLoader, imageLoader: FeedImageDataLoader) {
+        self.refreshController = FeedRefreshViewController(feedLoader: feedLoader)
         self.feedLoader = feedLoader
         self.imageLoader = imageLoader
         super.init(nibName: nil, bundle: nil)
@@ -36,7 +32,10 @@ public final class FeedViewController: UITableViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        refreshControl = _refreshControl
+        refreshControl = refreshController.view
+        refreshController.onRefresh = { [weak self] feed in
+            self?.models = feed
+        }
         configureTableView()
     }
     
@@ -48,17 +47,7 @@ public final class FeedViewController: UITableViewController {
     public override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
         
-        load()
-    }
-    
-    @objc private func load() {
-        refreshControl?.beginRefreshing()
-        feedLoader.load { [weak self] result in
-            if let feed = try? result.get() {
-                self?.models = feed
-            }
-            self?.refreshControl?.endRefreshing()
-        }
+        refreshController.refresh()
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
