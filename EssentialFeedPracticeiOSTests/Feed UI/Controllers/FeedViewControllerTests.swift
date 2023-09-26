@@ -135,6 +135,28 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect no image URL request state change once the view becomes visible again")
     }
     
+    func test_feedImageView_rendersImageWhileViewVisibleAgainOnDifferentPosition() {
+        let image0 = makeImage(description: "desc0", location: "location0", url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(description: "desc1", location: "location1", url: URL(string: "https://url-1.com")!)
+        let (sut, loader) = makeSUT()
+        
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(with: [image0, image1])
+        
+        let view0 = sut.simulateFeedImageViewNotVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewNotVisible(at: 1)
+        XCTAssertEqual(loader.cancelledImageURLs, [image0.url, image1.url], "Expect 2 cancelled image URL requests once the views become not visible")
+        
+        sut.simulateFeedImageViewVisibleAgain(for: view1!, at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url], "Expect a new image URL request once the 2nd view becomes visible again on 1st position")
+        
+        let imageData = UIImage.make(withColor: .red).pngData()!
+        loader.completeImageLoading(with: imageData, at: 2)
+        XCTAssertNil(view0?.renderedImage, "Expect no image rendered on 1st view once the 2nd image loading completes successfully")
+        XCTAssertEqual(view1?.renderedImage, imageData, "Expect 2nd view rendered the loaded image once the 2nd image loading completes successfully")
+        assertThat(view1, hasViewConfigureFor: image0, at: 0)
+    }
+    
     func test_feedImageViewLoadingIndicator_isVisibleWhileLoadingImage() {
         let (sut, loader) = makeSUT()
         
@@ -272,7 +294,7 @@ final class FeedViewControllerTests: XCTestCase {
     private func makeSUT(file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: FeedViewController, loader: LoaderSpy) {
         let loader = LoaderSpy()
-        let sut = FeedViewController(feedLoader: loader, imageLoader: loader)
+        let sut = FeedUIComposer.feedComposedWith(feedLoader: loader, imageLoader: loader)
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, loader)
@@ -302,6 +324,14 @@ final class FeedViewControllerTests: XCTestCase {
                             line: UInt = #line) {
         let view = sut.feedImageView(at: index)
         
+        assertThat(view, hasViewConfigureFor: image, at: index, file: file, line: line)
+    }
+    
+    private func assertThat(_ view: FeedImageCell?,
+                            hasViewConfigureFor image: FeedImage,
+                            at index: Int,
+                            file: StaticString = #filePath,
+                            line: UInt = #line) {
         let shouldLocationBeVisible = image.location != nil
         XCTAssertEqual(
             view?.isShowingLocation,
@@ -314,7 +344,7 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(
             view?.isShowingDescription,
             shouldDescriptionBeVisible,
-            "Expect shouldDescriptionBeVisible to be \(shouldDescriptionBeVisible) for image view at \(index)", 
+            "Expect shouldDescriptionBeVisible to be \(shouldDescriptionBeVisible) for image view at \(index)",
             file: file,
             line: line)
         
