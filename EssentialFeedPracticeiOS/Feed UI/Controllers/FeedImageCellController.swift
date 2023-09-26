@@ -36,13 +36,6 @@ final class FeedImageCellController {
         return cell
     }
     
-    private func configureCell(with model: FeedImage) {
-        cell?.locationContainer.isHidden = (model.location == nil)
-        cell?.locationLabel.text = model.location
-        cell?.descriptionLabel.isHidden = (model.description == nil)
-        cell?.descriptionLabel.text = model.description
-    }
-    
     func startTask(for cell: UITableViewCell) {
         if isAlreadyReferencingTheSame(cell) {
             return
@@ -50,6 +43,7 @@ final class FeedImageCellController {
         
         if let cell = cell as? FeedImageCell {
             self.cell = cell
+            configureCell(with: model)
         }
         
         startTask()
@@ -57,6 +51,13 @@ final class FeedImageCellController {
     
     private func isAlreadyReferencingTheSame(_ cell: UITableViewCell) -> Bool {
         self.cell === cell
+    }
+    
+    private func configureCell(with model: FeedImage) {
+        cell?.locationContainer.isHidden = (model.location == nil)
+        cell?.locationLabel.text = model.location
+        cell?.descriptionLabel.isHidden = (model.description == nil)
+        cell?.descriptionLabel.text = model.description
     }
     
     private func startTask() {

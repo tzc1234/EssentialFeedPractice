@@ -136,8 +136,8 @@ final class FeedViewControllerTests: XCTestCase {
     }
     
     func test_feedImageView_rendersImageWhileViewVisibleAgainOnDifferentPosition() {
-        let image0 = makeImage(url: URL(string: "https://url-0.com")!)
-        let image1 = makeImage(url: URL(string: "https://url-1.com")!)
+        let image0 = makeImage(description: "desc0", location: "location0", url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(description: "desc1", location: "location1", url: URL(string: "https://url-1.com")!)
         let (sut, loader) = makeSUT()
         
         sut.simulateViewIsAppearing()
@@ -154,6 +154,7 @@ final class FeedViewControllerTests: XCTestCase {
         loader.completeImageLoading(with: imageData, at: 2)
         XCTAssertNil(view0?.renderedImage, "Expect no image rendered on 1st view once the 2nd image loading completes successfully")
         XCTAssertEqual(view1?.renderedImage, imageData, "Expect 2nd view rendered the loaded image once the 2nd image loading completes successfully")
+        assertThat(view1, hasViewConfigureFor: image0, at: 0)
     }
     
     func test_feedImageViewLoadingIndicator_isVisibleWhileLoadingImage() {
@@ -323,6 +324,14 @@ final class FeedViewControllerTests: XCTestCase {
                             line: UInt = #line) {
         let view = sut.feedImageView(at: index)
         
+        assertThat(view, hasViewConfigureFor: image, at: index, file: file, line: line)
+    }
+    
+    private func assertThat(_ view: FeedImageCell?,
+                            hasViewConfigureFor image: FeedImage,
+                            at index: Int,
+                            file: StaticString = #filePath,
+                            line: UInt = #line) {
         let shouldLocationBeVisible = image.location != nil
         XCTAssertEqual(
             view?.isShowingLocation,
@@ -335,7 +344,7 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(
             view?.isShowingDescription,
             shouldDescriptionBeVisible,
-            "Expect shouldDescriptionBeVisible to be \(shouldDescriptionBeVisible) for image view at \(index)", 
+            "Expect shouldDescriptionBeVisible to be \(shouldDescriptionBeVisible) for image view at \(index)",
             file: file,
             line: line)
         
