@@ -47,7 +47,7 @@ final class FeedImageCellController {
     }
     
     func startImageDataLoad(for cell: UITableViewCell) {
-        if isAlreadyReferencingTheSame(cell) && viewModel.isImageDataTaskExisted {
+        guard shouldStartANewImageDataLoad(for: cell) else {
             return
         }
         
@@ -58,8 +58,12 @@ final class FeedImageCellController {
         startImageDataLoad()
     }
     
-    private func isAlreadyReferencingTheSame(_ cell: UITableViewCell) -> Bool {
-        self.cell === cell
+    private func shouldStartANewImageDataLoad(for cell: UITableViewCell) -> Bool {
+        isNotReferencingThis(cell) || viewModel.hasNoImageDataLoad
+    }
+    
+    private func isNotReferencingThis(_ cell: UITableViewCell) -> Bool {
+        self.cell !== cell
     }
     
     private func configure(_ cell: FeedImageCell) {

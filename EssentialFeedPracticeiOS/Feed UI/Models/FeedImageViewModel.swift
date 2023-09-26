@@ -12,7 +12,7 @@ final class FeedImageViewModel<Image> {
     typealias Observer<T> = (T) -> Void
     
     private var task: FeedImageDataLoaderTask?
-    var isImageDataTaskExisted: Bool { task != nil }
+    var hasNoImageDataLoad: Bool { task == nil }
     var description: String? { model.description }
     var location: String? { model.location }
     
