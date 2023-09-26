@@ -6,84 +6,83 @@
 //
 
 import UIKit
-import EssentialFeedPractice
 
 final class FeedImageCellController {
     static let cellClass: AnyClass = FeedImageCell.self
     static let cellIdentifier = FeedImageCell.identifier
     
     private var cell: FeedImageCell?
-    private var task: FeedImageDataLoaderTask?
-    private var isRunningTask: Bool { task != nil }
     
-    private let model: FeedImage
-    private let imageLoader: FeedImageDataLoader
+    private let viewModel: FeedImageViewModel<UIImage>
     
-    init(model: FeedImage, imageLoader: FeedImageDataLoader) {
-        self.model = model
-        self.imageLoader = imageLoader
+    init(viewModel: FeedImageViewModel<UIImage>) {
+        self.viewModel = viewModel
     }
     
     func view(for tableView: UITableView) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: FeedImageCell.identifier) as! FeedImageCell
-        configure(cell, with: model)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellIdentifier) as! FeedImageCell
+        configure(cell)
+        setupBindings()
         
         cell.onRetry = { [weak self] in
-            self?.startTask()
+            self?.startImageDataLoad()
         }
-        startTask()
+        startImageDataLoad()
         
         return cell
     }
     
-    func startTask(for cell: UITableViewCell) {
-        if isAlreadyReferencingTheSame(cell) && isRunningTask {
+    private func setupBindings() {
+        viewModel.onLoading = { [weak self] isLoading in
+            self?.cell?.feedImageContainer.isShimmering = isLoading
+        }
+        
+        viewModel.onImageLoad = { [weak self] image in
+            self?.cell?.feedImageView.image = image
+        }
+        
+        viewModel.onShouldRetryImageLoad = { [weak self] shouldRetry in
+            self?.cell?.feedImageRetryButton.isHidden = !shouldRetry
+        }
+    }
+    
+    func startImageDataLoad(for cell: UITableViewCell) {
+        if isAlreadyReferencingTheSame(cell) && viewModel.isImageDataTaskExisted {
             return
         }
         
         if let cell = cell as? FeedImageCell {
-            configure(cell, with: model)
+            configure(cell)
         }
         
-        startTask()
+        startImageDataLoad()
     }
     
     private func isAlreadyReferencingTheSame(_ cell: UITableViewCell) -> Bool {
         self.cell === cell
     }
     
-    private func configure(_ cell: FeedImageCell, with model: FeedImage) {
+    private func configure(_ cell: FeedImageCell) {
         self.cell = cell
-        cell.locationContainer.isHidden = (model.location == nil)
-        cell.locationLabel.text = model.location
-        cell.descriptionLabel.isHidden = (model.description == nil)
-        cell.descriptionLabel.text = model.description
+        cell.locationContainer.isHidden = (viewModel.location == nil)
+        cell.locationLabel.text = viewModel.location
+        cell.descriptionLabel.isHidden = (viewModel.description == nil)
+        cell.descriptionLabel.text = viewModel.description
     }
     
-    private func startTask() {
-        cell?.feedImageView.image = nil
-        cell?.feedImageRetryButton.isHidden = true
-        cell?.feedImageContainer.isShimmering = true
-        
-        task = imageLoader.loadImage(from: model.url) { [weak self] result in
-            let data = try? result.get()
-            let image = data.map(UIImage.init) ?? nil
-            self?.cell?.feedImageView.image = image
-            self?.cell?.feedImageRetryButton.isHidden = image != nil
-            self?.cell?.feedImageContainer.isShimmering = false
-        }
+    private func startImageDataLoad() {
+        viewModel.loadImageData()
     }
     
     func preLoad() {
-        task = imageLoader.loadImage(from: model.url) { _ in }
+        viewModel.loadImageData()
     }
     
     deinit {
-        cancelTask()
+        cancelImageDataLoad()
     }
     
-    func cancelTask() {
-        task?.cancel()
-        task = nil
+    func cancelImageDataLoad() {
+        viewModel.cancelImageDataLoad()
     }
 }

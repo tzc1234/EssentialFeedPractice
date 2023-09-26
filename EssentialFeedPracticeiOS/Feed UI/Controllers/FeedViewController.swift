@@ -49,7 +49,7 @@ public final class FeedViewController: UITableViewController {
     }
     
     public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).startTask(for: cell)
+        cellController(forRowAt: indexPath).startImageDataLoad(for: cell)
     }
     
     private func cellController(forRowAt indexPath: IndexPath) -> FeedImageCellController {
@@ -61,7 +61,7 @@ public final class FeedViewController: UITableViewController {
     }
     
     private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).cancelTask()
+        cellController(forRowAt: indexPath).cancelImageDataLoad()
     }
 }
 

@@ -5,6 +5,7 @@
 //  Created by Tsz-Lung on 26/09/2023.
 //
 
+import UIKit
 import EssentialFeedPractice
 
 public enum FeedUIComposer {
@@ -20,7 +21,8 @@ public enum FeedUIComposer {
                                                    loader: FeedImageDataLoader) -> ([FeedImage]) -> Void {
         return { [weak controller] feed in
             controller?.models = feed.map { model in
-                FeedImageCellController(model: model, imageLoader: loader)
+                let viewModel = FeedImageViewModel(model: model, imageLoader: loader, imageTransformer: UIImage.init)
+                return FeedImageCellController(viewModel: viewModel)
             }
         }
     }

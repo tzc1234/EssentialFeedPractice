@@ -8,9 +8,9 @@
 import Foundation
 import EssentialFeedPractice
 
-typealias Observer<T> = (T) -> Void
-
 final class FeedViewModel {
+    typealias Observer<T> = (T) -> Void
+    
     var onLoading: Observer<Bool>?
     var onFeedLoad: Observer<[FeedImage]>?
     
