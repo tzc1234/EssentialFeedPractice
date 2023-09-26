@@ -14,6 +14,7 @@ final class FeedImageCellController {
     
     private var cell: FeedImageCell?
     private var task: FeedImageDataLoaderTask?
+    private var isRunningTask: Bool { task != nil }
     
     private let model: FeedImage
     private let imageLoader: FeedImageDataLoader
@@ -25,8 +26,7 @@ final class FeedImageCellController {
     
     func view(for tableView: UITableView) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FeedImageCell.identifier) as! FeedImageCell
-        self.cell = cell
-        configureCell(with: model)
+        configure(cell, with: model)
         
         cell.onRetry = { [weak self] in
             self?.startTask()
@@ -37,13 +37,12 @@ final class FeedImageCellController {
     }
     
     func startTask(for cell: UITableViewCell) {
-        if isAlreadyReferencingTheSame(cell) {
+        if isAlreadyReferencingTheSame(cell) && isRunningTask {
             return
         }
         
         if let cell = cell as? FeedImageCell {
-            self.cell = cell
-            configureCell(with: model)
+            configure(cell, with: model)
         }
         
         startTask()
@@ -53,11 +52,12 @@ final class FeedImageCellController {
         self.cell === cell
     }
     
-    private func configureCell(with model: FeedImage) {
-        cell?.locationContainer.isHidden = (model.location == nil)
-        cell?.locationLabel.text = model.location
-        cell?.descriptionLabel.isHidden = (model.description == nil)
-        cell?.descriptionLabel.text = model.description
+    private func configure(_ cell: FeedImageCell, with model: FeedImage) {
+        self.cell = cell
+        cell.locationContainer.isHidden = (model.location == nil)
+        cell.locationLabel.text = model.location
+        cell.descriptionLabel.isHidden = (model.description == nil)
+        cell.descriptionLabel.text = model.description
     }
     
     private func startTask() {
@@ -82,7 +82,7 @@ final class FeedImageCellController {
         cancelTask()
     }
     
-    private func cancelTask() {
+    func cancelTask() {
         task?.cancel()
         task = nil
     }

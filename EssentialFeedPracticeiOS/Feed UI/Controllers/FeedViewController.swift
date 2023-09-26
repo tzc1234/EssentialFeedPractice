@@ -6,24 +6,16 @@
 //
 
 import UIKit
-import EssentialFeedPractice
 
 public final class FeedViewController: UITableViewController {
-    private var models = [FeedImage]() {
-        didSet {
-            tableView.reloadData()
-        }
+    var models = [FeedImageCellController]() {
+        didSet { tableView.reloadData() }
     }
-    private var cellControllers = [IndexPath: FeedImageCellController]()
     
     private let refreshController: FeedRefreshViewController
-    private let feedLoader: FeedLoader
-    private let imageLoader: FeedImageDataLoader
     
-    public init(feedLoader: FeedLoader, imageLoader: FeedImageDataLoader) {
-        self.refreshController = FeedRefreshViewController(feedLoader: feedLoader)
-        self.feedLoader = feedLoader
-        self.imageLoader = imageLoader
+    init(refreshController: FeedRefreshViewController) {
+        self.refreshController = refreshController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -33,9 +25,6 @@ public final class FeedViewController: UITableViewController {
         super.viewDidLoad()
         
         refreshControl = refreshController.view
-        refreshController.onRefresh = { [weak self] feed in
-            self?.models = feed
-        }
         configureTableView()
     }
     
@@ -64,22 +53,15 @@ public final class FeedViewController: UITableViewController {
     }
     
     private func cellController(forRowAt indexPath: IndexPath) -> FeedImageCellController {
-        if let cellControllers = cellControllers[indexPath] {
-            return cellControllers
-        }
-        
-        let model = models[indexPath.row]
-        let cellController = FeedImageCellController(model: model, imageLoader: imageLoader)
-        cellControllers[indexPath] = cellController
-        return cellController
+        models[indexPath.row]
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        removeCellController(forRowAt: indexPath)
+        cancelCellControllerLoad(forRowAt: indexPath)
     }
     
-    private func removeCellController(forRowAt indexPath: IndexPath) {
-        cellControllers[indexPath] = nil
+    private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
+        cellController(forRowAt: indexPath).cancelTask()
     }
 }
 
@@ -89,6 +71,6 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
     }
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach(removeCellController)
+        indexPaths.forEach(cancelCellControllerLoad)
     }
 }
