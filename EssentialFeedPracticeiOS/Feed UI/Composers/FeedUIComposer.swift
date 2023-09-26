@@ -5,13 +5,15 @@
 //  Created by Tsz-Lung on 26/09/2023.
 //
 
+import UIKit
 import EssentialFeedPractice
 
 public enum FeedUIComposer {
     public static func feedComposedWith(feedLoader: FeedLoader, imageLoader: FeedImageDataLoader) -> FeedViewController {
-        let refreshController = FeedRefreshViewController(feedLoader: feedLoader)
+        let feedViewModel = FeedViewModel(feedLoader: feedLoader)
+        let refreshController = FeedRefreshViewController(viewModel: feedViewModel)
         let feedViewController = FeedViewController(refreshController: refreshController)
-        refreshController.onRefresh = adaptFeedToCellControllers(forwardingTo: feedViewController, loader: imageLoader)
+        feedViewModel.onFeedLoad = adaptFeedToCellControllers(forwardingTo: feedViewController, loader: imageLoader)
         return feedViewController
     }
     
@@ -19,7 +21,8 @@ public enum FeedUIComposer {
                                                    loader: FeedImageDataLoader) -> ([FeedImage]) -> Void {
         return { [weak controller] feed in
             controller?.models = feed.map { model in
-                FeedImageCellController(model: model, imageLoader: loader)
+                let viewModel = FeedImageViewModel(model: model, imageLoader: loader, imageTransformer: UIImage.init)
+                return FeedImageCellController(viewModel: viewModel)
             }
         }
     }
