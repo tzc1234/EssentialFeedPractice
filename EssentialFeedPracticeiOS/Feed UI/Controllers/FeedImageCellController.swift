@@ -23,12 +23,7 @@ final class FeedImageCellController {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellIdentifier) as! FeedImageCell
         configure(cell)
         setupBindings()
-        
-        cell.onRetry = { [weak self] in
-            self?.startImageDataLoad()
-        }
         startImageDataLoad()
-        
         return cell
     }
     
@@ -72,13 +67,16 @@ final class FeedImageCellController {
         cell.locationLabel.text = viewModel.location
         cell.descriptionLabel.isHidden = (viewModel.description == nil)
         cell.descriptionLabel.text = viewModel.description
+        cell.onRetry = { [weak self] in
+            self?.startImageDataLoad()
+        }
     }
     
     private func startImageDataLoad() {
         viewModel.loadImageData()
     }
     
-    func preLoad() {
+    func preload() {
         viewModel.loadImageData()
     }
     

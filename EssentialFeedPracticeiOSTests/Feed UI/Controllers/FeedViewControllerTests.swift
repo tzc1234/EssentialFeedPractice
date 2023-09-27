@@ -256,6 +256,26 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url, image1.url], "Expect 4th image URL request after 2nd view retry action")
     }
     
+    func test_feedImageViewRetryAction_retriesImageLoadForViewVisibleAgainOnDifferentPosition() {
+        let image0 = makeImage(url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(url: URL(string: "https://url-1.com")!)
+        let (sut, loader) = makeSUT()
+        
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(with: [image0, image1])
+        
+        sut.simulateFeedImageViewNotVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewNotVisible(at: 1)!
+        XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url], "Expect only 2 image URL requests after the views become not visible")
+        
+        sut.simulateFeedImageViewVisibleAgain(for: view1, at: 0)
+        loader.completeImageLoadingWithError(at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url], "Expect a 1st image URL request after 2nd view visible again on 1st position")
+        
+        view1.simulateRetryAction()
+        XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url, image0.url], "Expect a 1st image URL retry request after 2nd view visible again on 1st position retry action")
+    }
+    
     func test_feedImageView_preloadsImageURLWhenNearVisible() {
         let image0 = makeImage(url: URL(string: "https://url-0.com")!)
         let image1 = makeImage(url: URL(string: "https://url-1.com")!)
