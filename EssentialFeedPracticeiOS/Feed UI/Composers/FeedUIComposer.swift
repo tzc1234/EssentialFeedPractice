@@ -39,20 +39,6 @@ final class FeedViewAdapter: FeedView {
     }
 }
 
-final class WeakRefProxy<T: AnyObject> {
-    weak var object: T?
-    
-    init(_ object: T?) {
-        self.object = object
-    }
-}
-
-extension WeakRefProxy: FeedLoadingView where T: FeedLoadingView {
-    func display(_ viewModel: FeedLoadingViewModel) {
-        object?.display(viewModel)
-    }
-}
-
 final class FeedLoaderPresentationAdapter: FeedRefreshViewControllerDelegate {
     private let feedLoader: FeedLoader
     var presenter: FeedPresenter?
