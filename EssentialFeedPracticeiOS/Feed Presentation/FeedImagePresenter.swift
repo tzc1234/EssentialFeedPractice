@@ -8,21 +8,10 @@
 import Foundation
 import EssentialFeedPractice
 
-struct FeedImageViewModel<Image> {
-    let description: String?
-    let location: String?
-    let image: Image?
-    let shouldRetry: Bool
-}
-
 protocol FeedImageView {
     associatedtype Image
     
     func display(_ viewModel: FeedImageViewModel<Image>)
-}
-
-struct FeedImageLoadingViewModel {
-    let isLoading: Bool
 }
 
 protocol FeedImageLoadingView {
