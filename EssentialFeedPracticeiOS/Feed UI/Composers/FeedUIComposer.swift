@@ -10,8 +10,9 @@ import EssentialFeedPractice
 
 public enum FeedUIComposer {
     public static func feedComposedWith(feedLoader: FeedLoader, imageLoader: FeedImageDataLoader) -> FeedViewController {
-        let presenter = FeedPresenter(feedLoader: feedLoader)
-        let refreshController = FeedRefreshViewController(loadFeed: presenter.loadFeed)
+        let presenter = FeedPresenter()
+        let presentationAdapter = FeedLoaderPresentationAdapter(feedLoader: feedLoader, presenter: presenter)
+        let refreshController = FeedRefreshViewController(loadFeed: presentationAdapter.loadFeed)
         let feedViewController = FeedViewController(refreshController: refreshController)
         
         presenter.view = FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader)
@@ -49,5 +50,27 @@ final class WeakRefProxy<T: AnyObject> {
 extension WeakRefProxy: FeedLoadingView where T: FeedLoadingView {
     func display(_ viewModel: FeedLoadingViewModel) {
         object?.display(viewModel)
+    }
+}
+
+final class FeedLoaderPresentationAdapter {
+    private let feedLoader: FeedLoader
+    private let presenter: FeedPresenter?
+    
+    init(feedLoader: FeedLoader, presenter: FeedPresenter?) {
+        self.feedLoader = feedLoader
+        self.presenter = presenter
+    }
+    
+    func loadFeed() {
+        presenter?.didStartLoadingFeed()
+        feedLoader.load { [weak presenter] result in
+            switch result {
+            case let .success(feed):
+                presenter?.didFinishLoadingFeed(with: feed)
+            case let .failure(error):
+                presenter?.didFinishLoadingFeed(with: error)
+            }
+        }
     }
 }
