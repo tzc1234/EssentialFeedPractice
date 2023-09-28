@@ -7,38 +7,29 @@
 
 import UIKit
 
+protocol FeedImageCellControllerDelegate {
+    var hasNoImageDataLoad: Bool { get }
+    func loadImageData()
+    func cancelImageDataLoad()
+}
+
 final class FeedImageCellController {
     static let cellClass: AnyClass = FeedImageCell.self
     static let cellIdentifier = FeedImageCell.identifier
     
     private var cell: FeedImageCell?
     
-    private let viewModel: FeedImageViewModel<UIImage>
+    private let delegate: FeedImageCellControllerDelegate
     
-    init(viewModel: FeedImageViewModel<UIImage>) {
-        self.viewModel = viewModel
+    init(delegate: FeedImageCellControllerDelegate) {
+        self.delegate = delegate
     }
     
     func view(for tableView: UITableView) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellIdentifier) as! FeedImageCell
-        configure(cell)
-        setupBindings()
+        setup(cell)
         startImageDataLoad()
         return cell
-    }
-    
-    private func setupBindings() {
-        viewModel.onLoading = { [weak self] isLoading in
-            self?.cell?.feedImageContainer.isShimmering = isLoading
-        }
-        
-        viewModel.onImageLoad = { [weak self] image in
-            self?.cell?.feedImageView.image = image
-        }
-        
-        viewModel.onShouldRetryImageLoad = { [weak self] shouldRetry in
-            self?.cell?.feedImageRetryButton.isHidden = !shouldRetry
-        }
     }
     
     func startImageDataLoad(for cell: UITableViewCell) {
@@ -47,37 +38,33 @@ final class FeedImageCellController {
         }
         
         if let cell = cell as? FeedImageCell {
-            configure(cell)
+            setup(cell)
         }
         
         startImageDataLoad()
     }
     
+    private func setup(_ cell: FeedImageCell) {
+        self.cell = cell
+        cell.onRetry = { [weak self] in
+            self?.startImageDataLoad()
+        }
+    }
+    
     private func shouldStartANewImageDataLoad(for cell: UITableViewCell) -> Bool {
-        isNotReferencingThis(cell) || viewModel.hasNoImageDataLoad
+        isNotReferencingThis(cell) || delegate.hasNoImageDataLoad
     }
     
     private func isNotReferencingThis(_ cell: UITableViewCell) -> Bool {
         self.cell !== cell
     }
     
-    private func configure(_ cell: FeedImageCell) {
-        self.cell = cell
-        cell.locationContainer.isHidden = (viewModel.location == nil)
-        cell.locationLabel.text = viewModel.location
-        cell.descriptionLabel.isHidden = (viewModel.description == nil)
-        cell.descriptionLabel.text = viewModel.description
-        cell.onRetry = { [weak self] in
-            self?.startImageDataLoad()
-        }
-    }
-    
     private func startImageDataLoad() {
-        viewModel.loadImageData()
+        delegate.loadImageData()
     }
     
     func preload() {
-        viewModel.loadImageData()
+        delegate.loadImageData()
     }
     
     deinit {
@@ -85,6 +72,27 @@ final class FeedImageCellController {
     }
     
     func cancelImageDataLoad() {
-        viewModel.cancelImageDataLoad()
+        delegate.cancelImageDataLoad()
+    }
+}
+
+extension FeedImageCellController: FeedImageView {
+    func display(_ viewModel: FeedImageViewModel<UIImage>) {
+        configureCell(with: viewModel)
+    }
+    
+    private func configureCell(with viewModel: FeedImageViewModel<UIImage>) {
+        cell?.locationContainer.isHidden = (viewModel.location == nil)
+        cell?.locationLabel.text = viewModel.location
+        cell?.descriptionLabel.isHidden = (viewModel.description == nil)
+        cell?.descriptionLabel.text = viewModel.description
+        cell?.feedImageView.image = viewModel.image
+        cell?.feedImageRetryButton.isHidden = !viewModel.shouldRetry
+    }
+}
+
+extension FeedImageCellController: FeedImageLoadingView {
+    func display(_ viewModel: FeedImageLoadingViewModel) {
+        cell?.feedImageContainer.isShimmering = viewModel.isLoading
     }
 }
