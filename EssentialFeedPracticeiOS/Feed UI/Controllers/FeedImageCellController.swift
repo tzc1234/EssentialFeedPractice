@@ -8,9 +8,9 @@
 import UIKit
 
 protocol FeedImageCellControllerDelegate {
-    var hasNoImageDataLoad: Bool { get }
-    func loadImageData()
-    func cancelImageDataLoad()
+    var hasNoImageRequest: Bool { get }
+    func didRequestImage()
+    func didCancelImageRequest()
 }
 
 final class FeedImageCellController {
@@ -52,7 +52,7 @@ final class FeedImageCellController {
     }
     
     private func shouldStartANewImageDataLoad(for cell: UITableViewCell) -> Bool {
-        isNotReferencingThis(cell) || delegate.hasNoImageDataLoad
+        isNotReferencingThis(cell) || delegate.hasNoImageRequest
     }
     
     private func isNotReferencingThis(_ cell: UITableViewCell) -> Bool {
@@ -60,11 +60,11 @@ final class FeedImageCellController {
     }
     
     private func startImageDataLoad() {
-        delegate.loadImageData()
+        delegate.didRequestImage()
     }
     
     func preload() {
-        delegate.loadImageData()
+        delegate.didRequestImage()
     }
     
     deinit {
@@ -72,7 +72,7 @@ final class FeedImageCellController {
     }
     
     func cancelImageDataLoad() {
-        delegate.cancelImageDataLoad()
+        delegate.didCancelImageRequest()
     }
 }
 

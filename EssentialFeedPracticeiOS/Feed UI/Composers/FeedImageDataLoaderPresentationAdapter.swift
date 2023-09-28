@@ -21,9 +21,9 @@ final class FeedImageDataLoaderPresentationAdapter<View: FeedImageView, Image> w
 }
 
 extension FeedImageDataLoaderPresentationAdapter: FeedImageCellControllerDelegate {
-    var hasNoImageDataLoad: Bool { task == nil }
+    var hasNoImageRequest: Bool { task == nil }
     
-    func loadImageData() {
+    func didRequestImage() {
         presenter?.didStartLoadingImageData(for: model)
         task = imageLoader.loadImage(from: model.url) { [weak presenter, model] result in
             switch result {
@@ -35,7 +35,7 @@ extension FeedImageDataLoaderPresentationAdapter: FeedImageCellControllerDelegat
         }
     }
     
-    func cancelImageDataLoad() {
+    func didCancelImageRequest() {
         task?.cancel()
         task = nil
     }
