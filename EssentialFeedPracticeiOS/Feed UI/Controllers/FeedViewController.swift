@@ -67,7 +67,7 @@ public final class FeedViewController: UITableViewController {
 
 extension FeedViewController: UITableViewDataSourcePrefetching {
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach { cellController(forRowAt: $0).preLoad() }
+        indexPaths.forEach { cellController(forRowAt: $0).preload() }
     }
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {

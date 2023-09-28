@@ -5,25 +5,18 @@
 //  Created by Tsz-Lung on 26/09/2023.
 //
 
-import UIKit
 import EssentialFeedPractice
 
 public enum FeedUIComposer {
     public static func feedComposedWith(feedLoader: FeedLoader, imageLoader: FeedImageDataLoader) -> FeedViewController {
-        let feedViewModel = FeedViewModel(feedLoader: feedLoader)
-        let refreshController = FeedRefreshViewController(viewModel: feedViewModel)
+        let presentationAdapter = FeedLoaderPresentationAdapter(feedLoader: feedLoader)
+        let refreshController = FeedRefreshViewController(delegate: presentationAdapter)
         let feedViewController = FeedViewController(refreshController: refreshController)
-        feedViewModel.onFeedLoad = adaptFeedToCellControllers(forwardingTo: feedViewController, loader: imageLoader)
+        
+        presentationAdapter.presenter = FeedPresenter(
+            view: FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader),
+            loadingView: WeakRefProxy(refreshController))
+        
         return feedViewController
-    }
-    
-    private static func adaptFeedToCellControllers(forwardingTo controller: FeedViewController,
-                                                   loader: FeedImageDataLoader) -> ([FeedImage]) -> Void {
-        return { [weak controller] feed in
-            controller?.models = feed.map { model in
-                let viewModel = FeedImageViewModel(model: model, imageLoader: loader, imageTransformer: UIImage.init)
-                return FeedImageCellController(viewModel: viewModel)
-            }
-        }
     }
 }
