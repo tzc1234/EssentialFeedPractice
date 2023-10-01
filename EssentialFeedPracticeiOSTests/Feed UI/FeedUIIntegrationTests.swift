@@ -1,5 +1,5 @@
 //
-//  FeedViewControllerTests.swift
+//  FeedUIIntegrationTests.swift
 //  EssentialFeedPracticeiOSTests
 //
 //  Created by Tsz-Lung on 21/09/2023.
@@ -10,7 +10,15 @@ import UIKit
 import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 
-final class FeedViewControllerTests: XCTestCase {
+final class FeedUIIntegrationTests: XCTestCase {
+    func test_feedView_hasTitle() {
+        let (sut, _) = makeSUT()
+        
+        sut.simulateViewIsAppearing()
+        
+        XCTAssertEqual(sut.title, localised("FEED_VIEW_TITLE"))
+    }
+    
     func test_loadFeedActions_requestFeedFromLoader() {
         let (sut, loader) = makeSUT()
         XCTAssertEqual(loader.loadFeedCallCount, 0, "Expect no loading requests before view is loaded")
@@ -150,7 +158,7 @@ final class FeedViewControllerTests: XCTestCase {
         sut.simulateFeedImageViewVisibleAgain(for: view1!, at: 0)
         XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url], "Expect a new image URL request once the 2nd view becomes visible again on 1st position")
         
-        let imageData = UIImage.make(withColor: .red).pngData()!
+        let imageData = UIImage.makeData(withColor: .red)
         loader.completeImageLoading(with: imageData, at: 2)
         XCTAssertNil(view0?.renderedImage, "Expect no image rendered on 1st view once the 2nd image loading completes successfully")
         XCTAssertEqual(view1?.renderedImage, imageData, "Expect 2nd view rendered the loaded image once the 2nd image loading completes successfully")
@@ -188,12 +196,12 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(view0?.renderedImage, .none, "Expect no image for 1st view while loading 1st image")
         XCTAssertEqual(view1?.renderedImage, .none, "Expect no image for 2nd view while loading 2nd image")
         
-        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let imageData0 = UIImage.makeData(withColor: .red)
         loader.completeImageLoading(with: imageData0, at: 0)
         XCTAssertEqual(view0?.renderedImage, imageData0, "Expect image for 1st view once 1st image loading complete successfully")
         XCTAssertEqual(view1?.renderedImage, .none, "Expect no image state change for 2nd view once 1st image loading complete successfully")
         
-        let imageData1 = UIImage.make(withColor: .blue).pngData()!
+        let imageData1 = UIImage.makeData(withColor: .blue)
         loader.completeImageLoading(with: imageData1, at: 1)
         XCTAssertEqual(view0?.renderedImage, imageData0, "Expect no image state change for 1st view once 2nd image loading complete successfully")
         XCTAssertEqual(view1?.renderedImage, imageData1, "Expect image for 2nd view once 2nd image loading complete successfully")
@@ -210,7 +218,7 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(view0?.isShowingRetryAction, false, "Expect no retry action for 1st view while loading 1st image")
         XCTAssertEqual(view1?.isShowingRetryAction, false, "Expect no retry action for 2nd view while loading 2nd image")
         
-        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let imageData0 = UIImage.makeData(withColor: .red)
         loader.completeImageLoading(with: imageData0, at: 0)
         XCTAssertEqual(view0?.isShowingRetryAction, false, "Expect no retry action for 1st view once 1st image loading complete successfully")
         XCTAssertEqual(view1?.isShowingRetryAction, false, "Expect no retry action state change for 2nd view once 1st image loading complete successfully")
@@ -307,6 +315,18 @@ final class FeedViewControllerTests: XCTestCase {
         
         sut.simulateFeedImageViewNotNearVisible(at: 1)
         XCTAssertEqual(loader.cancelledImageURLs, [image0.url, image1.url], "Expect 2nd cancelled image URL request once 2nd view is not near visible anymore")
+    }
+    
+    func test_feedImageView_doesNotRenderImageWhenNotVisibleAnymore() {
+        let (sut, loader) = makeSUT()
+        
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(with: [makeImage()])
+        
+        let view = sut.simulateFeedImageViewNotVisible(at: 0)
+        loader.completeImageLoading(with: UIImage.makeData(withColor: .red), at: 0)
+        
+        XCTAssertNil(view?.renderedImage, "Expect no image rendered after the image loading successfully but the view becomes not visible anymore")
     }
     
     // MARK: - Helpers

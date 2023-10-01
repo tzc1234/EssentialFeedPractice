@@ -12,6 +12,7 @@ public enum FeedUIComposer {
         let presentationAdapter = FeedLoaderPresentationAdapter(feedLoader: feedLoader)
         let refreshController = FeedRefreshViewController(delegate: presentationAdapter)
         let feedViewController = FeedViewController(refreshController: refreshController)
+        feedViewController.title = FeedPresenter.title
         
         presentationAdapter.presenter = FeedPresenter(
             view: FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader),

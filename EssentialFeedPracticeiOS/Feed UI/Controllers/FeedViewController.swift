@@ -12,6 +12,8 @@ public final class FeedViewController: UITableViewController {
         didSet { tableView.reloadData() }
     }
     
+    private var onViewIsAppearing: ((FeedViewController) -> Void)?
+    
     private let refreshController: FeedRefreshViewController
     
     init(refreshController: FeedRefreshViewController) {
@@ -26,6 +28,10 @@ public final class FeedViewController: UITableViewController {
         
         refreshControl = refreshController.view
         configureTableView()
+        onViewIsAppearing = { vc in
+            vc.refreshController.refresh()
+            vc.onViewIsAppearing = nil
+        }
     }
     
     private func configureTableView() {
@@ -37,7 +43,7 @@ public final class FeedViewController: UITableViewController {
     public override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
         
-        refreshController.refresh()
+        onViewIsAppearing?(self)
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
