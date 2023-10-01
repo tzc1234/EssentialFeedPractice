@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 import EssentialFeedPracticeiOS
 
-extension FeedViewControllerTests {
+extension FeedUIIntegrationTests {
     func localised(_ key: String, file: StaticString = #filePath, line: UInt = #line) -> String {
         let table = "Feed"
         let bundle = Bundle(for: FeedViewController.self)
