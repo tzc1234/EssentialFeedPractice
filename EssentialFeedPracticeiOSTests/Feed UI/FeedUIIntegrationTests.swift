@@ -324,9 +324,36 @@ final class FeedUIIntegrationTests: XCTestCase {
         loader.completeFeedLoading(with: [makeImage()])
         
         let view = sut.simulateFeedImageViewNotVisible(at: 0)
-        loader.completeImageLoading(with: UIImage.makeData(withColor: .red), at: 0)
+        loader.completeImageLoading(with: anyImageData(), at: 0)
         
         XCTAssertNil(view?.renderedImage, "Expect no image rendered after the image loading successfully but the view becomes not visible anymore")
+    }
+    
+    func test_loadFeedCompletion_dispatchesFromBackgroundToMainThread() {
+        let (sut, loader) = makeSUT()
+        sut.simulateViewIsAppearing()
+        
+        let exp = expectation(description: "Wait for background queue")
+        DispatchQueue.global().async {
+            loader.completeFeedLoading(at: 0)
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_loadImageDataCompletion_dispatchesFromBackgroundToMainThread() {
+        let (sut, loader) = makeSUT()
+        
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(with: [makeImage()])
+        sut.simulateFeedImageViewVisible(at: 0)
+        
+        let exp = expectation(description: "Wait for background queue")
+        DispatchQueue.global().async {
+            loader.completeImageLoading(with: self.anyImageData(), at: 0)
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
     }
     
     // MARK: - Helpers
@@ -407,5 +434,9 @@ final class FeedUIIntegrationTests: XCTestCase {
                            location: String? = nil,
                            url: URL = anyURL()) -> FeedImage {
         FeedImage(id: UUID(), description: description, location: location, url: url)
+    }
+    
+    private func anyImageData() -> Data {
+        UIImage.makeData(withColor: .red)
     }
 }
