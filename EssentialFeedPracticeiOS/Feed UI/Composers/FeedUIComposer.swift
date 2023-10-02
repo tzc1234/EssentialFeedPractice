@@ -16,7 +16,9 @@ public enum FeedUIComposer {
         feedViewController.title = FeedPresenter.title
         
         presentationAdapter.presenter = FeedPresenter(
-            view: FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader),
+            view: FeedViewAdapter(
+                controller: feedViewController,
+                imageLoader: MainQueueDispatchDecorator(decoratee: imageLoader)),
             loadingView: WeakRefProxy(refreshController))
         
         return feedViewController
