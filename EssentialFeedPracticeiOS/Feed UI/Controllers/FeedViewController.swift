@@ -9,7 +9,15 @@ import UIKit
 
 public final class FeedViewController: UITableViewController {
     var models = [FeedImageCellController]() {
-        didSet { tableView.reloadData() }
+        didSet {
+            if Thread.isMainThread {
+                tableView.reloadData()
+            } else {
+                DispatchQueue.main.async { [weak self] in
+                    self?.tableView.reloadData()
+                }
+            }
+        }
     }
     
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
