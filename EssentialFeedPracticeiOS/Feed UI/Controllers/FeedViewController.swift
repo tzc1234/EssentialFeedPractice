@@ -7,10 +7,6 @@
 
 import UIKit
 
-public class ErrorView: UIView {
-    public var message: String?
-}
-
 public final class FeedViewController: UITableViewController {
     public let errorView = ErrorView()
     
