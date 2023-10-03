@@ -8,5 +8,18 @@
 import UIKit
 
 public final class ErrorView: UIView {
-    public var message: String?
+    public private(set) lazy var button: UIButton = {
+        let btn = UIButton()
+        btn.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        return btn
+    }()
+    
+    public var message: String? {
+        get { button.title(for: .normal) }
+        set { button.setTitle(newValue, for: .normal) }
+    }
+    
+    @objc private func buttonTapped() {
+        button.setTitle(nil, for: .normal)
+    }
 }
