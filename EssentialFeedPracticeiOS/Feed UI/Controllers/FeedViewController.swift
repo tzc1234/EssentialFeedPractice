@@ -86,3 +86,9 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
         indexPaths.forEach(cancelCellControllerLoad)
     }
 }
+
+extension FeedViewController: FeedErrorView {
+    func display(_ viewModel: FeedErrorViewModel) {
+        errorView.message = viewModel.message
+    }
+}

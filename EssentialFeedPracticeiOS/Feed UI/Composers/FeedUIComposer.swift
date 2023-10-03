@@ -19,7 +19,8 @@ public enum FeedUIComposer {
             view: FeedViewAdapter(
                 controller: feedViewController,
                 imageLoader: MainQueueDispatchDecorator(decoratee: imageLoader)),
-            loadingView: WeakRefProxy(refreshController))
+            loadingView: WeakRefProxy(refreshController), 
+            errorView: WeakRefProxy(feedViewController))
         
         return feedViewController
     }
