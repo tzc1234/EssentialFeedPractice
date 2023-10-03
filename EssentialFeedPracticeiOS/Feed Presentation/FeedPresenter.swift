@@ -16,6 +16,10 @@ protocol FeedLoadingView {
     func display(_ viewModel: FeedLoadingViewModel)
 }
 
+protocol FeedErrorView {
+    func display(_ viewModel: FeedErrorViewModel)
+}
+
 final class FeedPresenter {
     static var title: String {
         NSLocalizedString("FEED_VIEW_TITLE",
@@ -24,16 +28,26 @@ final class FeedPresenter {
             comment: "Title for the feed view")
     }
     
+    static var feedLoadError: String {
+        NSLocalizedString("FEED_VIEW_CONNECTION_ERROR",
+            tableName: "Feed",
+            bundle: Bundle(for: Self.self),
+            comment: "Feed load error message")
+    }
+    
     private let view: FeedView
     private let loadingView: FeedLoadingView
+    private let errorView: FeedErrorView
     
-    init(view: FeedView, loadingView: FeedLoadingView) {
+    init(view: FeedView, loadingView: FeedLoadingView, errorView: FeedErrorView) {
         self.view = view
         self.loadingView = loadingView
+        self.errorView = errorView
     }
     
     func didStartLoadingFeed() {
         loadingView.display(FeedLoadingViewModel(isLoading: true))
+        errorView.display(.noError)
     }
     
     func didFinishLoadingFeed(with feed: [FeedImage]) {
@@ -42,6 +56,7 @@ final class FeedPresenter {
     }
     
     func didFinishLoadingFeed(with error: Error) {
+        errorView.display(.error(message: Self.feedLoadError))
         loadingView.display(FeedLoadingViewModel(isLoading: false))
     }
 }

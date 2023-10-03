@@ -22,6 +22,14 @@ extension FeedViewController {
         refreshControl?.isRefreshing == true
     }
     
+    var errorMessage: String? {
+        errorView.message
+    }
+    
+    func simulateUserDismissedFeedErrorView() {
+        errorView.button.simulate(event: .touchUpInside)
+    }
+    
     func numberOfRenderedFeedImageViews() -> Int {
         tableView.numberOfRows(inSection: feedImageSection)
     }

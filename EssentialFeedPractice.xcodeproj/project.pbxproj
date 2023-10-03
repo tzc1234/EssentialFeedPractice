@@ -53,6 +53,8 @@
 		BE87E8C52AB32FF800E04245 /* CoreDataFeedStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE87E8C42AB32FF800E04245 /* CoreDataFeedStoreTests.swift */; };
 		BE87E8C82AB332C200E04245 /* FeedStore.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BE87E8C62AB332C100E04245 /* FeedStore.xcdatamodeld */; };
 		BE87E8CA2AB3358800E04245 /* CoreDataFeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE87E8C92AB3358800E04245 /* CoreDataFeedStore.swift */; };
+		BE8E01D92ACC48D100ED126A /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8E01D82ACC48D100ED126A /* ErrorView.swift */; };
+		BE8E01DB2ACC492000ED126A /* FeedErrorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8E01DA2ACC492000ED126A /* FeedErrorViewModel.swift */; };
 		BE910DF12AB84C77000BC634 /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE910DF02AB84C77000BC634 /* URLSessionHTTPClient.swift */; };
 		BE910DF32AB84D37000BC634 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE910DF22AB84D37000BC634 /* HTTPClient.swift */; };
 		BE910DF52AB8858C000BC634 /* LoadFeedFromRemoteUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE910DF42AB8858C000BC634 /* LoadFeedFromRemoteUseCaseTests.swift */; };
@@ -197,6 +199,8 @@
 		BE87E8C42AB32FF800E04245 /* CoreDataFeedStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFeedStoreTests.swift; sourceTree = "<group>"; };
 		BE87E8C72AB332C100E04245 /* FeedStore.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FeedStore.xcdatamodel; sourceTree = "<group>"; };
 		BE87E8C92AB3358800E04245 /* CoreDataFeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFeedStore.swift; sourceTree = "<group>"; };
+		BE8E01D82ACC48D100ED126A /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
+		BE8E01DA2ACC492000ED126A /* FeedErrorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedErrorViewModel.swift; sourceTree = "<group>"; };
 		BE910DF02AB84C77000BC634 /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
 		BE910DF22AB84D37000BC634 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		BE910DF42AB8858C000BC634 /* LoadFeedFromRemoteUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadFeedFromRemoteUseCaseTests.swift; sourceTree = "<group>"; };
@@ -344,6 +348,7 @@
 				BE92FCED2AC5796D00E5AB8E /* FeedPresenter.swift */,
 				BE92FCF92AC5BC1B00E5AB8E /* FeedViewModel.swift */,
 				BE92FCFB2AC5BC4900E5AB8E /* FeedLoadingViewModel.swift */,
+				BE8E01DA2ACC492000ED126A /* FeedErrorViewModel.swift */,
 				BE92FCF52AC5A3B200E5AB8E /* FeedImagePresenter.swift */,
 				BE92FCFD2AC5BCD800E5AB8E /* FeedImageViewModel.swift */,
 				BE92FCFF2AC5BCF000E5AB8E /* FeedImageLoadingViewModel.swift */,
@@ -449,6 +454,7 @@
 			children = (
 				BEF6DEAB2ABDB93D0088BABB /* FeedImageCell.swift */,
 				BEF6DEB02ABDFDF30088BABB /* ShimmeringView.swift */,
+				BE8E01D82ACC48D100ED126A /* ErrorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -832,6 +838,7 @@
 			files = (
 				BE92FCFA2AC5BC1B00E5AB8E /* FeedViewModel.swift in Sources */,
 				BE92FCEE2AC5796D00E5AB8E /* FeedPresenter.swift in Sources */,
+				BE8E01D92ACC48D100ED126A /* ErrorView.swift in Sources */,
 				BE92FCF82AC5B85500E5AB8E /* FeedImageDataLoaderPresentationAdapter.swift in Sources */,
 				BE92FCFC2AC5BC4900E5AB8E /* FeedLoadingViewModel.swift in Sources */,
 				BE6AB8B12AC1EEA40057E7F7 /* FeedImageDataLoader.swift in Sources */,
@@ -846,6 +853,7 @@
 				BEF6DEAC2ABDB93D0088BABB /* FeedImageCell.swift in Sources */,
 				BE92FCF62AC5A3B200E5AB8E /* FeedImagePresenter.swift in Sources */,
 				BE6AB8B52AC208C80057E7F7 /* FeedImageCellController.swift in Sources */,
+				BE8E01DB2ACC492000ED126A /* FeedErrorViewModel.swift in Sources */,
 				BE672CD52AC2D2D5005CDCAA /* FeedUIComposer.swift in Sources */,
 				BE92FD002AC5BCF000E5AB8E /* FeedImageLoadingViewModel.swift in Sources */,
 			);

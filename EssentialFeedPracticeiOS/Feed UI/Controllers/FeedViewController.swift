@@ -8,6 +8,8 @@
 import UIKit
 
 public final class FeedViewController: UITableViewController {
+    public let errorView = ErrorView()
+    
     var models = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
     }
@@ -78,5 +80,11 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach(cancelCellControllerLoad)
+    }
+}
+
+extension FeedViewController: FeedErrorView {
+    func display(_ viewModel: FeedErrorViewModel) {
+        errorView.message = viewModel.message
     }
 }
