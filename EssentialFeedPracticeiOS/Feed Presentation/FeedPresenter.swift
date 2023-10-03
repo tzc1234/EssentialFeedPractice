@@ -20,10 +20,6 @@ protocol FeedErrorView {
     func display(_ viewModel: FeedErrorViewModel)
 }
 
-struct FeedErrorViewModel {
-    let message: String?
-}
-
 final class FeedPresenter {
     static var title: String {
         NSLocalizedString("FEED_VIEW_TITLE",
