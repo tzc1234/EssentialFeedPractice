@@ -7,10 +7,6 @@
 
 import Foundation
 
-public struct FeedLoadingViewModel {
-    public let isLoading: Bool
-}
-
 public struct FeedErrorViewModel {
     public let message: String?
     
