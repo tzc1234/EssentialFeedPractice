@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EssentialFeedPractice
 
 protocol FeedImageCellControllerDelegate {
     var hasNoImageRequest: Bool { get }
