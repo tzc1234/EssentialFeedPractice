@@ -15,20 +15,31 @@ struct FeedImageViewModel<Image> {
     let shouldRetry: Bool
 }
 
+struct FeedImageLoadingViewModel {
+    let isLoading: Bool
+}
+
 protocol FeedImageView {
     associatedtype Image
     
     func display(_ viewModel: FeedImageViewModel<Image>)
 }
 
+protocol FeedImageLoadingView {
+    func display(_ viewModel: FeedImageLoadingViewModel)
+}
+
 final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
     private let view: View
+    private let loadingView: FeedImageLoadingView
     
-    init(view: View) {
+    init(view: View, loadingView: FeedImageLoadingView) {
         self.view = view
+        self.loadingView = loadingView
     }
     
     func didStartLoadingImageData(for model: FeedImage) {
+        loadingView.display(FeedImageLoadingViewModel(isLoading: true))
         view.display(FeedImageViewModel<Image>(
             description: model.description,
             location: model.location,
@@ -41,15 +52,17 @@ final class FeedImagePresenterTests: XCTestCase {
     func test_init_doesNotMessageView() {
         let (_, view) = makeSUT()
         
+        XCTAssertFalse(view.isLoading)
         XCTAssertTrue(view.messages.isEmpty)
     }
     
-    func test_didStartLoadingImageData_displaysImage() {
+    func test_didStartLoadingImageData_displaysImageAndStartLoading() {
         let (sut, view) = makeSUT()
         let image = uniqueFeedImage()
         
         sut.didStartLoadingImageData(for: image)
         
+        XCTAssertTrue(view.isLoading)
         XCTAssertEqual(view.messages.count, 1)
         let message = view.messages.first
         XCTAssertEqual(message?.description, image.description)
@@ -63,17 +76,22 @@ final class FeedImagePresenterTests: XCTestCase {
     private func makeSUT(file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, Any>, view: ViewSpy) {
         let view = ViewSpy()
-        let sut = FeedImagePresenter(view: view)
+        let sut = FeedImagePresenter(view: view, loadingView: view)
         trackForMemoryLeaks(view, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, view)
     }
     
-    private class ViewSpy: FeedImageView {
+    private class ViewSpy: FeedImageView, FeedImageLoadingView {
         private(set) var messages = [FeedImageViewModel<Any>]()
+        private(set) var isLoading = false
         
         func display(_ viewModel: FeedImageViewModel<Any>) {
             messages.append(viewModel)
+        }
+        
+        func display(_ viewModel: FeedImageLoadingViewModel) {
+            isLoading = viewModel.isLoading
         }
     }
 }
