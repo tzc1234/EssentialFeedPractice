@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EssentialFeedPractice
 
 final class WeakRefProxy<T: AnyObject> {
     weak var object: T?
