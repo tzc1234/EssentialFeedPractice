@@ -41,11 +41,23 @@ protocol FeedErrorView {
 }
 
 final class FeedPresenter {
+    static var title: String {
+        NSLocalizedString("FEED_VIEW_TITLE",
+            tableName: tableName,
+            bundle: bundle,
+            comment: "Title for the feed view")
+    }
+    
     static var feedLoadError: String {
         NSLocalizedString("FEED_VIEW_CONNECTION_ERROR",
-            tableName: "Feed",
-            bundle: Bundle(for: Self.self),
+            tableName: tableName,
+            bundle: bundle,
             comment: "Feed load error message")
+    }
+    
+    private static let tableName = "Feed"
+    private static var bundle: Bundle {
+        Bundle(for: Self.self)
     }
     
     private let view: FeedView
@@ -75,6 +87,10 @@ final class FeedPresenter {
 }
 
 final class FeedPresenterTests: XCTestCase {
+    func test_title_isLocalised() {
+        XCTAssertEqual(FeedPresenter.title, localised("FEED_VIEW_TITLE"))
+    }
+    
     func test_init_doesNotMessageToView() {
         let (_, view) = makeSUT()
         
