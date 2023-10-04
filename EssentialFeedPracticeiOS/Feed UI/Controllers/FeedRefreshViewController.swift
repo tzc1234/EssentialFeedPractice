@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EssentialFeedPractice
 
 protocol FeedRefreshViewControllerDelegate {
     func didRequestFeedRefresh()

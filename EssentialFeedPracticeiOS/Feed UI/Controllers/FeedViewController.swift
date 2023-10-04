@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EssentialFeedPractice
 
 public final class FeedViewController: UITableViewController {
     public let errorView = ErrorView()
@@ -84,7 +85,7 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
 }
 
 extension FeedViewController: FeedErrorView {
-    func display(_ viewModel: FeedErrorViewModel) {
+    public func display(_ viewModel: FeedErrorViewModel) {
         errorView.message = viewModel.message
     }
 }
