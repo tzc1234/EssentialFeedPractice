@@ -99,11 +99,28 @@ final class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(message?.shouldRetry, true)
     }
     
+    func test_didFinishLoadingImageData_displaysImageOnSuccessfulTransformationAndStopLoading() {
+        let transformedData = AnyImage()
+        let (sut, view) = makeSUT(imageTransformer: { _ in transformedData })
+        let image = uniqueFeedImage()
+        let data = Data()
+        
+        sut.didFinishLoadingImageData(with: data, for: image)
+        
+        XCTAssertFalse(view.isLoading)
+        XCTAssertEqual(view.messages.count, 1)
+        let message = view.messages.first
+        XCTAssertEqual(message?.description, image.description)
+        XCTAssertEqual(message?.location, image.location)
+        XCTAssertEqual(message?.image, transformedData)
+        XCTAssertEqual(message?.shouldRetry, false)
+    }
+    
     // MARK: - Helpers
     
-    private func makeSUT(imageTransformer: @escaping (Data) -> Any? = { _ in nil },
+    private func makeSUT(imageTransformer: @escaping (Data) -> AnyImage? = { _ in nil },
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, Any>, view: ViewSpy) {
+                         line: UInt = #line) -> (sut: FeedImagePresenter<ViewSpy, AnyImage>, view: ViewSpy) {
         let view = ViewSpy()
         let sut = FeedImagePresenter(view: view, loadingView: view, imageTransformer: imageTransformer)
         trackForMemoryLeaks(view, file: file, line: line)
@@ -111,15 +128,17 @@ final class FeedImagePresenterTests: XCTestCase {
         return (sut, view)
     }
     
-    private var fail: (Data) -> Any? {
+    private var fail: (Data) -> AnyImage? {
         return { _ in nil }
     }
     
+    private struct AnyImage: Equatable {}
+    
     private class ViewSpy: FeedImageView, FeedImageLoadingView {
-        private(set) var messages = [FeedImageViewModel<Any>]()
+        private(set) var messages = [FeedImageViewModel<AnyImage>]()
         private(set) var isLoading = false
         
-        func display(_ viewModel: FeedImageViewModel<Any>) {
+        func display(_ viewModel: FeedImageViewModel<AnyImage>) {
             messages.append(viewModel)
         }
         
