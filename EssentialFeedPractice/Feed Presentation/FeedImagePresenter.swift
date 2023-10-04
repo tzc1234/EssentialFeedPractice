@@ -7,10 +7,6 @@
 
 import Foundation
 
-public struct FeedImageLoadingViewModel {
-    public let isLoading: Bool
-}
-
 public protocol FeedImageView {
     associatedtype Image
     
