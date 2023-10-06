@@ -46,8 +46,8 @@ final class LoaderSpy: FeedLoader, FeedImageDataLoader {
         }
     }
     
-    func loadImage(from url: URL,
-                   completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
+    func loadImageData(from url: URL,
+                       completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
         imageRequests.append((url, completion))
         return Task { [weak self] in
             self?.cancelledImageURLs.append(url)
