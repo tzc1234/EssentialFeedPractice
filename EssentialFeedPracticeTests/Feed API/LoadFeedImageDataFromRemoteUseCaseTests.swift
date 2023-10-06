@@ -112,6 +112,17 @@ final class LoadFeedImageDataFromRemoteUseCaseTests: XCTestCase {
         })
     }
     
+    func test_cancelLoadImageDataTask_cancelsClientURLRequest() {
+        let (sut, client) = makeSUT()
+        let url = URL(string: "https://a-given-url.com")!
+        
+        let task = sut.loadImageData(from: url) { _ in }
+        XCTAssertTrue(client.cancelledURLs.isEmpty, "Expect no cancelled URL request until task is cancelled")
+        
+        task.cancel()
+        XCTAssertEqual(client.cancelledURLs, [url], "Expect cancelled URL request after task is cancelled")
+    }
+    
     func test_loadImageDataFromURL_doesNotDeliverResultAfterSUTInstanceIsDeallocated() {
         let client = HTTPClientSpy()
         var sut: RemoteFeedImageDataLoader? = RemoteFeedImageDataLoader(client: client)
@@ -170,13 +181,21 @@ final class LoadFeedImageDataFromRemoteUseCaseTests: XCTestCase {
             messages.map(\.url)
         }
         
+        private(set) var cancelledURLs = [URL]()
+        
         private struct Task: HTTPClientTask {
-            func cancel() {}
+            let afterCancel: () -> Void
+            
+            func cancel() {
+                afterCancel()
+            }
         }
         
         func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) -> HTTPClientTask {
             messages.append((url, completion))
-            return Task()
+            return Task { [weak self] in
+                self?.cancelledURLs.append(url)
+            }
         }
         
         func complete(with error: Error, at index: Int = 0) {
