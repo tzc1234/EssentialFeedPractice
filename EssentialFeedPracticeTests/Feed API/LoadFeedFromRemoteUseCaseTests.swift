@@ -163,12 +163,17 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
             messages.map(\.url)
         }
         
+        private struct Task: HTTPClientTask {
+            func cancel() {}
+        }
+        
         private var completions: [(HTTPClient.Result) -> Void] {
             messages.map(\.completion)
         }
         
-        func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) {
+        func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) -> HTTPClientTask {
             messages.append((url, completion))
+            return Task()
         }
         
         func complete(with data: Data, at index: Int = 0) {

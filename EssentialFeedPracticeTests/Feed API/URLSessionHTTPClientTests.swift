@@ -31,7 +31,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
             XCTAssertEqual(request.httpMethod, "GET")
             exp.fulfill()
         }
-        sut.get(from: url) { _ in}
+        sut.get(from: url) { _ in }
         
         wait(for: [exp], timeout: 1)
     }
@@ -70,9 +70,24 @@ final class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertEqual(received?.response.statusCode, httpResponse.statusCode)
     }
     
+    func test_cancelGetFromURLTask_cancelsURLRequest() {
+        let exp = expectation(description: "Wait for request")
+        let task = makeSUT().get(from: anyURL()) { result in
+            switch result {
+            case let .failure(error as NSError) where error.code == URLError.cancelled.rawValue:
+                break
+            default:
+                XCTFail("Expect cancelled result, got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        task.cancel()
+        wait(for: [exp], timeout: 1)
+    }
+    
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> URLSessionHTTPClient {
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> HTTPClient {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [URLProtocolStub.self]
         let session = URLSession(configuration: configuration)
