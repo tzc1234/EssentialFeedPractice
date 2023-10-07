@@ -28,11 +28,22 @@ final class EssentialFeedPracticeAPIEndToEndTests: XCTestCase {
         }
     }
     
+    func test_endToEndTestServerGetFeedImageDataResult_matchesFixedTestAccountData() {
+        switch getFeedImageDataResult() {
+        case let .success(data):
+            XCTAssertFalse(data.isEmpty, "Expect non-empty image data")
+        case let .failure(error):
+            XCTFail("Expect successful image data, got \(error) instead")
+        default:
+            XCTFail("Expect successful image data, got no result instead")
+        }
+    }
+    
     // MARK: - Helpers
     
     private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) -> FeedLoader.Result? {
         let client = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
-        let loader = RemoteFeedLoader(client: client, url: testServerURL())
+        let loader = RemoteFeedLoader(client: client, url: feedTestServerURL())
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(loader, file: file, line: line)
         
@@ -46,7 +57,25 @@ final class EssentialFeedPracticeAPIEndToEndTests: XCTestCase {
         return receivedResult
     }
     
-    private func testServerURL() -> URL {
+    private func getFeedImageDataResult(file: StaticString = #filePath, 
+                                        line: UInt = #line) -> FeedImageDataLoader.Result? {
+        let testServerURL = feedTestServerURL().appending(path: "73A7F70C-75DA-4C2E-B5A3-EED40DC53AA6/image")
+        let client = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
+        let loader = RemoteFeedImageDataLoader(client: client)
+        trackForMemoryLeaks(client, file: file, line: line)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        
+        let exp = expectation(description: "Wait for load completion")
+        var receivedResult: FeedImageDataLoader.Result?
+        _ = loader.loadImageData(from: testServerURL) { result in
+            receivedResult = result
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 10)
+        return receivedResult
+    }
+    
+    private func feedTestServerURL() -> URL {
         URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
     }
     
