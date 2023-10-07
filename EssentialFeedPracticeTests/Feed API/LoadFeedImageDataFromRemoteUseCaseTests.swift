@@ -52,11 +52,15 @@ final class RemoteFeedImageDataLoader: FeedImageDataLoader {
             taskWrapper.complete(with: result
                 .mapError { _ in Error.connectivity }
                 .flatMap { (data, response) in
-                    let isValidResponse = response.statusCode == 200 && !data.isEmpty
+                    let isValidResponse = Self.isOK(response) && !data.isEmpty
                     return isValidResponse ? .success(data) : .failure(Error.invalidData)
                 })
         }
         return taskWrapper
+    }
+    
+    private static func isOK(_ response: HTTPURLResponse) -> Bool {
+        response.statusCode == 200
     }
 }
 
