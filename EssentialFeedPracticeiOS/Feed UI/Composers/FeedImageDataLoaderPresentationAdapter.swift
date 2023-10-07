@@ -25,7 +25,7 @@ extension FeedImageDataLoaderPresentationAdapter: FeedImageCellControllerDelegat
     
     func didRequestImage() {
         presenter?.didStartLoadingImageData(for: model)
-        task = imageLoader.loadImage(from: model.url) { [weak presenter, model] result in
+        task = imageLoader.loadImageData(from: model.url) { [weak presenter, model] result in
             switch result {
             case let .success(data):
                 presenter?.didFinishLoadingImageData(with: data, for: model)
