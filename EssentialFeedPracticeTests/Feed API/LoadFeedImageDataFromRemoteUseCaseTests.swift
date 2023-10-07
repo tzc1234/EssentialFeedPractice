@@ -16,6 +16,7 @@ final class RemoteFeedImageDataLoader: FeedImageDataLoader {
     }
     
     enum Error: Swift.Error {
+        case connectivity
         case invalidData
     }
     
@@ -57,8 +58,8 @@ final class RemoteFeedImageDataLoader: FeedImageDataLoader {
                 }
                 
                 taskWrapper.complete(with: .success(data))
-            case let .failure(error):
-                taskWrapper.complete(with: .failure(error))
+            case .failure:
+                taskWrapper.complete(with: .failure(Error.connectivity))
             }
         }
         return taskWrapper
@@ -91,11 +92,11 @@ final class LoadFeedImageDataFromRemoteUseCaseTests: XCTestCase {
         XCTAssertEqual(client.requestedURLs, [url, url])
     }
     
-    func test_loadImageDataFromURL_deliversErrorOnClientError() {
+    func test_loadImageDataFromURL_deliversConnectivityErrorOnClientError() {
         let (sut, client) = makeSUT()
-        let clientError = NSError(domain: "a client error", code: 0)
         
-        expect(sut, toCompleteWith: .failure(clientError), when: {
+        expect(sut, toCompleteWith: failure(.connectivity), when: {
+            let clientError = NSError(domain: "a client error", code: 0)
             client.complete(with: clientError)
         })
     }
