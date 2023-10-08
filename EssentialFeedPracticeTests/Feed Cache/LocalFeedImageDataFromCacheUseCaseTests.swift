@@ -7,9 +7,17 @@
 
 import XCTest
 
+typealias FeedImageDataStore = LocalFeedImageDataFromCacheUseCaseTests.FeedImageDataStoreSpy
+
 final class LocalFeedImageDataLoader {
-    init(store: Any) {
-        
+    private let store: FeedImageDataStore
+    
+    init(store: FeedImageDataStore) {
+        self.store = store
+    }
+    
+    func loadImageData(from url: URL) {
+        store.retrieveData(for: url)
     }
 }
 
@@ -21,9 +29,27 @@ final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
         XCTAssertTrue(store.messages.isEmpty)
     }
     
+    func test_loadImageDataFromURL_requestsStoredDataForURL() {
+        let store = FeedImageDataStoreSpy()
+        let sut = LocalFeedImageDataLoader(store: store)
+        let url = anyURL()
+        
+        sut.loadImageData(from: url)
+        
+        XCTAssertEqual(store.messages, [.retrieveData(for: url)])
+    }
+    
     // MARK: - Helpers
     
-    private class FeedImageDataStoreSpy {
-        private(set) var messages = [Any]()
+    class FeedImageDataStoreSpy {
+        enum Message: Equatable {
+            case retrieveData(for: URL)
+        }
+        
+        private(set) var messages = [Message]()
+        
+        func retrieveData(for url: URL) {
+            messages.append(.retrieveData(for: url))
+        }
     }
 }
