@@ -15,22 +15,22 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
     }
     
     private(set) var messages = [Message]()
-    private var retrieveCompletions = [(FeedImageDataStore.Result) -> Void]()
-    
-    func retrieveData(for url: URL, completion: @escaping (FeedImageDataStore.Result) -> Void) {
-        messages.append(.retrieveData(for: url))
-        retrieveCompletions.append(completion)
-    }
-    
-    func complete(with error: Error, at index: Int = 0) {
-        retrieveCompletions[index](.failure(error))
-    }
-    
-    func complete(with data: Data?, at index: Int = 0) {
-        retrieveCompletions[index](.success(data))
-    }
+    private var retrievalCompletions = [(RetrievalResult) -> Void]()
     
     func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> Void) {
         messages.append(.insert(data: data, for: url))
+    }
+    
+    func retrieveData(for url: URL, completion: @escaping (RetrievalResult) -> Void) {
+        messages.append(.retrieveData(for: url))
+        retrievalCompletions.append(completion)
+    }
+    
+    func completeRetrieval(with error: Error, at index: Int = 0) {
+        retrievalCompletions[index](.failure(error))
+    }
+    
+    func completeRetrieval(with data: Data?, at index: Int = 0) {
+        retrievalCompletions[index](.success(data))
     }
 }
