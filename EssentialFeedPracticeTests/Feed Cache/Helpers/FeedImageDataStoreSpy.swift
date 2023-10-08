@@ -27,6 +27,10 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
         insertionCompletions[index](.failure(error))
     }
     
+    func completeInsertionSuccessfully(at index: Int = 0) {
+        insertionCompletions[index](.success(()))
+    }
+    
     private var retrievalCompletions = [(RetrievalResult) -> Void]()
     
     func retrieveData(for url: URL, completion: @escaping (RetrievalResult) -> Void) {
