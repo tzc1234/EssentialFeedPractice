@@ -86,7 +86,7 @@
 1. System delivers error.
 
 #### Empty cache course (sad path):
-1. System deliver no image data.
+1. System deliver not found error.
 
 ---
 
