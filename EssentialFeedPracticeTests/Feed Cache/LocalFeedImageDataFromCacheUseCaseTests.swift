@@ -24,17 +24,10 @@ final class LocalFeedImageDataLoader {
     
     func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> Void) {
         store.retrieveData(for: url) { result in
-            switch result {
-            case let .success(data):
-                guard let data else {
-                    completion(.failure(Error.notFound))
-                    return
-                }
-                
-                completion(.success(data))
-            case .failure:
-                completion(.failure(Error.fail))
-            }
+            completion(result
+                .mapError { _ in Error.fail }
+                .flatMap { data in data.map { .success($0) } ?? .failure(Error.notFound) }
+            )
         }
     }
 }
