@@ -25,8 +25,13 @@ final class LocalFeedImageDataLoader {
     func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> Void) {
         store.retrieveData(for: url) { result in
             switch result {
-            case .success(_):
-                completion(.failure(Error.notFound))
+            case let .success(data):
+                guard let data else {
+                    completion(.failure(Error.notFound))
+                    return
+                }
+                
+                completion(.success(data))
             case .failure:
                 completion(.failure(Error.fail))
             }
@@ -64,6 +69,15 @@ final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
         
         expect(sut, toCompleteWith: failure(.notFound), when: {
             store.complete(with: .none)
+        })
+    }
+    
+    func test_loadImageDataFromURL_deliversStoredDataOnFoundData() {
+        let (sut, store) = makeSUT()
+        let foundData = anyData()
+        
+        expect(sut, toCompleteWith: .success(foundData), when: {
+            store.complete(with: foundData)
         })
     }
     
