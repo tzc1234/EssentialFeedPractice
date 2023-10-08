@@ -19,11 +19,17 @@ final class LocalFeedImageDataLoader {
     
     enum Error: Swift.Error {
         case fail
+        case notFound
     }
     
     func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result) -> Void) {
         store.retrieveData(for: url) { result in
-            completion(.failure(Error.fail))
+            switch result {
+            case .success(_):
+                completion(.failure(Error.notFound))
+            case .failure:
+                completion(.failure(Error.fail))
+            }
         }
     }
 }
@@ -50,6 +56,14 @@ final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
         expect(sut, toCompleteWith: failure(.fail), when: {
             let retrievalError = anyNSError()
             store.complete(with: retrievalError)
+        })
+    }
+    
+    func test_loadImageDataFromURL_deliversNotFoundErrorOnNoStoredData() {
+        let (sut, store) = makeSUT()
+        
+        expect(sut, toCompleteWith: failure(.notFound), when: {
+            store.complete(with: .none)
         })
     }
     
@@ -105,6 +119,10 @@ final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
         
         func complete(with error: Error, at index: Int = 0) {
             retrieveCompletions[index](.failure(error))
+        }
+        
+        func complete(with data: Data?, at index: Int = 0) {
+            retrieveCompletions[index](.success(data))
         }
     }
 }
