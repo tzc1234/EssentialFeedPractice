@@ -8,7 +8,11 @@
 import XCTest
 import EssentialFeedPractice
 
-typealias FeedImageDataStore = LocalFeedImageDataFromCacheUseCaseTests.FeedImageDataStoreSpy
+protocol FeedImageDataStore {
+    typealias RetrieveResult = Result<Data?, Error>
+    
+    func retrieveData(for url: URL, completion: @escaping (RetrieveResult) -> Void)
+}
 
 final class LocalFeedImageDataLoader: FeedImageDataLoader {
     private let store: FeedImageDataStore
@@ -164,15 +168,15 @@ final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
         .failure(error)
     }
     
-    class FeedImageDataStoreSpy {
+    private class FeedImageDataStoreSpy: FeedImageDataStore {
         enum Message: Equatable {
             case retrieveData(for: URL)
         }
         
         private(set) var messages = [Message]()
-        private var retrieveCompletions = [(Result<Data?, Error>) -> Void]()
+        private var retrieveCompletions = [(RetrieveResult) -> Void]()
         
-        func retrieveData(for url: URL, completion: @escaping (Result<Data?, Error>) -> Void) {
+        func retrieveData(for url: URL, completion: @escaping (RetrieveResult) -> Void) {
             messages.append(.retrieveData(for: url))
             retrieveCompletions.append(completion)
         }
