@@ -53,3 +53,13 @@ public final class LocalFeedImageDataLoader: FeedImageDataLoader {
         return taskWrapper
     }
 }
+
+extension LocalFeedImageDataLoader {
+    public typealias SaveResult = Swift.Result<Void, Error>
+    
+    public func save(_ data: Data, for url: URL, completion: @escaping (SaveResult) -> Void) {
+        store.insert(data, for: url) { result in
+            
+        }
+    }
+}

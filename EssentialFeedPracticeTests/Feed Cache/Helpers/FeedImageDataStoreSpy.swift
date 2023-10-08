@@ -11,6 +11,7 @@ import EssentialFeedPractice
 final class FeedImageDataStoreSpy: FeedImageDataStore {
     enum Message: Equatable {
         case retrieveData(for: URL)
+        case insert(data: Data, for: URL)
     }
     
     private(set) var messages = [Message]()
@@ -27,5 +28,9 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
     
     func complete(with data: Data?, at index: Int = 0) {
         retrieveCompletions[index](.success(data))
+    }
+    
+    func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> Void) {
+        messages.append(.insert(data: data, for: url))
     }
 }
