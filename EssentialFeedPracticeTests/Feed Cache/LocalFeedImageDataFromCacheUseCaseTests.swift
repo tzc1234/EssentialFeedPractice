@@ -8,59 +8,6 @@
 import XCTest
 import EssentialFeedPractice
 
-protocol FeedImageDataStore {
-    typealias RetrieveResult = Result<Data?, Error>
-    
-    func retrieveData(for url: URL, completion: @escaping (RetrieveResult) -> Void)
-}
-
-final class LocalFeedImageDataLoader: FeedImageDataLoader {
-    private let store: FeedImageDataStore
-    
-    init(store: FeedImageDataStore) {
-        self.store = store
-    }
-    
-    enum Error: Swift.Error {
-        case fail
-        case notFound
-    }
-    
-    private class ImageDataLoaderTaskWrapper: FeedImageDataLoaderTask {
-        private var completion: ((FeedImageDataLoader.Result) -> Void)?
-        
-        init(_ completion: @escaping (FeedImageDataLoader.Result) -> Void) {
-            self.completion = completion
-        }
-        
-        func complete(with result: FeedImageDataLoader.Result) {
-            completion?(result)
-        }
-        
-        func cancel() {
-            preventFurtherCompletions()
-        }
-        
-        private func preventFurtherCompletions() {
-            completion = nil
-        }
-    }
-    
-    func loadImageData(from url: URL,
-                       completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
-        let taskWrapper = ImageDataLoaderTaskWrapper(completion)
-        store.retrieveData(for: url) { [weak self] result in
-            guard self != nil else { return }
-            
-            taskWrapper.complete(with: result
-                .mapError { _ in Error.fail }
-                .flatMap { data in data.map { .success($0) } ?? .failure(Error.notFound) }
-            )
-        }
-        return taskWrapper
-    }
-}
-
 final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
     func test_init_doesNotMessageStoreUponCreation() {
         let (_, store) = makeSUT()
@@ -174,9 +121,9 @@ final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
         }
         
         private(set) var messages = [Message]()
-        private var retrieveCompletions = [(RetrieveResult) -> Void]()
+        private var retrieveCompletions = [(FeedImageDataStore.Result) -> Void]()
         
-        func retrieveData(for url: URL, completion: @escaping (RetrieveResult) -> Void) {
+        func retrieveData(for url: URL, completion: @escaping (FeedImageDataStore.Result) -> Void) {
             messages.append(.retrieveData(for: url))
             retrieveCompletions.append(completion)
         }
