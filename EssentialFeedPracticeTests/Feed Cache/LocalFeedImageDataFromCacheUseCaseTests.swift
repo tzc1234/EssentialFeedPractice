@@ -23,15 +23,13 @@ final class LocalFeedImageDataLoader {
 
 final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
     func test_init_doesNotMessageStoreUponCreation() {
-        let store = FeedImageDataStoreSpy()
-        _ = LocalFeedImageDataLoader(store: store)
+        let (_, store) = makeSUT()
         
         XCTAssertTrue(store.messages.isEmpty)
     }
     
     func test_loadImageDataFromURL_requestsStoredDataForURL() {
-        let store = FeedImageDataStoreSpy()
-        let sut = LocalFeedImageDataLoader(store: store)
+        let (sut, store) = makeSUT()
         let url = anyURL()
         
         sut.loadImageData(from: url)
@@ -40,6 +38,15 @@ final class LocalFeedImageDataFromCacheUseCaseTests: XCTestCase {
     }
     
     // MARK: - Helpers
+    
+    private func makeSUT(file: StaticString = #filePath,
+                         line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: FeedImageDataStoreSpy) {
+        let store = FeedImageDataStoreSpy()
+        let sut = LocalFeedImageDataLoader(store: store)
+        trackForMemoryLeaks(store, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return (sut, store)
+    }
     
     class FeedImageDataStoreSpy {
         enum Message: Equatable {
