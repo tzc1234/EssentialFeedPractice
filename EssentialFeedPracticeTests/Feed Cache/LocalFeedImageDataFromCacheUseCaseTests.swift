@@ -10,7 +10,7 @@ import EssentialFeedPractice
 
 typealias FeedImageDataStore = LocalFeedImageDataFromCacheUseCaseTests.FeedImageDataStoreSpy
 
-final class LocalFeedImageDataLoader {
+final class LocalFeedImageDataLoader: FeedImageDataLoader {
     private let store: FeedImageDataStore
     
     init(store: FeedImageDataStore) {
