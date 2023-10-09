@@ -25,6 +25,17 @@ public class CoreDataFeedStore {
             block(context)
         }
     }
+    
+    deinit {
+        cleanUpReferencesToPersistentStore()
+    }
+    
+    private func cleanUpReferencesToPersistentStore() {
+        context.performAndWait {
+            let coordinator = self.container.persistentStoreCoordinator
+            try? coordinator.persistentStores.forEach(coordinator.remove)
+        }
+    }
 }
 
 extension CoreDataFeedStore {
