@@ -1558,7 +1558,7 @@
 				BE879B7A2AD40962009D0760 /* FeedStore2.xcdatamodel */,
 				BE87E8C72AB332C100E04245 /* FeedStore.xcdatamodel */,
 			);
-			currentVersion = BE87E8C72AB332C100E04245 /* FeedStore.xcdatamodel */;
+			currentVersion = BE879B7A2AD40962009D0760 /* FeedStore2.xcdatamodel */;
 			path = FeedStore.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

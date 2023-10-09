@@ -59,7 +59,7 @@ public class CoreDataFeedStore: FeedStore {
         }
     }
     
-    private func perform(_ block: @escaping (NSManagedObjectContext) -> Void) {
+    func perform(_ block: @escaping (NSManagedObjectContext) -> Void) {
         context.perform { [context] in
             block(context)
         }

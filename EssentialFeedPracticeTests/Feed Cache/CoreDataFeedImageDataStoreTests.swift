@@ -8,16 +8,6 @@
 import XCTest
 import EssentialFeedPractice
 
-extension CoreDataFeedStore: FeedImageDataStore {
-    public func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> Void) {
-        
-    }
-    
-    public func retrieveData(for url: URL, completion: @escaping (RetrievalResult) -> Void) {
-        completion(.success(.none))
-    }
-}
-
 final class CoreDataFeedImageDataStoreTests: XCTestCase {
     func test_retrieveImageData_deliversNoDataWhenCacheEmpty() {
         let sut = makeSUT()
@@ -33,6 +23,16 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         insert(anyData(), for: url, into: sut)
         
         expect(sut, toRetrieveWith: .success(.none), for: notMatchingURL)
+    }
+    
+    func test_retrieveImageData_deliversDataWhenThereIsAStoredImageDataMatchingURL() {
+        let sut = makeSUT()
+        let storeData = anyData()
+        let matchingURL =  URL(string: "http://a-url.com")!
+        
+        insert(storeData, for: matchingURL, into: sut)
+        
+        expect(sut, toRetrieveWith: .success(storeData), for: matchingURL)
     }
     
     // MARK: - Helpers
