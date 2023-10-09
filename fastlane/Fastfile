@@ -25,7 +25,8 @@ platform :ios do
   lane :test do
     run_tests(
       scheme: "iOS_CI",
-      device: "iPhone 15"
+      device: "iPhone 15",
+      clean: true
     )
   end
 end
