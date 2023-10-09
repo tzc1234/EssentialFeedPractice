@@ -12,7 +12,11 @@ public class CoreDataFeedStore {
     private let context: NSManagedObjectContext
     
     public init(storeURL: URL) throws {
-        self.container = try Self.loadContainer(for: storeURL)
+        guard let model = Self.model else {
+            throw StoreError.modelNotFound
+        }
+        
+        self.container = try Self.loadContainer(for: storeURL, with: model)
         self.context = container.newBackgroundContext()
     }
     
@@ -30,9 +34,20 @@ extension CoreDataFeedStore {
     }
     
     private static let modelName = "FeedStore"
+    private static let model = getModel()
     
-    private static func loadContainer(for storeURL: URL) throws -> NSPersistentContainer {
-        let container = NSPersistentContainer(name: modelName, managedObjectModel: try model())
+    private static func getModel() -> NSManagedObjectModel? {
+        let bundle = Bundle(for: Self.self)
+        guard let url = bundle.url(forResource: modelName, withExtension: "momd") else {
+            return nil
+        }
+        
+        return NSManagedObjectModel(contentsOf: url)
+    }
+    
+    private static func loadContainer(for storeURL: URL,
+                                      with model: NSManagedObjectModel) throws -> NSPersistentContainer {
+        let container = NSPersistentContainer(name: modelName, managedObjectModel: model)
         container.persistentStoreDescriptions = [NSPersistentStoreDescription(url: storeURL)]
         
         var loadError: Error?
@@ -44,15 +59,5 @@ extension CoreDataFeedStore {
         } catch {
             throw StoreError.loadContainerFailed
         }
-    }
-    
-    private static func model() throws -> NSManagedObjectModel {
-        let bundle = Bundle(for: Self.self)
-        guard let url = bundle.url(forResource: modelName, withExtension: "momd"),
-            let model = NSManagedObjectModel(contentsOf: url) else {
-            throw StoreError.modelNotFound
-        }
-        
-        return model
     }
 }
