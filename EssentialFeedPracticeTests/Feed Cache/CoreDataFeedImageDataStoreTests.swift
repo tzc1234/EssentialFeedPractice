@@ -12,7 +12,7 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
     func test_retrieveImageData_deliversNoDataWhenCacheEmpty() {
         let sut = makeSUT()
         
-        expect(sut, toRetrieveWith: .success(.none), for: anyURL())
+        expect(sut, toRetrieveWith: noData(), for: anyURL())
     }
     
     func test_retrieveImageData_deliversNoDataWhenStoreDataURLDoesNotMatch() {
@@ -22,29 +22,29 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         
         insert(anyData(), for: url, into: sut)
         
-        expect(sut, toRetrieveWith: .success(.none), for: notMatchingURL)
+        expect(sut, toRetrieveWith: noData(), for: notMatchingURL)
     }
     
     func test_retrieveImageData_deliversDataWhenThereIsAStoredImageDataMatchingURL() {
         let sut = makeSUT()
-        let storeData = anyData()
+        let storedData = anyData()
         let matchingURL =  URL(string: "http://a-url.com")!
         
-        insert(storeData, for: matchingURL, into: sut)
+        insert(storedData, for: matchingURL, into: sut)
         
-        expect(sut, toRetrieveWith: .success(storeData), for: matchingURL)
+        expect(sut, toRetrieveWith: found(storedData), for: matchingURL)
     }
     
     func test_retrieveImageData_deliversLastInsertedData() {
         let sut = makeSUT()
-        let firstStoreData = Data("first".utf8)
-        let lastStoreData = Data("last".utf8)
+        let firstStoredData = Data("first".utf8)
+        let lastStoredData = Data("last".utf8)
         let url = URL(string: "http://a-url.com")!
         
-        insert(firstStoreData, for: url, into: sut)
-        insert(lastStoreData, for: url, into: sut)
+        insert(firstStoredData, for: url, into: sut)
+        insert(lastStoredData, for: url, into: sut)
         
-        expect(sut, toRetrieveWith: .success(lastStoreData), for: url)
+        expect(sut, toRetrieveWith: found(lastStoredData), for: url)
     }
     
     func test_sideEffects_runSerially() {
@@ -112,5 +112,13 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
     
     private func localImage(url: URL) -> LocalFeedImage {
         LocalFeedImage(id: UUID(), description: "any", location: "any", url: url)
+    }
+    
+    private func noData() -> FeedImageDataStore.RetrievalResult {
+        .success(.none)
+    }
+    
+    private func found(_ data: Data) -> FeedImageDataStore.RetrievalResult {
+        .success(data)
     }
 }
