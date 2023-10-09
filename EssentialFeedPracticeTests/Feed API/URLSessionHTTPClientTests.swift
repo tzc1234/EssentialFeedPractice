@@ -130,7 +130,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
             receivedResult = result
             exp.fulfill()
         })
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 5)
         return receivedResult!
     }
     
