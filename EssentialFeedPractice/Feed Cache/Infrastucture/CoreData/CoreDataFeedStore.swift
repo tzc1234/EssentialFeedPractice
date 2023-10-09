@@ -7,61 +7,33 @@
 
 import CoreData
 
-public class CoreDataFeedStore: FeedStore {
+public class CoreDataFeedStore {
     private let container: NSPersistentContainer
     private let context: NSManagedObjectContext
     
     public init(storeURL: URL) throws {
-        self.container = try Self.loadContainer(for: storeURL)
+        guard let model = Self.model else {
+            throw StoreError.modelNotFound
+        }
+        
+        self.container = try Self.loadContainer(for: storeURL, with: model)
         self.context = container.newBackgroundContext()
     }
     
-    public func retrieve(completion: @escaping RetrieveCompletion) {
-        perform { context in
-            do {
-                guard let managedCache = try ManagedCache.find(by: context) else {
-                    completion(.success(.none))
-                    return
-                }
-                
-                completion(.success((managedCache.localFeed, managedCache.timestamp)))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertCompletion) {
-        perform { context in
-            do {
-                let managedCache = try ManagedCache.newUniqueInstance(in: context)
-                managedCache.timestamp = timestamp
-                managedCache.feed = feed.toManagedFeed(in: context)
-                
-                try context.save()
-                completion(.success(()))
-            } catch {
-                context.rollback()
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    public func deleteCachedFeed(completion: @escaping DeleteCompletion) {
-        perform { context in
-            do {
-                try ManagedCache.find(by: context).map(context.delete).map(context.save)
-                completion(.success(()))
-            } catch {
-                context.rollback()
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    private func perform(_ block: @escaping (NSManagedObjectContext) -> Void) {
+    func perform(_ block: @escaping (NSManagedObjectContext) -> Void) {
         context.perform { [context] in
             block(context)
+        }
+    }
+    
+    deinit {
+        cleanUpReferencesToPersistentStore()
+    }
+    
+    private func cleanUpReferencesToPersistentStore() {
+        context.performAndWait {
+            let coordinator = self.container.persistentStoreCoordinator
+            try? coordinator.persistentStores.forEach(coordinator.remove)
         }
     }
 }
@@ -73,9 +45,20 @@ extension CoreDataFeedStore {
     }
     
     private static let modelName = "FeedStore"
+    private static let model = getModel()
     
-    private static func loadContainer(for storeURL: URL) throws -> NSPersistentContainer {
-        let container = NSPersistentContainer(name: modelName, managedObjectModel: try model())
+    private static func getModel() -> NSManagedObjectModel? {
+        let bundle = Bundle(for: Self.self)
+        guard let url = bundle.url(forResource: modelName, withExtension: "momd") else {
+            return nil
+        }
+        
+        return NSManagedObjectModel(contentsOf: url)
+    }
+    
+    private static func loadContainer(for storeURL: URL,
+                                      with model: NSManagedObjectModel) throws -> NSPersistentContainer {
+        let container = NSPersistentContainer(name: modelName, managedObjectModel: model)
         container.persistentStoreDescriptions = [NSPersistentStoreDescription(url: storeURL)]
         
         var loadError: Error?
@@ -87,28 +70,5 @@ extension CoreDataFeedStore {
         } catch {
             throw StoreError.loadContainerFailed
         }
-    }
-    
-    private static func model() throws -> NSManagedObjectModel {
-        let bundle = Bundle(for: Self.self)
-        guard let url = bundle.url(forResource: modelName, withExtension: "momd"),
-            let model = NSManagedObjectModel(contentsOf: url) else {
-            throw StoreError.modelNotFound
-        }
-        
-        return model
-    }
-}
-
-private extension [LocalFeedImage] {
-    func toManagedFeed(in context: NSManagedObjectContext) -> NSOrderedSet {
-        NSOrderedSet(array: map { local in
-            let managed = ManagedFeedImage(context: context)
-            managed.id = local.id
-            managed.imageDescription = local.description
-            managed.location = local.location
-            managed.url = local.url
-            return managed
-        })
     }
 }
