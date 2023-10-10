@@ -92,7 +92,7 @@ extension FeedImageCellController: FeedImageView {
         cell?.locationLabel.text = viewModel.location
         cell?.descriptionLabel.isHidden = (viewModel.description == nil)
         cell?.descriptionLabel.text = viewModel.description
-        cell?.feedImageView.image = viewModel.image
+        cell?.feedImageView.setImage(viewModel.image)
         cell?.feedImageRetryButton.isHidden = !viewModel.shouldRetry
     }
 }

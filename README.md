@@ -1,6 +1,6 @@
 # EssentialFeedPractice
 ## Practice the learnings from iOS Lead Essentials again.
-[![](https://circleci.com/gh/tzc1234/EssentialFeedPractice.svg?style=shield)](https://circleci.com/gh/tzc1234/EssentialFeedPractice)
+[![CI-iOS](https://github.com/tzc1234/EssentialFeedPractice/actions/workflows/CI-iOS.yml/badge.svg)](https://github.com/tzc1234/EssentialFeedPractice/actions/workflows/CI-iOS.yml)
 
 ## Use Cases
 

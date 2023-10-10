@@ -41,6 +41,21 @@ public final class FeedViewController: UITableViewController {
         tableView.register(FeedImageCellController.cellClass,
                            forCellReuseIdentifier: FeedImageCellController.cellIdentifier)
         tableView.prefetchDataSource = self
+        tableView.separatorStyle = .none
+        tableView.tableHeaderView = errorView.makeContainer()
+        tableView.tableFooterView = .init(frame: CGRect(x: 0, y: 0, width: 0, height: 16))
+        
+        errorView.onHide = { [weak self] in
+            self?.tableView.beginUpdates()
+            self?.tableView.sizeTableHeaderToFit()
+            self?.tableView.endUpdates()
+        }
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.sizeTableHeaderToFit()
     }
     
     public override func viewIsAppearing(_ animated: Bool) {
