@@ -7,19 +7,24 @@
 
 import UIKit
 
-public final class ErrorView: UIView {
-    public private(set) lazy var button: UIButton = {
-        let btn = UIButton()
-        btn.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-        return btn
-    }()
-    
+public final class ErrorView: UIButton {
     public var message: String? {
-        get { button.title(for: .normal) }
-        set { button.setTitle(newValue, for: .normal) }
+        get { title(for: .normal) }
+        set { setTitle(newValue, for: .normal) }
+    }
+    
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        configure()
+    }
+    
+    required init?(coder: NSCoder) { nil }
+    
+    private func configure() {
+        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
     @objc private func buttonTapped() {
-        button.setTitle(nil, for: .normal)
+        setTitle(nil, for: .normal)
     }
 }

@@ -19,7 +19,7 @@ public final class FeedImageCell: UITableViewCell {
         return sv
     }()
     
-    private(set) lazy var locationContainer: UIStackView = {
+    public private(set) lazy var locationContainer: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
         sv.spacing = 6
@@ -41,7 +41,7 @@ public final class FeedImageCell: UITableViewCell {
         return iv
     }()
     
-    private(set) lazy var locationLabel: UILabel = {
+    public private(set) lazy var locationLabel: UILabel = {
         let lbl = UILabel()
         lbl.font = .systemFont(ofSize: 15)
         lbl.numberOfLines = 0
@@ -50,7 +50,7 @@ public final class FeedImageCell: UITableViewCell {
         return lbl
     }()
     
-    private(set) lazy var feedImageContainer: ShimmeringView = {
+    public private(set) lazy var feedImageContainer: ShimmeringView = {
         let v = ShimmeringView()
         v.backgroundColor = .systemGray4
         v.layer.cornerRadius = 22
@@ -58,14 +58,14 @@ public final class FeedImageCell: UITableViewCell {
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()
-    private(set) lazy var feedImageView: UIImageView = {
+    public private(set) lazy var feedImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()
     
-    private(set) lazy var descriptionLabel: UILabel = {
+    public private(set) lazy var descriptionLabel: UILabel = {
         let lbl = UILabel()
         lbl.font = .systemFont(ofSize: 16)
         lbl.numberOfLines = 0

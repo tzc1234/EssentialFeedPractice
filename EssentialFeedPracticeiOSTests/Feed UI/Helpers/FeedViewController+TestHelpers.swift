@@ -27,7 +27,7 @@ extension FeedViewController {
     }
     
     func simulateUserDismissedFeedErrorView() {
-        errorView.button.simulate(event: .touchUpInside)
+        errorView.simulate(event: .touchUpInside)
     }
     
     func numberOfRenderedFeedImageViews() -> Int {
