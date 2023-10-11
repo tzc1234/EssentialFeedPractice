@@ -16,6 +16,7 @@
 		BE3A35502AD54E7600DB4159 /* EssentialFeedPractice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BE3A354D2AD54E7600DB4159 /* EssentialFeedPractice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE3A35512AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE3A354E2AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework */; };
 		BE3A35522AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BE3A354E2AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BE82A8D82AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8D72AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		BE3A354B2AD54CB900DB4159 /* EssentialApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialApp.xctestplan; sourceTree = "<group>"; };
 		BE3A354D2AD54E7600DB4159 /* EssentialFeedPractice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = EssentialFeedPractice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE3A354E2AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = EssentialFeedPracticeiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE82A8D72AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 			children = (
 				BE3A351B2AD54B4600DB4159 /* AppDelegate.swift */,
 				BE3A351D2AD54B4600DB4159 /* SceneDelegate.swift */,
+				BE82A8D72AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift */,
 				BE3A35242AD54B4800DB4159 /* Assets.xcassets */,
 				BE3A35262AD54B4800DB4159 /* LaunchScreen.storyboard */,
 				BE3A35292AD54B4800DB4159 /* Info.plist */,
@@ -228,6 +231,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE3A351C2AD54B4600DB4159 /* AppDelegate.swift in Sources */,
+				BE82A8D82AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift in Sources */,
 				BE3A351E2AD54B4600DB4159 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
