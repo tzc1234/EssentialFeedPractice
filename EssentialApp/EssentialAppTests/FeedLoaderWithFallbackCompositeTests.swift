@@ -9,14 +9,23 @@ import XCTest
 import EssentialFeedPractice
 
 final class FeedLoaderWithFallbackComposite: FeedLoader {
-    private let remote: FeedLoader
+    private let primary: FeedLoader
+    private let fallback: FeedLoader
     
     init(primary: FeedLoader, fallback: FeedLoader) {
-        self.remote = primary
+        self.primary = primary
+        self.fallback = fallback
     }
     
     func load(completion: @escaping (FeedLoader.Result) -> Void) {
-        remote.load(completion: completion)
+        primary.load { [weak self] result in
+            switch result {
+            case .success:
+                completion(result)
+            case .failure:
+                self?.fallback.load(completion: completion)
+            }
+        }
     }
 }
 
@@ -31,6 +40,23 @@ final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
             switch result {
             case let .success(receivedFeed):
                 XCTAssertEqual(receivedFeed, primaryFeed)
+            case .failure:
+                XCTFail("Expect successful load feed result, got \(result) instead")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_load_deliversFallbackFeedOnPrimaryFailure() {
+        let fallbackFeed = uniqueFeed()
+        let sut = makeSUT(primaryResult: .failure(anyNSError()), fallbackResult: .success(fallbackFeed))
+        
+        let exp = expectation(description: "Wait for load completion")
+        sut.load { result in
+            switch result {
+            case let .success(receivedFeed):
+                XCTAssertEqual(receivedFeed, fallbackFeed)
             case .failure:
                 XCTFail("Expect successful load feed result, got \(result) instead")
             }
@@ -54,6 +80,16 @@ final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
         return sut
     }
     
+    private func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(
+                instance,
+                "\(String(describing: instance.self)) should have deallocated. Potential memory leak.",
+                file: file,
+                line: line)
+        }
+    }
+    
     private func uniqueFeed() -> [FeedImage] {
         [
             .init(id: UUID(),
@@ -63,14 +99,8 @@ final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
         ]
     }
     
-    private func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
-        addTeardownBlock { [weak instance] in
-            XCTAssertNil(
-                instance,
-                "\(String(describing: instance.self)) should have deallocated. Potential memory leak.",
-                file: file,
-                line: line)
-        }
+    private func anyNSError() -> NSError {
+        NSError(domain: "any", code: 0)
     }
     
     private class LoaderStub: FeedLoader {
