@@ -17,7 +17,7 @@
                BlueprintIdentifier = "BE6989312AADC8430038B32C"
                BuildableName = "EssentialFeedPractice.framework"
                BlueprintName = "EssentialFeedPractice"
-               ReferencedContainer = "container:EssentialFeedPractice.xcodeproj">
+               ReferencedContainer = "container:../EssentialFeedPractice.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "BE248B652ABC5151008EDB4E"
                BuildableName = "EssentialFeedPracticeiOS.framework"
                BlueprintName = "EssentialFeedPracticeiOS"
-               ReferencedContainer = "container:EssentialFeedPractice.xcodeproj">
+               ReferencedContainer = "container:../EssentialFeedPractice.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -71,7 +71,7 @@
             BlueprintIdentifier = "BE6989312AADC8430038B32C"
             BuildableName = "EssentialFeedPractice.framework"
             BlueprintName = "EssentialFeedPractice"
-            ReferencedContainer = "container:EssentialFeedPractice.xcodeproj">
+            ReferencedContainer = "container:../EssentialFeedPractice.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

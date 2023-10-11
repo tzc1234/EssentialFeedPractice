@@ -12,14 +12,14 @@
     "codeCoverage" : {
       "targets" : [
         {
-          "containerPath" : "container:EssentialFeedPractice.xcodeproj",
-          "identifier" : "BE248B652ABC5151008EDB4E",
-          "name" : "EssentialFeedPracticeiOS"
-        },
-        {
-          "containerPath" : "container:EssentialFeedPractice.xcodeproj",
+          "containerPath" : "container:..\/EssentialFeedPractice.xcodeproj",
           "identifier" : "BE6989312AADC8430038B32C",
           "name" : "EssentialFeedPractice"
+        },
+        {
+          "containerPath" : "container:..\/EssentialFeedPractice.xcodeproj",
+          "identifier" : "BE248B652ABC5151008EDB4E",
+          "name" : "EssentialFeedPracticeiOS"
         }
       ]
     }
@@ -27,28 +27,35 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:EssentialFeedPractice.xcodeproj",
+        "containerPath" : "container:EssentialApp.xcodeproj",
+        "identifier" : "BE3A352D2AD54B4800DB4159",
+        "name" : "EssentialAppTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/EssentialFeedPractice.xcodeproj",
         "identifier" : "BE70B1E22AB9932500F30F90",
         "name" : "EssentialFeedPracticeAPIEndToEndTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:EssentialFeedPractice.xcodeproj",
+        "containerPath" : "container:..\/EssentialFeedPractice.xcodeproj",
         "identifier" : "BE1AF42D2AB497B900120182",
         "name" : "EssentialFeedPracticeCacheIntegrationTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:EssentialFeedPractice.xcodeproj",
+        "containerPath" : "container:..\/EssentialFeedPractice.xcodeproj",
         "identifier" : "BE6989392AADC8430038B32C",
         "name" : "EssentialFeedPracticeTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:EssentialFeedPractice.xcodeproj",
+        "containerPath" : "container:..\/EssentialFeedPractice.xcodeproj",
         "identifier" : "BE248B6C2ABC5151008EDB4E",
         "name" : "EssentialFeedPracticeiOSTests"
       }
