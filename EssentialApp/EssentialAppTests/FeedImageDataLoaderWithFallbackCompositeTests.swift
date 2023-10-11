@@ -18,27 +18,25 @@ final class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
     }
     
     private class TaskWrapper: FeedImageDataLoaderTask {
-        private var wrapped: FeedImageDataLoaderTask
-        
-        init(wrapped: FeedImageDataLoaderTask) {
-            self.wrapped = wrapped
-        }
+        var wrapped: FeedImageDataLoaderTask?
         
         func cancel() {
-            wrapped.cancel()
+            wrapped?.cancel()
         }
     }
     
     func loadImageData(from url: URL,
                        completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
-        TaskWrapper(wrapped: primary.loadImageData(from: url) { [weak self] result in
+        let task = TaskWrapper()
+        task.wrapped = primary.loadImageData(from: url) { [weak self] result in
             switch result {
             case .success:
                 break
             case .failure:
-                _ = self?.fallback.loadImageData(from: url) { _ in }
+                task.wrapped = self?.fallback.loadImageData(from: url) { _ in }
             }
-        })
+        }
+        return task
     }
 }
 
@@ -80,6 +78,18 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         
         XCTAssertEqual(primaryLoader.cancelledURLs, [url], "Expect to cancel URL loading from primary loader")
         XCTAssertTrue(fallbackLoader.cancelledURLs.isEmpty, "Expect no cancelled URLs in the fallback loader")
+    }
+    
+    func test_loadImageData_cancelsFallbackLoaderTaskAfterPrimaryLoaderFailure() {
+        let (sut, primaryLoader, fallbackLoader) = makeSUT()
+        let url = anyURL()
+        
+        let task = sut.loadImageData(from: url) { _ in }
+        primaryLoader.complete(with: anyNSError())
+        task.cancel()
+        
+        XCTAssertTrue(primaryLoader.cancelledURLs.isEmpty, "Expect no cancelled URLs in the primary loader")
+        XCTAssertEqual(fallbackLoader.cancelledURLs, [url], "Expect to cancel URL loading from fallback loader")
     }
     
     // MARK: - Helpers
