@@ -178,7 +178,6 @@
 		BE248B6D2ABC5151008EDB4E /* EssentialFeedPracticeiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedPracticeiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE248B722ABC5151008EDB4E /* FeedUIIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUIIntegrationTests.swift; sourceTree = "<group>"; };
 		BE248B7B2ABC51EE008EDB4E /* EssentialFeedPracticeiOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedPracticeiOS.xctestplan; sourceTree = "<group>"; };
-		BE248B7C2ABC53A8008EDB4E /* iOS_CI.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iOS_CI.xctestplan; sourceTree = SOURCE_ROOT; };
 		BE2499F42AAF31A700C2FF25 /* FeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStore.swift; sourceTree = "<group>"; };
 		BE2499F72AAF323D00C2FF25 /* LocalFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFeedLoader.swift; sourceTree = "<group>"; };
 		BE2499F92AAF329E00C2FF25 /* FeedStoreSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStoreSpy.swift; sourceTree = "<group>"; };
@@ -414,7 +413,6 @@
 			isa = PBXGroup;
 			children = (
 				BE64EA462AB4A74D007FD51B /* macOS_CI.xctestplan */,
-				BE248B7C2ABC53A8008EDB4E /* iOS_CI.xctestplan */,
 				BE6989342AADC8430038B32C /* EssentialFeedPractice */,
 				BE69893E2AADC8430038B32C /* EssentialFeedPracticeTests */,
 				BE1AF42F2AB497B900120182 /* EssentialFeedPracticeCacheIntegrationTests */,
