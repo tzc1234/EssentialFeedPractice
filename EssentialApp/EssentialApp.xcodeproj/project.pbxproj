@@ -20,6 +20,7 @@
 		BE82A8DA2AD6C9E100CA1D3E /* FeedImageDataLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8D92AD6C9E100CA1D3E /* FeedImageDataLoaderWithFallbackCompositeTests.swift */; };
 		BE82A8DC2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8DB2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift */; };
 		BE82A8DF2AD6DA0900CA1D3E /* XCTextCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8DE2AD6DA0900CA1D3E /* XCTextCase+MemoryLeakTracking.swift */; };
+		BE82A8E12AD6DACB00CA1D3E /* CommonHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8E02AD6DACB00CA1D3E /* CommonHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		BE82A8D92AD6C9E100CA1D3E /* FeedImageDataLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
 		BE82A8DB2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 		BE82A8DE2AD6DA0900CA1D3E /* XCTextCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTextCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
+		BE82A8E02AD6DACB00CA1D3E /* CommonHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonHelpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +143,7 @@
 		BE82A8DD2AD6D9E400CA1D3E /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				BE82A8E02AD6DACB00CA1D3E /* CommonHelpers.swift */,
 				BE82A8DE2AD6DA0900CA1D3E /* XCTextCase+MemoryLeakTracking.swift */,
 			);
 			path = Helpers;
@@ -258,6 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE82A8E12AD6DACB00CA1D3E /* CommonHelpers.swift in Sources */,
 				BE82A8DF2AD6DA0900CA1D3E /* XCTextCase+MemoryLeakTracking.swift in Sources */,
 				BE82A8DA2AD6C9E100CA1D3E /* FeedImageDataLoaderWithFallbackCompositeTests.swift in Sources */,
 				BE3A35332AD54B4800DB4159 /* FeedLoaderWithFallbackCompositeTests.swift in Sources */,
