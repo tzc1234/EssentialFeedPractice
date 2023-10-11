@@ -18,6 +18,7 @@
 		BE3A35522AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BE3A354E2AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE82A8D82AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8D72AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift */; };
 		BE82A8DA2AD6C9E100CA1D3E /* FeedImageDataLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8D92AD6C9E100CA1D3E /* FeedImageDataLoaderWithFallbackCompositeTests.swift */; };
+		BE82A8DC2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8DB2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		BE3A354E2AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = EssentialFeedPracticeiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE82A8D72AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 		BE82A8D92AD6C9E100CA1D3E /* FeedImageDataLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
+		BE82A8DB2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 				BE3A351B2AD54B4600DB4159 /* AppDelegate.swift */,
 				BE3A351D2AD54B4600DB4159 /* SceneDelegate.swift */,
 				BE82A8D72AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift */,
+				BE82A8DB2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift */,
 				BE3A35242AD54B4800DB4159 /* Assets.xcassets */,
 				BE3A35262AD54B4800DB4159 /* LaunchScreen.storyboard */,
 				BE3A35292AD54B4800DB4159 /* Info.plist */,
@@ -233,6 +236,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE82A8DC2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift in Sources */,
 				BE3A351C2AD54B4600DB4159 /* AppDelegate.swift in Sources */,
 				BE82A8D82AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift in Sources */,
 				BE3A351E2AD54B4600DB4159 /* SceneDelegate.swift in Sources */,
