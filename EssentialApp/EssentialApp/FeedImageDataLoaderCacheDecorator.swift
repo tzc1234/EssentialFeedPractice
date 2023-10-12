@@ -17,21 +17,13 @@ public final class FeedImageDataLoaderCacheDecorator: FeedImageDataLoader {
         self.cache = cache
     }
     
-    private struct TaskWrapper: FeedImageDataLoaderTask {
-        let wrapped: FeedImageDataLoaderTask
-        
-        func cancel() {
-            wrapped.cancel()
-        }
-    }
-    
     public func loadImageData(from url: URL,
-                       completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
-        TaskWrapper(wrapped: decoratee.loadImageData(from: url) { [weak self] result in
+                              completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
+        decoratee.loadImageData(from: url) { [weak self] result in
             completion(result.map { data in
                 self?.cache.save(data, for: url) { _ in }
                 return data
             })
-        })
+        }
     }
 }
