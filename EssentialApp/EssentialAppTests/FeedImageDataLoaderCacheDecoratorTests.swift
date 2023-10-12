@@ -9,8 +9,10 @@ import XCTest
 import EssentialFeedPractice
 
 final class FeedImageDataLoaderCacheDecorator: FeedImageDataLoader {
+    private let decoratee: FeedImageDataLoader
+    
     init(decoratee: FeedImageDataLoader) {
-        
+        self.decoratee = decoratee
     }
     
     private struct TaskWrapper: FeedImageDataLoaderTask {
@@ -19,7 +21,8 @@ final class FeedImageDataLoaderCacheDecorator: FeedImageDataLoader {
     
     func loadImageData(from url: URL,
                        completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
-        TaskWrapper()
+        _ = decoratee.loadImageData(from: url) { _ in }
+        return TaskWrapper()
     }
 }
 
@@ -29,6 +32,16 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         _ = FeedImageDataLoaderCacheDecorator(decoratee: loader)
         
         XCTAssertTrue(loader.loadedURLs.isEmpty)
+    }
+    
+    func test_loadImageData_loadsFromLoader() {
+        let loader = LoaderSpy()
+        let sut = FeedImageDataLoaderCacheDecorator(decoratee: loader)
+        let url = anyURL()
+        
+        _ = sut.loadImageData(from: url) { _ in }
+        
+        XCTAssertEqual(loader.loadedURLs, [url])
     }
     
     // MARK: - Helpers
