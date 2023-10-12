@@ -62,13 +62,4 @@ final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
         }
         wait(for: [exp], timeout: 1)
     }
-    
-    private func uniqueFeed() -> [FeedImage] {
-        [
-            .init(id: UUID(),
-                  description: "any description",
-                  location: "any location",
-                  url: anyURL())
-        ]
-    }
 }
