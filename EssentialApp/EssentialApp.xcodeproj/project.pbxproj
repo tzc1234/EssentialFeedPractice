@@ -14,6 +14,7 @@
 		BE20A63A2AD7FE7100F08E09 /* FeedImageDataLoaderCacheDecoratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20A6392AD7FE7100F08E09 /* FeedImageDataLoaderCacheDecoratorTests.swift */; };
 		BE20A63C2AD8049400F08E09 /* FeedImageDataLoaderSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20A63B2AD8049400F08E09 /* FeedImageDataLoaderSpy.swift */; };
 		BE20A63E2AD8058C00F08E09 /* XCTestCase+FeedImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20A63D2AD8058C00F08E09 /* XCTestCase+FeedImageDataLoader.swift */; };
+		BE20A6422AD80A9400F08E09 /* FeedImageDataLoaderCacheDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20A6412AD80A9400F08E09 /* FeedImageDataLoaderCacheDecorator.swift */; };
 		BE3A351C2AD54B4600DB4159 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3A351B2AD54B4600DB4159 /* AppDelegate.swift */; };
 		BE3A351E2AD54B4600DB4159 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3A351D2AD54B4600DB4159 /* SceneDelegate.swift */; };
 		BE3A35252AD54B4800DB4159 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE3A35242AD54B4800DB4159 /* Assets.xcassets */; };
@@ -63,6 +64,7 @@
 		BE20A6392AD7FE7100F08E09 /* FeedImageDataLoaderCacheDecoratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderCacheDecoratorTests.swift; sourceTree = "<group>"; };
 		BE20A63B2AD8049400F08E09 /* FeedImageDataLoaderSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderSpy.swift; sourceTree = "<group>"; };
 		BE20A63D2AD8058C00F08E09 /* XCTestCase+FeedImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FeedImageDataLoader.swift"; sourceTree = "<group>"; };
+		BE20A6412AD80A9400F08E09 /* FeedImageDataLoaderCacheDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderCacheDecorator.swift; sourceTree = "<group>"; };
 		BE3A35182AD54B4600DB4159 /* EssentialApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EssentialApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE3A351B2AD54B4600DB4159 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BE3A351D2AD54B4600DB4159 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				BE82A8D72AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift */,
 				BE82A8DB2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift */,
 				BE20A6372AD7FB3D00F08E09 /* FeedLoaderCacheDecorator.swift */,
+				BE20A6412AD80A9400F08E09 /* FeedImageDataLoaderCacheDecorator.swift */,
 				BE3A35242AD54B4800DB4159 /* Assets.xcassets */,
 				BE3A35262AD54B4800DB4159 /* LaunchScreen.storyboard */,
 				BE3A35292AD54B4800DB4159 /* Info.plist */,
@@ -274,6 +277,7 @@
 				BE82A8DC2AD6D98900CA1D3E /* FeedImageDataLoaderWithFallbackComposite.swift in Sources */,
 				BE3A351C2AD54B4600DB4159 /* AppDelegate.swift in Sources */,
 				BE82A8D82AD6B6DC00CA1D3E /* FeedLoaderWithFallbackComposite.swift in Sources */,
+				BE20A6422AD80A9400F08E09 /* FeedImageDataLoaderCacheDecorator.swift in Sources */,
 				BE20A6382AD7FB3D00F08E09 /* FeedLoaderCacheDecorator.swift in Sources */,
 				BE3A351E2AD54B4600DB4159 /* SceneDelegate.swift in Sources */,
 			);
