@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import EssentialFeedPractice
 
 func anyNSError() -> NSError {
     NSError(domain: "any", code: 0)
@@ -13,6 +14,15 @@ func anyNSError() -> NSError {
 
 func anyData() -> Data {
     Data("any data".utf8)
+}
+
+func uniqueFeed() -> [FeedImage] {
+    [
+        .init(id: UUID(),
+              description: "any description",
+              location: "any location",
+              url: anyURL())
+    ]
 }
 
 func anyURL() -> URL {

@@ -135,21 +135,12 @@ public final class FeedImageCell: UITableViewCell {
             
             outmostStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             outmostStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            outmostStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6)
-                .set { $0.priority = .init(999) },
-            outmostStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6)
-                .set { $0.priority = .init(999) }
+            outmostStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6).prioritised(999),
+            outmostStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6).prioritised(999)
         ])
     }
     
     @objc private func retryButtonTapped() {
         onRetry?()
-    }
-}
-
-private extension NSLayoutConstraint {
-    func set(_ action: (NSLayoutConstraint) -> Void) -> NSLayoutConstraint {
-        action(self)
-        return self
     }
 }
