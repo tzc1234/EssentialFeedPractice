@@ -25,7 +25,7 @@ final class FeedImageDataLoaderCacheDecorator: FeedImageDataLoader {
     
     func loadImageData(from url: URL,
                        completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
-        TaskWrapper(wrapped: decoratee.loadImageData(from: url) { _ in })
+        TaskWrapper(wrapped: decoratee.loadImageData(from: url, completion: completion))
     }
 }
 
@@ -55,6 +55,24 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         XCTAssertEqual(loader.cancelledURLs, [url])
     }
     
+    func test_loadImageData_deliversDataOnLoaderSuccess() {
+        let (sut, loader) = makeSUT()
+        let imageData = anyData()
+        
+        expect(sut, toCompleteWith: .success(imageData), when: {
+            loader.complete(with: imageData)
+        })
+    }
+    
+    func test_loadImageData_deliversDataOnLoaderFailure() {
+        let (sut, loader) = makeSUT()
+        let loaderError = anyNSError()
+        
+        expect(sut, toCompleteWith: .failure(loaderError), when: {
+            loader.complete(with: loaderError)
+        })
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath,
@@ -64,6 +82,27 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, loader)
+    }
+    
+    private func expect(_ sut: FeedImageDataLoader,
+                        toCompleteWith expectedResult: FeedImageDataLoader.Result,
+                        when action: () -> Void,
+                        file: StaticString = #filePath,
+                        line: UInt = #line) {
+        let exp = expectation(description: "Wait for load completion")
+        _ = sut.loadImageData(from: anyURL()) { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case let (.success(receivedData), .success(expectedData)):
+                XCTAssertEqual(receivedData, expectedData, file: file, line: line)
+            case (.failure, .failure):
+                break
+            default:
+                XCTFail("Expect \(expectedResult), got: \(receivedResult) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        action()
+        wait(for: [exp], timeout: 1)
     }
     
     private class LoaderSpy: FeedImageDataLoader {
