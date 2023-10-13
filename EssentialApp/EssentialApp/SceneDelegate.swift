@@ -21,10 +21,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let remoteFeedLoader = RemoteFeedLoader(client: client, url: remoteURL)
         let remoteImageLoader = RemoteFeedImageDataLoader(client: client)
         
-        let storeURL = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("feed-store.sqlite")
-        let store = try! CoreDataFeedStore(storeURL: storeURL)
-        let localFeedLoader = LocalFeedLoader(store: store)
-        let localImageLoader = LocalFeedImageDataLoader(store: store)
+        let localStoreURL = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("feed-store.sqlite")
+        let localStore = try! CoreDataFeedStore(storeURL: localStoreURL)
+        let localFeedLoader = LocalFeedLoader(store: localStore)
+        let localImageLoader = LocalFeedImageDataLoader(store: localStore)
+        
+        if CommandLine.arguments.contains("-reset") {
+            try? FileManager.default.removeItem(at: localStoreURL)
+        }
         
         let feedViewController = FeedUIComposer.feedComposedWith(
             feedLoader: FeedLoaderWithFallbackComposite(
