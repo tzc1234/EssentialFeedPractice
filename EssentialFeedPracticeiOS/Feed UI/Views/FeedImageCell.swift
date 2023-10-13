@@ -62,6 +62,7 @@ public final class FeedImageCell: UITableViewCell {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.isAccessibilityElement = true
         return iv
     }()
     
