@@ -14,7 +14,8 @@
       "containerPath" : "container:EssentialApp.xcodeproj",
       "identifier" : "BE3A35172AD54B4600DB4159",
       "name" : "EssentialApp"
-    }
+    },
+    "uiTestingScreenshotsLifetime" : "keepAlways"
   },
   "testTargets" : [
     {
