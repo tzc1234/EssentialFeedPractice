@@ -41,7 +41,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 fallback: FeedImageDataLoaderCacheDecorator(decoratee: remoteImageLoader, cache: localImageLoader)))
         
         window?.rootViewController = UINavigationController(rootViewController: feedViewController)
-//        window?.makeKeyAndVisible()
+        window?.makeKeyAndVisible()
     }
     
     func makeRemoteClient() -> HTTPClient {
