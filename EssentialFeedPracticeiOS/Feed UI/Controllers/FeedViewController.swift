@@ -11,7 +11,7 @@ import EssentialFeedPractice
 public final class FeedViewController: UITableViewController {
     public let errorView = ErrorView()
     
-    var models = [FeedImageCellController]() {
+    private var models = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
     }
     
@@ -19,7 +19,7 @@ public final class FeedViewController: UITableViewController {
     
     private let refreshController: FeedRefreshViewController
     
-    init(refreshController: FeedRefreshViewController) {
+    public init(refreshController: FeedRefreshViewController) {
         self.refreshController = refreshController
         super.init(nibName: nil, bundle: nil)
     }
@@ -62,6 +62,10 @@ public final class FeedViewController: UITableViewController {
         super.viewIsAppearing(animated)
         
         onViewIsAppearing?(self)
+    }
+    
+    public func display(_ cellControllers: [FeedImageCellController]) {
+        models = cellControllers
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

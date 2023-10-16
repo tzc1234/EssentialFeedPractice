@@ -8,13 +8,13 @@
 import UIKit
 import EssentialFeedPractice
 
-protocol FeedImageCellControllerDelegate {
+public protocol FeedImageCellControllerDelegate {
     var hasNoImageRequest: Bool { get }
     func didRequestImage()
     func didCancelImageRequest()
 }
 
-final class FeedImageCellController {
+public final class FeedImageCellController {
     static let cellClass: AnyClass = FeedImageCell.self
     static let cellIdentifier = FeedImageCell.identifier
     
@@ -22,7 +22,7 @@ final class FeedImageCellController {
     
     private let delegate: FeedImageCellControllerDelegate
     
-    init(delegate: FeedImageCellControllerDelegate) {
+    public init(delegate: FeedImageCellControllerDelegate) {
         self.delegate = delegate
     }
     
@@ -83,7 +83,7 @@ final class FeedImageCellController {
 }
 
 extension FeedImageCellController: FeedImageView {
-    func display(_ viewModel: FeedImageViewModel<UIImage>) {
+    public func display(_ viewModel: FeedImageViewModel<UIImage>) {
         configureCell(with: viewModel)
     }
     
@@ -98,7 +98,7 @@ extension FeedImageCellController: FeedImageView {
 }
 
 extension FeedImageCellController: FeedImageLoadingView {
-    func display(_ viewModel: FeedImageLoadingViewModel) {
+    public func display(_ viewModel: FeedImageLoadingViewModel) {
         cell?.feedImageContainer.isShimmering = viewModel.isLoading
     }
 }
