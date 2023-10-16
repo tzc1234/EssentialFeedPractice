@@ -59,13 +59,6 @@
         "identifier" : "BE248B6C2ABC5151008EDB4E",
         "name" : "EssentialFeedPracticeiOSTests"
       }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:EssentialApp.xcodeproj",
-        "identifier" : "BE0620E52AD93C5F003C59D1",
-        "name" : "EssentialAppUIAcceptanceTests"
-      }
     }
   ],
   "version" : 1
