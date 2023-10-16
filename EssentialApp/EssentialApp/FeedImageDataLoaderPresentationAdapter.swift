@@ -6,6 +6,7 @@
 //
 
 import EssentialFeedPractice
+import EssentialFeedPracticeiOS
 
 final class FeedImageDataLoaderPresentationAdapter<View: FeedImageView, Image> where View.Image == Image {
     private var task: FeedImageDataLoaderTask?

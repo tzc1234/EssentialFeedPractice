@@ -8,11 +8,11 @@
 import UIKit
 import EssentialFeedPractice
 
-protocol FeedRefreshViewControllerDelegate {
+public protocol FeedRefreshViewControllerDelegate {
     func didRequestFeedRefresh()
 }
 
-final class FeedRefreshViewController: NSObject {
+public final class FeedRefreshViewController: NSObject {
     private(set) lazy var view: UIRefreshControl = {
         let view = UIRefreshControl()
         view.addTarget(self, action: #selector(refresh), for: .valueChanged)
@@ -21,7 +21,7 @@ final class FeedRefreshViewController: NSObject {
     
     private let delegate: FeedRefreshViewControllerDelegate
     
-    init(delegate: FeedRefreshViewControllerDelegate) {
+    public init(delegate: FeedRefreshViewControllerDelegate) {
         self.delegate = delegate
     }
     
@@ -31,7 +31,7 @@ final class FeedRefreshViewController: NSObject {
 }
 
 extension FeedRefreshViewController: FeedLoadingView {
-    func display(_ viewModel: FeedLoadingViewModel) {
+    public func display(_ viewModel: FeedLoadingViewModel) {
         if viewModel.isLoading {
             view.beginRefreshing()
         } else {

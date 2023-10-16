@@ -1,5 +1,5 @@
 //
-//  XCTextCase+MemoryLeakTracking.swift
+//  XCTestCase+MemoryLeakTracking.swift
 //  EssentialAppTests
 //
 //  Created by Tsz-Lung on 11/10/2023.
