@@ -18,6 +18,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         
+        window = UIWindow(windowScene: scene)
+        configureWindow()
+    }
+    
+    func configureWindow() {
         let remoteURL = URL(string: "https://ile-api.essentialdeveloper.com/essential-feed/v1/feed")!
         let client = makeRemoteClient()
         let remoteFeedLoader = RemoteFeedLoader(client: client, url: remoteURL)
@@ -35,9 +40,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 primary: localImageLoader,
                 fallback: FeedImageDataLoaderCacheDecorator(decoratee: remoteImageLoader, cache: localImageLoader)))
         
-        window = UIWindow(windowScene: scene)
         window?.rootViewController = UINavigationController(rootViewController: feedViewController)
-        window?.makeKeyAndVisible()
+//        window?.makeKeyAndVisible()
     }
     
     func makeRemoteClient() -> HTTPClient {
