@@ -59,7 +59,7 @@ extension UIViewController {
         }
         
         func snapshot() -> UIImage {
-            let renderer = UIGraphicsImageRenderer(bounds: bounds)
+            let renderer = UIGraphicsImageRenderer(bounds: bounds, format: .init(for: traitCollection))
             return renderer.image { action in
                 layer.render(in: action.cgContext)
             }
