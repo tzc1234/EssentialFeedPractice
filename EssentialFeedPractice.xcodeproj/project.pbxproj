@@ -51,6 +51,7 @@
 		BE7FCCDB2ADFE49700093BED /* EMPTY_FEED.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7FCCDA2ADFE49700093BED /* EMPTY_FEED.png */; };
 		BE7FCCDE2AE002C300093BED /* UIImage+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7FCCDD2AE002C300093BED /* UIImage+TestHelpers.swift */; };
 		BE7FCCE02AE0045D00093BED /* FEED_WITH_CONTENT.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7FCCDF2AE0045D00093BED /* FEED_WITH_CONTENT.png */; };
+		BE7FCCE22AE006DD00093BED /* FEED_WITH_ERROR_MESSAGE.png in Resources */ = {isa = PBXBuildFile; fileRef = BE7FCCE12AE006DD00093BED /* FEED_WITH_ERROR_MESSAGE.png */; };
 		BE879B792AD3FE9B009D0760 /* CoreDataFeedImageDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE879B782AD3FE9B009D0760 /* CoreDataFeedImageDataStoreTests.swift */; };
 		BE879B7C2AD40D0B009D0760 /* CoreDataFeedStore+FeedImageDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE879B7B2AD40D0B009D0760 /* CoreDataFeedStore+FeedImageDataStore.swift */; };
 		BE879B7E2AD424E1009D0760 /* CoreDataFeedStore+FeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE879B7D2AD424E1009D0760 /* CoreDataFeedStore+FeedStore.swift */; };
@@ -204,6 +205,7 @@
 		BE7FCCDA2ADFE49700093BED /* EMPTY_FEED.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EMPTY_FEED.png; sourceTree = "<group>"; };
 		BE7FCCDD2AE002C300093BED /* UIImage+TestHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE7FCCDF2AE0045D00093BED /* FEED_WITH_CONTENT.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FEED_WITH_CONTENT.png; sourceTree = "<group>"; };
+		BE7FCCE12AE006DD00093BED /* FEED_WITH_ERROR_MESSAGE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FEED_WITH_ERROR_MESSAGE.png; sourceTree = "<group>"; };
 		BE879B782AD3FE9B009D0760 /* CoreDataFeedImageDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFeedImageDataStoreTests.swift; sourceTree = "<group>"; };
 		BE879B7A2AD40962009D0760 /* FeedStore2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FeedStore2.xcdatamodel; sourceTree = "<group>"; };
 		BE879B7B2AD40D0B009D0760 /* CoreDataFeedStore+FeedImageDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreDataFeedStore+FeedImageDataStore.swift"; sourceTree = "<group>"; };
@@ -502,6 +504,7 @@
 			children = (
 				BE7FCCDA2ADFE49700093BED /* EMPTY_FEED.png */,
 				BE7FCCDF2AE0045D00093BED /* FEED_WITH_CONTENT.png */,
+				BE7FCCE12AE006DD00093BED /* FEED_WITH_ERROR_MESSAGE.png */,
 			);
 			path = snapshots;
 			sourceTree = "<group>";
@@ -814,6 +817,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE7FCCDB2ADFE49700093BED /* EMPTY_FEED.png in Resources */,
+				BE7FCCE22AE006DD00093BED /* FEED_WITH_ERROR_MESSAGE.png in Resources */,
 				BE7FCCE02AE0045D00093BED /* FEED_WITH_CONTENT.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
