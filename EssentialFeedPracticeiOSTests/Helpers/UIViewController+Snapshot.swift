@@ -30,6 +30,7 @@ extension UIViewController {
                     .init(userInterfaceIdiom: .phone),
                     .init(horizontalSizeClass: .compact),
                     .init(verticalSizeClass: .regular),
+                    .init(accessibilityContrast: .normal),
                     .init(displayScale: 3),
                     .init(displayGamut: .P3),
                     .init(userInterfaceStyle: style)
