@@ -45,14 +45,14 @@ public final class FeedImageCell: UITableViewCell {
         let lbl = UILabel()
         lbl.font = .systemFont(ofSize: 15)
         lbl.numberOfLines = 0
-        lbl.textColor = .systemGray3
+        lbl.textColor = .secondaryLabel
         lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()
     
     public private(set) lazy var feedImageContainer: ShimmeringView = {
         let v = ShimmeringView()
-        v.backgroundColor = .systemGray4
+        v.backgroundColor = .secondaryLabel
         v.layer.cornerRadius = 22
         v.clipsToBounds = true
         v.translatesAutoresizingMaskIntoConstraints = false
@@ -71,7 +71,7 @@ public final class FeedImageCell: UITableViewCell {
         let lbl = UILabel()
         lbl.font = .systemFont(ofSize: 16)
         lbl.numberOfLines = 0
-        lbl.textColor = .systemGray3
+        lbl.textColor = .secondaryLabel
         lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()

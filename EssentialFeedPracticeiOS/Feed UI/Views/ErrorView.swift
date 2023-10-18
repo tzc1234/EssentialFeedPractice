@@ -28,6 +28,7 @@ public final class ErrorView: UIButton {
     
     private func configure() {
         titleLabel?.numberOfLines = 0
+        titleLabel?.textAlignment = .center
         setTitleColor(.white, for: .normal)
         backgroundColor = UIColor(red: 0.99951404330000004, green: 0.41759261489999999, blue: 0.4154433012, alpha: 1)
         addTarget(self, action: #selector(hideMessageAnimated), for: .touchUpInside)
