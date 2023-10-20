@@ -14,15 +14,18 @@ import EssentialFeedPracticeiOS
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
+    private let remoteURL = URL(string: "https://ile-api.essentialdeveloper.com/essential-feed/v1/feed")!
+    private lazy var remoteFeedLoader = RemoteFeedLoader(client: httpClient, url: remoteURL)
+    private lazy var localFeedLoader: LocalFeedLoader = {
+        LocalFeedLoader(store: store)
+    }()
+    
     private lazy var httpClient: HTTPClient = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
     private lazy var store: FeedStore & FeedImageDataStore = {
         try! CoreDataFeedStore(
             storeURL: NSPersistentContainer
                 .defaultDirectoryURL()
                 .appendingPathComponent("feed-store.sqlite"))
-    }()
-    private lazy var localFeedLoader: LocalFeedLoader = {
-        LocalFeedLoader(store: store)
     }()
     
     convenience init(httpClient: HTTPClient, store: FeedStore & FeedImageDataStore) {
@@ -57,10 +60,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func makeRemoteFeedLoaderWithLocalFallback() -> RemoteFeedLoader.Publisher {
-        let remoteURL = URL(string: "https://ile-api.essentialdeveloper.com/essential-feed/v1/feed")!
-        let remoteFeedLoader = RemoteFeedLoader(client: httpClient, url: remoteURL)
-        
-        return remoteFeedLoader.loadPublisher()
+        remoteFeedLoader.loadPublisher()
             .caching(to: localFeedLoader)
             .fallback(to: localFeedLoader.loadPublisher)
     }
@@ -83,7 +83,7 @@ extension Publisher where Output == [FeedImage] {
     }
 }
 
-extension FeedCache {
+private extension FeedCache {
     func saveIgnoringResult(_ feed: [FeedImage]) {
         save(feed) { _ in }
     }
