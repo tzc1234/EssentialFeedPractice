@@ -28,16 +28,18 @@ extension FeedImageDataLoaderPresentationAdapter: FeedImageCellControllerDelegat
     
     func didRequestImage() {
         presenter?.didStartLoadingImageData(for: model)
-        cancellable = imageLoader(model.url).sink { [weak presenter, model] completion in
-            switch completion {
-            case .finished:
-                break
-            case let .failure(error):
-                presenter?.didFinishLoadingImageData(with: error, for: model)
+        cancellable = imageLoader(model.url)
+            .dispatchOnMainQueue()
+            .sink { [weak presenter, model] completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
+                    presenter?.didFinishLoadingImageData(with: error, for: model)
+                }
+            } receiveValue: { [weak presenter, model] data in
+                presenter?.didFinishLoadingImageData(with: data, for: model)
             }
-        } receiveValue: { [weak presenter, model] data in
-            presenter?.didFinishLoadingImageData(with: data, for: model)
-        }
     }
     
     func didCancelImageRequest() {

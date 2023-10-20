@@ -23,15 +23,17 @@ final class FeedLoaderPresentationAdapter {
 extension FeedLoaderPresentationAdapter: FeedRefreshViewControllerDelegate {
     func didRequestFeedRefresh() {
         presenter?.didStartLoadingFeed()
-        cancellable = feedLoader().sink { [weak presenter] completion in
-            switch completion {
-            case .finished:
-                break
-            case let .failure(error):
-                presenter?.didFinishLoadingFeed(with: error)
+        cancellable = feedLoader()
+            .dispatchOnMainQueue()
+            .sink { [weak presenter] completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
+                    presenter?.didFinishLoadingFeed(with: error)
+                }
+            } receiveValue: { [weak presenter] feed in
+                presenter?.didFinishLoadingFeed(with: feed)
             }
-        } receiveValue: { [weak presenter] feed in
-            presenter?.didFinishLoadingFeed(with: feed)
-        }
     }
 }
