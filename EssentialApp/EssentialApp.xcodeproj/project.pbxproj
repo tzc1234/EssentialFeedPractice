@@ -34,6 +34,7 @@
 		BE3A35522AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BE3A354E2AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE82A8DF2AD6DA0900CA1D3E /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8DE2AD6DA0900CA1D3E /* XCTestCase+MemoryLeakTracking.swift */; };
 		BE82A8E12AD6DACB00CA1D3E /* CommonHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE82A8E02AD6DACB00CA1D3E /* CommonHelpers.swift */; };
+		BEB5B80C2AE293230067EE45 /* CombineHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB5B80B2AE293230067EE45 /* CombineHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,7 @@
 		BE3A354E2AD54E7600DB4159 /* EssentialFeedPracticeiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = EssentialFeedPracticeiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE82A8DE2AD6DA0900CA1D3E /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 		BE82A8E02AD6DACB00CA1D3E /* CommonHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonHelpers.swift; sourceTree = "<group>"; };
+		BEB5B80B2AE293230067EE45 /* CombineHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineHelpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +140,7 @@
 			children = (
 				BE3A351B2AD54B4600DB4159 /* AppDelegate.swift */,
 				BE3A351D2AD54B4600DB4159 /* SceneDelegate.swift */,
+				BEB5B80B2AE293230067EE45 /* CombineHelpers.swift */,
 				BE2C5BAD2ADD479D002AA16A /* FeedImageDataLoaderPresentationAdapter.swift */,
 				BE2C5BAF2ADD479D002AA16A /* FeedLoaderPresentationAdapter.swift */,
 				BE2C5BAB2ADD479D002AA16A /* FeedUIComposer.swift */,
@@ -296,6 +299,7 @@
 				BE2C5BB52ADD479D002AA16A /* FeedLoaderPresentationAdapter.swift in Sources */,
 				BE3A351E2AD54B4600DB4159 /* SceneDelegate.swift in Sources */,
 				BE2C5BB62ADD479D002AA16A /* WeakRefProxy.swift in Sources */,
+				BEB5B80C2AE293230067EE45 /* CombineHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
