@@ -5,39 +5,45 @@
 //  Created by Tsz-Lung on 28/09/2023.
 //
 
+import Combine
+import Foundation
 import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 
 final class FeedImageDataLoaderPresentationAdapter<View: FeedImageView, Image> where View.Image == Image {
-    private var task: FeedImageDataLoaderTask?
+    private var cancellable: AnyCancellable?
     var presenter: FeedImagePresenter<View, Image>?
     
     private let model: FeedImage
-    private let imageLoader: FeedImageDataLoader
+    private let imageLoader: (URL) -> FeedImageDataLoader.Publisher
     
-    init(model: FeedImage, imageLoader: FeedImageDataLoader) {
+    init(model: FeedImage, imageLoader: @escaping (URL) -> FeedImageDataLoader.Publisher) {
         self.model = model
         self.imageLoader = imageLoader
     }
 }
 
 extension FeedImageDataLoaderPresentationAdapter: FeedImageCellControllerDelegate {
-    var hasNoImageRequest: Bool { task == nil }
+    var hasNoImageRequest: Bool { cancellable == nil }
     
     func didRequestImage() {
         presenter?.didStartLoadingImageData(for: model)
-        task = imageLoader.loadImageData(from: model.url) { [weak presenter, model] result in
-            switch result {
-            case let .success(data):
+        cancellable = imageLoader(model.url)
+            .dispatchOnMainQueue()
+            .sink { [weak presenter, model] completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
+                    presenter?.didFinishLoadingImageData(with: error, for: model)
+                }
+            } receiveValue: { [weak presenter, model] data in
                 presenter?.didFinishLoadingImageData(with: data, for: model)
-            case let .failure(error):
-                presenter?.didFinishLoadingImageData(with: error, for: model)
             }
-        }
     }
     
     func didCancelImageRequest() {
-        task?.cancel()
-        task = nil
+        cancellable?.cancel()
+        cancellable = nil
     }
 }

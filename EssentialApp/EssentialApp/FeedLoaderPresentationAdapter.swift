@@ -5,14 +5,17 @@
 //  Created by Tsz-Lung on 28/09/2023.
 //
 
+import Combine
 import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 
 final class FeedLoaderPresentationAdapter {
-    private let feedLoader: FeedLoader
     var presenter: FeedPresenter?
+    private var cancellable: AnyCancellable?
     
-    init(feedLoader: FeedLoader) {
+    private let feedLoader: () -> FeedLoader.Publisher
+    
+    init(feedLoader: @escaping () -> FeedLoader.Publisher) {
         self.feedLoader = feedLoader
     }
 }
@@ -20,13 +23,17 @@ final class FeedLoaderPresentationAdapter {
 extension FeedLoaderPresentationAdapter: FeedRefreshViewControllerDelegate {
     func didRequestFeedRefresh() {
         presenter?.didStartLoadingFeed()
-        feedLoader.load { [weak presenter] result in
-            switch result {
-            case let .success(feed):
+        cancellable = feedLoader()
+            .dispatchOnMainQueue()
+            .sink { [weak presenter] completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
+                    presenter?.didFinishLoadingFeed(with: error)
+                }
+            } receiveValue: { [weak presenter] feed in
                 presenter?.didFinishLoadingFeed(with: feed)
-            case let .failure(error):
-                presenter?.didFinishLoadingFeed(with: error)
             }
-        }
     }
 }
