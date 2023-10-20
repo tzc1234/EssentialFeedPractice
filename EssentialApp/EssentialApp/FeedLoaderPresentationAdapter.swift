@@ -13,9 +13,9 @@ final class FeedLoaderPresentationAdapter {
     var presenter: FeedPresenter?
     private var cancellable: AnyCancellable?
     
-    private let feedLoader: () -> AnyPublisher<[FeedImage], Error>
+    private let feedLoader: () -> FeedLoader.Publisher
     
-    init(feedLoader: @escaping () -> AnyPublisher<[FeedImage], Error>) {
+    init(feedLoader: @escaping () -> FeedLoader.Publisher) {
         self.feedLoader = feedLoader
     }
 }
