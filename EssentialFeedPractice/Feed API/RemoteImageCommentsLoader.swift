@@ -21,7 +21,9 @@ public final class RemoteImageCommentsLoader: FeedLoader {
         case invalidData
     }
     
-    public func load(completion: @escaping (FeedLoader.Result) -> Void) {
+    public typealias Result = FeedLoader.Result
+    
+    public func load(completion: @escaping (Result) -> Void) {
         client.get(from: url) { [weak self] result in
             guard self != nil else { return }
             

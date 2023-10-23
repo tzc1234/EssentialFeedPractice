@@ -27,54 +27,62 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
     func test_load_deliversConnectivityErrorOnClientError() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompleteWith: .failure(RemoteImageCommentsLoader.Error.connectivity), when: {
+        expect(sut, toCompleteWith: failure(.connectivity), when: {
             client.complete(with: anyNSError())
         })
     }
     
-    func test_load_deliversInvalidDataErrorWhenReceivedInvalidDataFromClient() {
+    func test_load_deliversInvalidDataErrorWhenNon2xxResponseFromClient() {
         let (sut, client) = makeSUT()
-        let invalidData = Data("invalid data".utf8)
-        
-        expect(sut, toCompleteWith: .failure(RemoteImageCommentsLoader.Error.invalidData), when: {
-            client.complete(with: invalidData)
-        })
-    }
-    
-    func test_load_deliversInvalidDataErrorWhenNon200ResponseFromClient() {
-        let (sut, client) = makeSUT()
-        let simple = [100, 199, 201, 300, 400, 500]
+        let simple = [100, 199, 300, 400, 500]
         
         simple.enumerated().forEach { index, statusCode in
-            let non200Response = HTTPURLResponse(statusCode: statusCode)
-            expect(sut, toCompleteWith: .failure(RemoteImageCommentsLoader.Error.invalidData), when: {
-                client.complete(with: anyData(), response: non200Response, at: index)
+            expect(sut, toCompleteWith: failure(.invalidData), when: {
+                client.complete(with: anyData(), statusCode: statusCode, at: index)
             })
         }
     }
     
-    func test_load_deliversEmptyFeedWhenReceivedEmptyItemsDataFromClient() {
+    func test_load_deliversInvalidDataErrorOn2xxHTTPResponse() {
         let (sut, client) = makeSUT()
-        let emptyFeed = [FeedImage]()
-        let emptyItemsData = makeJSONData([])
+        let simple = [200, 201, 250, 280, 299]
         
-        expect(sut, toCompleteWith: .success(emptyFeed), when: {
-            client.complete(with: emptyItemsData)
-        })
+        simple.enumerated().forEach { index, statusCode in
+            expect(sut, toCompleteWith: failure(.invalidData), when: {
+                let invalidData = Data("invalid data".utf8)
+                client.complete(with: invalidData, statusCode: statusCode, at: index)
+            })
+        }
     }
     
-    func test_load_deliversOneFeedImageWhenReceivedOneItemDataFromClient() {
+    func test_load_deliversEmptyFeedOn2xxResponseWithEmptyJSONList() {
+        let (sut, client) = makeSUT()
+        let emptyFeed = [FeedImage]()
+        let simple = [200, 201, 250, 280, 299]
+        
+        simple.enumerated().forEach { index, statusCode in
+            expect(sut, toCompleteWith: .success(emptyFeed), when: {
+                let emptyItemsData = makeJSONData([])
+                client.complete(with: emptyItemsData, statusCode: statusCode, at: index)
+            })
+        }
+    }
+    
+    func test_load_deliversOneFeedImageOn2xxResponseWithOneItem() {
         let (sut, client) = makeSUT()
         let items = [makeFeedItem(url: URL(string: "https://an-url.com")!)]
         let feed = items.map(\.image)
-        let oneItemData = makeJSONData(items.map(\.json))
+        let simple = [200, 201, 250, 280, 299]
         
-        expect(sut, toCompleteWith: .success(feed), when: {
-            client.complete(with: oneItemData)
-        })
+        simple.enumerated().forEach { index, statusCode in
+            expect(sut, toCompleteWith: .success(feed), when: {
+                let oneItemData = makeJSONData(items.map(\.json))
+                client.complete(with: oneItemData, statusCode: statusCode, at: index)
+            })
+        }
     }
     
-    func test_load_deliversFeedWhenReceivedMultipleItemsDataFromClient() {
+    func test_load_deliversFeedOn2xxResponseWithMultipleItemsData() {
         let (sut, client) = makeSUT()
         let items = [
             makeFeedItem(url: URL(string: "https://an-url.com")!),
@@ -84,11 +92,14 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
                 url: URL(string: "https://another-url.com")!)
         ]
         let feed = items.map(\.image)
-        let itemsData = makeJSONData(items.map(\.json))
+        let simple = [200, 201, 250, 280, 299]
         
-        expect(sut, toCompleteWith: .success(feed), when: {
-            client.complete(with: itemsData)
-        })
+        simple.enumerated().forEach { index, statusCode in
+            expect(sut, toCompleteWith: .success(feed), when: {
+                let itemsData = makeJSONData(items.map(\.json))
+                client.complete(with: itemsData, statusCode: statusCode, at: index)
+            })
+        }
     }
     
     func test_load_doesNotDeliverFeedAfterSUTInstanceIsDeallocated() {
@@ -113,6 +124,10 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
+    }
+    
+    private func failure(_ error: RemoteImageCommentsLoader.Error) -> RemoteImageCommentsLoader.Result {
+        .failure(error)
     }
     
     private func makeFeedItem(id: UUID = UUID(),
@@ -176,12 +191,8 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
             return Task()
         }
         
-        func complete(with data: Data, at index: Int = 0) {
-            complete(with: data, response: HTTPURLResponse(statusCode: 200), at: index)
-        }
-        
-        func complete(with data: Data, response: HTTPURLResponse, at index: Int = 0) {
-            completions[index](.success((data, response)))
+        func complete(with data: Data, statusCode: Int = 200, at index: Int = 0) {
+            completions[index](.success((data, HTTPURLResponse(statusCode: statusCode))))
         }
         
         func complete(with error: Error, at index: Int = 0) {
