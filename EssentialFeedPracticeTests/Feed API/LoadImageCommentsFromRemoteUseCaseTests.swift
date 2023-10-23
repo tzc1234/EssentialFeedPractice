@@ -57,7 +57,7 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
     
     func test_load_deliversEmptyFeedOn2xxResponseWithEmptyJSONList() {
         let (sut, client) = makeSUT()
-        let emptyFeed = [FeedImage]()
+        let emptyFeed = [ImageComment]()
         let simple = [200, 201, 250, 280, 299]
         
         simple.enumerated().forEach { index, statusCode in
@@ -70,12 +70,18 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
     
     func test_load_deliversOneFeedImageOn2xxResponseWithOneItem() {
         let (sut, client) = makeSUT()
-        let items = [makeFeedItem(url: URL(string: "https://an-url.com")!)]
-        let feed = items.map(\.image)
+        let items = [
+            makeItem(
+                message: "a message",
+                createdAt: (Date(timeIntervalSince1970: 1598627222), "2020-08-28T15:07:02+00:00"),
+                username: "a username"
+            )
+        ]
+        let imageComments = items.map(\.model)
         let simple = [200, 201, 250, 280, 299]
         
         simple.enumerated().forEach { index, statusCode in
-            expect(sut, toCompleteWith: .success(feed), when: {
+            expect(sut, toCompleteWith: .success(imageComments), when: {
                 let oneItemData = makeJSONData(items.map(\.json))
                 client.complete(with: oneItemData, statusCode: statusCode, at: index)
             })
@@ -85,17 +91,22 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
     func test_load_deliversFeedOn2xxResponseWithMultipleItemsData() {
         let (sut, client) = makeSUT()
         let items = [
-            makeFeedItem(url: URL(string: "https://an-url.com")!),
-            makeFeedItem(
-                description: "an description",
-                location: "a location",
-                url: URL(string: "https://another-url.com")!)
+            makeItem(
+                message: "a message",
+                createdAt: (Date(timeIntervalSince1970: 1598627222), "2020-08-28T15:07:02+00:00"),
+                username: "a username"
+            ),
+            makeItem(
+                message: "another message",
+                createdAt: (Date(timeIntervalSince1970: 1577881882), "2020-01-01T12:31:22+00:00"),
+                username: "another username"
+            )
         ]
-        let feed = items.map(\.image)
+        let imageComments = items.map(\.model)
         let simple = [200, 201, 250, 280, 299]
         
         simple.enumerated().forEach { index, statusCode in
-            expect(sut, toCompleteWith: .success(feed), when: {
+            expect(sut, toCompleteWith: .success(imageComments), when: {
                 let itemsData = makeJSONData(items.map(\.json))
                 client.complete(with: itemsData, statusCode: statusCode, at: index)
             })
@@ -130,18 +141,20 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
         .failure(error)
     }
     
-    private func makeFeedItem(id: UUID = UUID(),
-                              description: String? = nil,
-                              location: String? = nil,
-                              url: URL) -> (image: FeedImage, json: [String: Any]) {
-        let image = FeedImage(id: id, description: description, location: location, url: url)
+    private func makeItem(id: UUID = UUID(),
+                          message: String,
+                          createdAt: (date: Date, iso8601String: String),
+                          username: String) -> (model: ImageComment, json: [String: Any]) {
+        let model = ImageComment(id: id, message: message, createdAt: createdAt.date, username: username)
         let json: [String: Any] = [
-            "id": image.id.uuidString,
-            "description": image.description,
-            "location": image.location,
-            "image": image.url.absoluteString
-        ].compactMapValues { $0 }
-        return (image, json)
+            "id": id.uuidString,
+            "message": message,
+            "created_at": createdAt.iso8601String,
+            "author": [
+                "username": username
+            ]
+        ]
+        return (model, json)
     }
     
     private func makeJSONData(_ items: [[String: Any]]) -> Data {
@@ -150,15 +163,15 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
     }
     
     private func expect(_ sut: RemoteImageCommentsLoader,
-                        toCompleteWith expectedResult: FeedLoader.Result,
+                        toCompleteWith expectedResult: RemoteImageCommentsLoader.Result,
                         when action: () -> Void,
                         file: StaticString = #filePath,
                         line: UInt = #line) {
         let exp = expectation(description: "Wait for completion")
         sut.load { receivedResult in
             switch (receivedResult, expectedResult) {
-            case let (.success(receivedFeed), .success(expectedFeed)):
-                XCTAssertEqual(receivedFeed, expectedFeed, file: file, line: line)
+            case let (.success(receivedComments), .success(expectedFeed)):
+                XCTAssertEqual(receivedComments, expectedFeed, file: file, line: line)
             case let (.failure(receivedError as RemoteImageCommentsLoader.Error),
                 .failure(expectedError as RemoteImageCommentsLoader.Error)):
                 XCTAssertEqual(receivedError, expectedError, file: file, line: line)
