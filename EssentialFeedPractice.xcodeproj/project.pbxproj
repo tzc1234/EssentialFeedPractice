@@ -426,6 +426,23 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		BE2DE0F72AE6D45A00DB815D /* Image Comments API */ = {
+			isa = PBXGroup;
+			children = (
+				BE2DE0E62AE6B16E00DB815D /* RemoteImageCommentsLoader.swift */,
+				BE2DE0E82AE6B43800DB815D /* ImageCommentsMapper.swift */,
+			);
+			path = "Image Comments API";
+			sourceTree = "<group>";
+		};
+		BE2DE0F82AE6D48B00DB815D /* Image Comments API */ = {
+			isa = PBXGroup;
+			children = (
+				BE2DE0E42AE6B08C00DB815D /* LoadImageCommentsFromRemoteUseCaseTests.swift */,
+			);
+			path = "Image Comments API";
+			sourceTree = "<group>";
+		};
 		BE3A35562AD559FF00DB4159 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -504,6 +521,7 @@
 				BE2DE0ED2AE6D17E00DB815D /* Shared API */,
 				BE2DE0EE2AE6D1A100DB815D /* Shared API Infra */,
 				BE2DE0EA2AE6BDC800DB815D /* Image Comments Feature */,
+				BE2DE0F72AE6D45A00DB815D /* Image Comments API */,
 				BEC19CDB2AAF4A3E00926CD2 /* Feed Feature */,
 				BE910DEF2AB84C5E000BC634 /* Feed API */,
 				BE2499F62AAF31DB00C2FF25 /* Feed Cache */,
@@ -519,6 +537,7 @@
 				BEE03CC42AB72AC100C60F6D /* Helpers */,
 				BE2DE0EF2AE6D23B00DB815D /* Shared API */,
 				BE2DE0F02AE6D27E00DB815D /* Shared API Infra */,
+				BE2DE0F82AE6D48B00DB815D /* Image Comments API */,
 				BEE03CC12AB72A1C00C60F6D /* Feed API */,
 				BE680F4C2AAF071100F90355 /* Feed Cache */,
 				BE9FBF6B2ACD5E3400247D93 /* Feed Presentation */,
@@ -631,8 +650,6 @@
 				BEB6B9A02AB8B41000DB5560 /* RemoteFeedItemsMapper.swift */,
 				BEB6B9A22AB8C2D900DB5560 /* RemoteFeedImage.swift */,
 				BE6C33722AD1608C00761B6C /* RemoteFeedImageDataLoader.swift */,
-				BE2DE0E62AE6B16E00DB815D /* RemoteImageCommentsLoader.swift */,
-				BE2DE0E82AE6B43800DB815D /* ImageCommentsMapper.swift */,
 			);
 			path = "Feed API";
 			sourceTree = "<group>";
@@ -679,7 +696,6 @@
 			children = (
 				BE910DF42AB8858C000BC634 /* LoadFeedFromRemoteUseCaseTests.swift */,
 				BE63644B2AD0508800C14865 /* LoadFeedImageDataFromRemoteUseCaseTests.swift */,
-				BE2DE0E42AE6B08C00DB815D /* LoadImageCommentsFromRemoteUseCaseTests.swift */,
 			);
 			path = "Feed API";
 			sourceTree = "<group>";

@@ -46,7 +46,6 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         let simple = [100, 199, 201, 300, 400, 500]
         
         simple.enumerated().forEach { index, statusCode in
-            let non200Response = HTTPURLResponse(statusCode: statusCode)
             expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), when: {
                 client.complete(with: anyData(), statusCode: statusCode, at: index)
             })
