@@ -114,7 +114,7 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
     }
     
     func test_load_doesNotDeliverFeedAfterSUTInstanceIsDeallocated() {
-        let client = ClientSpy()
+        let client = HTTPClientSpy()
         var sut: RemoteImageCommentsLoader? = RemoteImageCommentsLoader(client: client, url: anyURL())
         
         var completionCount = 0
@@ -129,8 +129,8 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
     
     private func makeSUT(url: URL? = nil,
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: RemoteImageCommentsLoader, client: ClientSpy) {
-        let client = ClientSpy()
+                         line: UInt = #line) -> (sut: RemoteImageCommentsLoader, client: HTTPClientSpy) {
+        let client = HTTPClientSpy()
         let sut = RemoteImageCommentsLoader(client: client, url: url ?? anyURL())
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
@@ -182,34 +182,5 @@ final class LoadImageCommentsFromRemoteUseCaseTests: XCTestCase {
         }
         action()
         wait(for: [exp], timeout: 1)
-    }
-    
-    private class ClientSpy: HTTPClient {
-        private(set) var messages = [(url: URL, completion: (HTTPClient.Result) -> Void)]()
-        
-        var loggedURLs: [URL] {
-            messages.map(\.url)
-        }
-        
-        private struct Task: HTTPClientTask {
-            func cancel() {}
-        }
-        
-        private var completions: [(HTTPClient.Result) -> Void] {
-            messages.map(\.completion)
-        }
-        
-        func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) -> HTTPClientTask {
-            messages.append((url, completion))
-            return Task()
-        }
-        
-        func complete(with data: Data, statusCode: Int = 200, at index: Int = 0) {
-            completions[index](.success((data, HTTPURLResponse(statusCode: statusCode))))
-        }
-        
-        func complete(with error: Error, at index: Int = 0) {
-            completions[index](.failure(error))
-        }
     }
 }
