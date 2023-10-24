@@ -31,3 +31,8 @@ func uniqueFeedImage() -> FeedImage {
 func anyData() -> Data {
     Data("any data".utf8)
 }
+
+func makeJSONData(_ items: [[String: Any]]) -> Data {
+    let json: [String: Any] = ["items": items]
+    return try! JSONSerialization.data(withJSONObject: json)
+}
