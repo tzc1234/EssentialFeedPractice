@@ -1,5 +1,5 @@
 //
-//  RemoteFeedItemsMapper.swift
+//  FeedItemsMapper.swift
 //  EssentialFeedPractice
 //
 //  Created by Tsz-Lung on 18/09/2023.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RemoteFeedItemsMapper {
+public enum FeedItemsMapper {
     private struct Root: Decodable {
         private let items: [RemoteFeedImage]
         
@@ -23,7 +23,7 @@ enum RemoteFeedItemsMapper {
         }
     }
     
-    static func map(_ data: Data, response: HTTPURLResponse) throws -> [FeedImage] {
+    public static func map(_ data: Data, from response: HTTPURLResponse) throws -> [FeedImage] {
         guard response.statusCode == okCode, let root = try? JSONDecoder().decode(Root.self, from: data) else {
             throw RemoteFeedLoader.Error.invalidData
         }
