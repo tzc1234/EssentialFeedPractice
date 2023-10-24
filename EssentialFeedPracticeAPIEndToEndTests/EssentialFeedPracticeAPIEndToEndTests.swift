@@ -41,11 +41,13 @@ final class EssentialFeedPracticeAPIEndToEndTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) -> FeedLoader.Result? {
+    private typealias Result = Swift.Result<[FeedImage], Error>
+    
+    private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) -> Result? {
         let client = ephemeralClient(file: file, line: line)
         
         let exp = expectation(description: "Wait for completion")
-        var receivedResult: FeedLoader.Result?
+        var receivedResult: Result?
         _ = client.get(from: feedTestServerURL()) { result in
             receivedResult = result.flatMap { (data, response) in
                 do {

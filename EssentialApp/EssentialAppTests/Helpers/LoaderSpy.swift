@@ -5,29 +5,30 @@
 //  Created by Tsz-Lung on 23/09/2023.
 //
 
+import Combine
 import Foundation
 import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 
-final class LoaderSpy: FeedLoader, FeedImageDataLoader {
-    // MARK: - FeedLoader
-    
-    private var feedRequests = [(FeedLoader.Result) -> Void]()
-    
+final class LoaderSpy: FeedImageDataLoader {
+    private var feedRequests = [PassthroughSubject<[FeedImage], Error>]()
     var loadFeedCallCount: Int {
         feedRequests.count
     }
     
-    func load(completion: @escaping (FeedLoader.Result) -> Void) {
-        feedRequests.append(completion)
+    func loadPublisher() -> AnyPublisher<[FeedImage], Error> {
+        let publisher = PassthroughSubject<[FeedImage], Error>()
+        feedRequests.append(publisher)
+        return publisher.eraseToAnyPublisher()
     }
     
     func completeFeedLoading(with feed: [FeedImage] = [], at index: Int = 0) {
-        feedRequests[index](.success(feed))
+        feedRequests[index].send(feed)
+        feedRequests[index].send(completion: .finished)
     }
     
     func completeFeedLoadingWithError(at index: Int = 0) {
-        feedRequests[index](.failure(anyNSError()))
+        feedRequests[index].send(completion: .failure(anyNSError()))
     }
     
     // MARK: - FeedImageDataLoader
