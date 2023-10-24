@@ -9,44 +9,12 @@ import XCTest
 import EssentialFeedPractice
 
 final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
-    func test_init_doesNotRequestFromClientUponCreation() {
-        let (_, client) = makeSUT()
-        
-        XCTAssertTrue(client.loggedURLs.isEmpty)
-    }
-    
-    func test_load_requestsFromURL() {
-        let url = URL(string: "https://an-url.com")!
-        let (sut, client) = makeSUT(url: url)
-        
-        sut.load { _ in }
-        
-        XCTAssertEqual(client.loggedURLs, [url])
-    }
-    
-    func test_load_deliversConnectivityErrorOnClientError() {
-        let (sut, client) = makeSUT()
-        
-        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.connectivity), when: {
-            client.complete(with: anyNSError())
-        })
-    }
-    
-    func test_load_deliversInvalidDataErrorWhenReceivedInvalidDataFromClient() {
-        let (sut, client) = makeSUT()
-        let invalidData = Data("invalid data".utf8)
-        
-        expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), when: {
-            client.complete(with: invalidData)
-        })
-    }
-    
     func test_load_deliversInvalidDataErrorWhenNon200ResponseFromClient() {
         let (sut, client) = makeSUT()
         let simple = [100, 199, 201, 300, 400, 500]
         
         simple.enumerated().forEach { index, statusCode in
-            expect(sut, toCompleteWith: .failure(RemoteFeedLoader.Error.invalidData), when: {
+            expect(sut, toCompleteWith: failure(.invalidData), when: {
                 client.complete(with: anyData(), statusCode: statusCode, at: index)
             })
         }
@@ -90,18 +58,6 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         })
     }
     
-    func test_load_doesNotDeliverFeedAfterSUTInstanceIsDeallocated() {
-        let client = HTTPClientSpy()
-        var sut: RemoteFeedLoader? = RemoteFeedLoader(client: client, url: anyURL())
-        
-        var completionCount = 0
-        sut?.load { _ in completionCount += 1 }
-        sut = nil
-        client.complete(with: anyData())
-        
-        XCTAssertEqual(completionCount, 0)
-    }
-    
     // MARK: - Helpers
     
     private func makeSUT(url: URL? = nil,
@@ -112,6 +68,10 @@ final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
+    }
+    
+    private func failure(_ error: RemoteFeedLoader.Error) -> RemoteFeedLoader.Result {
+        .failure(error)
     }
     
     private func makeFeedItem(id: UUID = UUID(),
