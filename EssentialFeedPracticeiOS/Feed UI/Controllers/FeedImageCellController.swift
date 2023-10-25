@@ -20,10 +20,10 @@ public final class FeedImageCellController {
     
     private var cell: FeedImageCell?
     
-    private let viewModel: FeedImageViewModel<UIImage>
+    private let viewModel: FeedImageViewModel
     private let delegate: FeedImageCellControllerDelegate
     
-    public init(viewModel: FeedImageViewModel<UIImage>, delegate: FeedImageCellControllerDelegate) {
+    public init(viewModel: FeedImageViewModel, delegate: FeedImageCellControllerDelegate) {
         self.viewModel = viewModel
         self.delegate = delegate
     }
@@ -53,6 +53,7 @@ public final class FeedImageCellController {
         cell.locationLabel.text = viewModel.location
         cell.descriptionLabel.isHidden = (viewModel.description == nil)
         cell.descriptionLabel.text = viewModel.description
+        cell.feedImageView.setImage(nil)
         cell.onRetry = { [weak self] in
             self?.startImageDataLoad()
         }
@@ -85,16 +86,6 @@ public final class FeedImageCellController {
     
     private func releaseCellForReuse() {
         cell = nil
-    }
-}
-
-extension FeedImageCellController: FeedImageView {
-    public func display(_ viewModel: FeedImageViewModel<UIImage>) {
-        configureCell(with: viewModel)
-    }
-    
-    private func configureCell(with viewModel: FeedImageViewModel<UIImage>) {
-        cell?.feedImageView.setImage(viewModel.image)
     }
 }
 

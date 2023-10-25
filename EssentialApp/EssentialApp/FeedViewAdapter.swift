@@ -26,9 +26,7 @@ final class FeedViewAdapter: ResourceView {
                     imageLoader(model.url)
                 })
             
-            let controller = FeedImageCellController(
-                viewModel: FeedImagePresenter<FeedImageCellController, UIImage>.map(model),
-                delegate: adapter)
+            let controller = FeedImageCellController(viewModel: FeedImagePresenter.map(model), delegate: adapter)
             
             adapter.presenter = LoadResourcePresenter(
                 view: WeakRefProxy(controller),

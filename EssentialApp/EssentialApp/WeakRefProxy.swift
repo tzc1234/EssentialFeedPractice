@@ -33,9 +33,3 @@ extension WeakRefProxy: ResourceErrorView where T: ResourceErrorView {
         object?.display(viewModel)
     }
 }
-
-extension WeakRefProxy: FeedImageLoadingView where T: FeedImageLoadingView {
-    func display(_ viewModel: FeedImageLoadingViewModel) {
-        object?.display(viewModel)
-    }
-}
