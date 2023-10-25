@@ -52,11 +52,13 @@ final class LoadResourcePresenterTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(mapper: @escaping LoadResourcePresenter.Mapper = { _ in "any" },
+    private typealias SUT = LoadResourcePresenter<String, ViewSpy>
+    
+    private func makeSUT(mapper: @escaping SUT.Mapper = { _ in "any" },
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: LoadResourcePresenter, view: ViewSpy) {
+                         line: UInt = #line) -> (sut: SUT, view: ViewSpy) {
         let view = ViewSpy()
-        let sut = LoadResourcePresenter(view: view, loadingView: view, errorView: view, mapper: mapper)
+        let sut = SUT(view: view, loadingView: view, errorView: view, mapper: mapper)
         trackForMemoryLeaks(view, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, view)
@@ -64,7 +66,7 @@ final class LoadResourcePresenterTests: XCTestCase {
     
     private func localised(_ key: String, file: StaticString = #filePath, line: UInt = #line) -> String {
         let table = "Feed"
-        let bundle = Bundle(for: LoadResourcePresenter.self)
+        let bundle = Bundle(for: SUT.self)
         let value = bundle.localizedString(forKey: key, value: nil, table: table)
         if value == key {
             XCTFail("Missing localised string for key: \(key) in table \(table)", file: file, line: line)
@@ -73,6 +75,8 @@ final class LoadResourcePresenterTests: XCTestCase {
     }
     
     private class ViewSpy: FeedErrorView, FeedLoadingView, ResourceView {
+        typealias ResourceViewModel = String
+        
         enum Message: Hashable {
             case display(errorMessage: String?)
             case display(isLoading: Bool)
@@ -89,7 +93,7 @@ final class LoadResourcePresenterTests: XCTestCase {
             messages.insert(.display(isLoading: viewModel.isLoading))
         }
         
-        func display(_ viewModel: String) {
+        func display(_ viewModel: ResourceViewModel) {
             messages.insert(.display(resourceViewModel: viewModel))
         }
     }
