@@ -22,8 +22,8 @@ extension WeakRefProxy: ResourceLoadingView where T: ResourceLoadingView {
     }
 }
 
-extension WeakRefProxy: FeedImageView where T: FeedImageView, T.Image == UIImage {
-    func display(_ viewModel: FeedImageViewModel<UIImage>) {
+extension WeakRefProxy: ResourceView where T: ResourceView, T.ResourceViewModel == UIImage {
+    func display(_ viewModel: UIImage) {
         object?.display(viewModel)
     }
 }

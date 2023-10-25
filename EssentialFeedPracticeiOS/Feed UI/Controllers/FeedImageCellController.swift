@@ -20,9 +20,11 @@ public final class FeedImageCellController {
     
     private var cell: FeedImageCell?
     
+    private let viewModel: FeedImageViewModel<UIImage>
     private let delegate: FeedImageCellControllerDelegate
     
-    public init(delegate: FeedImageCellControllerDelegate) {
+    public init(viewModel: FeedImageViewModel<UIImage>, delegate: FeedImageCellControllerDelegate) {
+        self.viewModel = viewModel
         self.delegate = delegate
     }
     
@@ -47,6 +49,10 @@ public final class FeedImageCellController {
     
     private func setup(_ cell: FeedImageCell) {
         self.cell = cell
+        cell.locationContainer.isHidden = (viewModel.location == nil)
+        cell.locationLabel.text = viewModel.location
+        cell.descriptionLabel.isHidden = (viewModel.description == nil)
+        cell.descriptionLabel.text = viewModel.description
         cell.onRetry = { [weak self] in
             self?.startImageDataLoad()
         }
@@ -88,17 +94,26 @@ extension FeedImageCellController: FeedImageView {
     }
     
     private func configureCell(with viewModel: FeedImageViewModel<UIImage>) {
-        cell?.locationContainer.isHidden = (viewModel.location == nil)
-        cell?.locationLabel.text = viewModel.location
-        cell?.descriptionLabel.isHidden = (viewModel.description == nil)
-        cell?.descriptionLabel.text = viewModel.description
         cell?.feedImageView.setImage(viewModel.image)
-        cell?.feedImageRetryButton.isHidden = !viewModel.shouldRetry
     }
 }
 
-extension FeedImageCellController: FeedImageLoadingView {
-    public func display(_ viewModel: FeedImageLoadingViewModel) {
+extension FeedImageCellController: ResourceView {
+    public typealias ResourceViewModel = UIImage
+    
+    public func display(_ viewModel: UIImage) {
+        cell?.feedImageView.setImage(viewModel)
+    }
+}
+
+extension FeedImageCellController: ResourceLoadingView {
+    public func display(_ viewModel: ResourceLoadingViewModel) {
         cell?.feedImageContainer.isShimmering = viewModel.isLoading
+    }
+}
+
+extension FeedImageCellController: ResourceErrorView {
+    public func display(_ viewModel: ResourceErrorViewModel) {
+        cell?.feedImageRetryButton.isHidden = viewModel.message == nil
     }
 }
