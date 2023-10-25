@@ -22,19 +22,18 @@ public protocol FeedErrorView {
 public final class FeedPresenter {
     public static var title: String {
         NSLocalizedString("FEED_VIEW_TITLE",
-            tableName: tableName,
+            tableName: "Feed",
             bundle: bundle,
             comment: "Title for the feed view")
     }
     
     public static var feedLoadError: String {
         NSLocalizedString("GENERIC_CONNECTION_ERROR",
-            tableName: tableName,
+            tableName: "Shared",
             bundle: bundle,
             comment: "Feed load error message")
     }
     
-    private static let tableName = "Feed"
     private static var bundle: Bundle {
         Bundle(for: Self.self)
     }
