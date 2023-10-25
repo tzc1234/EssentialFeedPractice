@@ -8,13 +8,6 @@
 import Foundation
 
 public final class LoadResourcePresenter {
-    public static var title: String {
-        NSLocalizedString("FEED_VIEW_TITLE",
-            tableName: tableName,
-            bundle: bundle,
-            comment: "Title for the feed view")
-    }
-    
     public static var feedLoadError: String {
         NSLocalizedString("FEED_VIEW_CONNECTION_ERROR",
             tableName: tableName,
