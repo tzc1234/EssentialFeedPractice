@@ -20,11 +20,11 @@ final class ImageCommentsPresenterTests: XCTestCase {
         let comments = [
             makeComment(
                 message: "a message",
-                createdAt: (now.adding(minutes: -5), "5 minutes ago"),
+                createdAt: (now.adding(minutes: -5, calendar: calendar), "5 minutes ago"),
                 username: "a username"),
             makeComment(
                 message: "another message",
-                createdAt: (now.adding(days: -1), "1 day ago"),
+                createdAt: (now.adding(days: -1, calendar: calendar), "1 day ago"),
                 username: "another username")
         ]
         
