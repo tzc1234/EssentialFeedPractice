@@ -16,26 +16,20 @@ final class WeakRefProxy<T: AnyObject> {
     }
 }
 
-extension WeakRefProxy: FeedLoadingView where T: FeedLoadingView {
-    func display(_ viewModel: FeedLoadingViewModel) {
+extension WeakRefProxy: ResourceLoadingView where T: ResourceLoadingView {
+    func display(_ viewModel: ResourceLoadingViewModel) {
         object?.display(viewModel)
     }
 }
 
-extension WeakRefProxy: FeedImageView where T: FeedImageView, T.Image == UIImage {
-    func display(_ viewModel: FeedImageViewModel<UIImage>) {
+extension WeakRefProxy: ResourceView where T: ResourceView, T.ResourceViewModel == UIImage {
+    func display(_ viewModel: UIImage) {
         object?.display(viewModel)
     }
 }
 
-extension WeakRefProxy: FeedErrorView where T: FeedErrorView {
-    func display(_ viewModel: FeedErrorViewModel) {
-        object?.display(viewModel)
-    }
-}
-
-extension WeakRefProxy: FeedImageLoadingView where T: FeedImageLoadingView {
-    func display(_ viewModel: FeedImageLoadingViewModel) {
+extension WeakRefProxy: ResourceErrorView where T: ResourceErrorView {
+    func display(_ viewModel: ResourceErrorViewModel) {
         object?.display(viewModel)
     }
 }
