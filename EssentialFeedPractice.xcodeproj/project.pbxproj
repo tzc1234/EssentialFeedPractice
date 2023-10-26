@@ -479,6 +479,7 @@
 			isa = PBXGroup;
 			children = (
 				BE4731212AEA5E4100F6A2F4 /* ImageCommentsPresenterTests.swift */,
+				BE47312F2AEA60B300F6A2F4 /* ImageCommentsLocalisationTests.swift */,
 			);
 			path = "Image Comments Presentation";
 			sourceTree = "<group>";
@@ -487,7 +488,6 @@
 			isa = PBXGroup;
 			children = (
 				BE4731242AEA5EED00F6A2F4 /* ImageCommentsPresenter.swift */,
-				BE47312F2AEA60B300F6A2F4 /* ImageCommentsLocalisationTests.swift */,
 				BE47312A2AEA5F9D00F6A2F4 /* ImageComments.strings */,
 			);
 			path = "Image Comments Presentation";
