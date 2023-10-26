@@ -11,10 +11,12 @@ import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 
 public enum FeedUIComposer {
+    private typealias FeedPresentationAdapter = LoadResourcePresentationAdapter<[FeedImage], FeedViewAdapter>
+    
     public static func feedComposedWith(
         feedLoader: @escaping () -> AnyPublisher<[FeedImage], Error>,
         imageLoader: @escaping (URL) -> FeedImageDataLoader.Publisher) -> FeedViewController {
-        let presentationAdapter = LoadResourcePresentationAdapter<[FeedImage], FeedViewAdapter>(loader: feedLoader)
+        let presentationAdapter = FeedPresentationAdapter(loader: feedLoader)
         let refreshController = FeedRefreshViewController(delegate: presentationAdapter)
         let feedViewController = FeedViewController(refreshController: refreshController)
         feedViewController.title = FeedPresenter.title
