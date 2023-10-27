@@ -10,15 +10,6 @@ import XCTest
 import EssentialFeedPracticeiOS
 
 final class FeedSnapshotTests: XCTestCase {
-    func test_emptyFeed() {
-        let sut = makeSUT()
-        
-        sut.display(emptyFeed())
-        
-        assert(snapshot: sut.snapshot(for: .iPhone(style: .light)), named: "EMPTY_FEED_light")
-        assert(snapshot: sut.snapshot(for: .iPhone(style: .dark)), named: "EMPTY_FEED_dark")
-    }
-    
     func test_feedWithContent() {
         let sut = makeSUT()
         
@@ -26,15 +17,6 @@ final class FeedSnapshotTests: XCTestCase {
         
         assert(snapshot: sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_CONTENT_light")
         assert(snapshot: sut.snapshot(for: .iPhone(style: .dark)), named: "FEED_WITH_CONTENT_dark")
-    }
-    
-    func test_feedWithErrorMessage() {
-        let sut = makeSUT()
-        
-        sut.display(.error(message: "This is a\nmulti-line\nerror message"))
-        
-        assert(snapshot: sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_ERROR_MESSAGE_light")
-        assert(snapshot: sut.snapshot(for: .iPhone(style: .dark)), named: "FEED_WITH_ERROR_MESSAGE_dark")
     }
     
     func test_feedWithFailedImageLoading() {
@@ -49,20 +31,12 @@ final class FeedSnapshotTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT() -> ListViewController {
-        let refresh = RefreshViewController(delegate: RefreshDelegateDummy())
+        let refresh = RefreshViewController()
         let sut = ListViewController(refreshController: refresh)
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false
         sut.loadViewIfNeeded()
         return sut
-    }
-    
-    private class RefreshDelegateDummy: FeedRefreshViewControllerDelegate {
-        func didRequestFeedRefresh() {}
-    }
-    
-    private func emptyFeed() -> [FeedImageCellController] {
-        []
     }
     
     private func feedWithContent() -> [ImageStub] {
