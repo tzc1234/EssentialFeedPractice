@@ -8,11 +8,10 @@
 import UIKit
 
 public final class FeedImageCell: UITableViewCell {
-    private(set) lazy var outmostStackView: UIStackView = {
+    private lazy var outmostStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .vertical
         sv.spacing = 10
-        sv.alignment = .leading
         sv.translatesAutoresizingMaskIntoConstraints = false
         return sv
     }()
@@ -26,12 +25,12 @@ public final class FeedImageCell: UITableViewCell {
         return sv
     }()
     
-    private(set) lazy var pinBackgroundView: UIView = {
+    private lazy var pinBackgroundView: UIView = {
         let v = UIView()
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()
-    private(set) lazy var pinImageView: UIImageView = {
+    private lazy var pinImageView: UIImageView = {
         let image = UIImage(named: "pin", in: Bundle(for: Self.self), with: .none)
         let iv = UIImageView(image: image)
         iv.contentMode = .scaleAspectFit
@@ -61,7 +60,6 @@ public final class FeedImageCell: UITableViewCell {
         iv.contentMode = .scaleAspectFill
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.isAccessibilityElement = true
-        iv.accessibilityLabel = "feed-image-view"
         return iv
     }()
     
@@ -74,7 +72,7 @@ public final class FeedImageCell: UITableViewCell {
         return lbl
     }()
     
-    public lazy var feedImageRetryButton: UIButton = {
+    public private(set) lazy var feedImageRetryButton: UIButton = {
         let btn = UIButton()
         btn.setTitle("↻", for: .normal)
         btn.setTitleColor(.systemBackground, for: .normal)
@@ -89,7 +87,6 @@ public final class FeedImageCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        accessibilityLabel = "feed-image-cell"
         selectionStyle = .none
         configureLayout()
     }
@@ -116,10 +113,6 @@ public final class FeedImageCell: UITableViewCell {
             
             pinBackgroundView.leadingAnchor.constraint(equalTo: pinImageView.leadingAnchor),
             pinBackgroundView.trailingAnchor.constraint(equalTo: pinImageView.trailingAnchor),
-            pinBackgroundView.topAnchor.constraint(equalTo: locationContainer.topAnchor),
-            pinBackgroundView.bottomAnchor.constraint(equalTo: locationContainer.bottomAnchor),
-            
-            locationContainer.widthAnchor.constraint(equalTo: outmostStackView.widthAnchor),
             
             feedImageView.widthAnchor.constraint(equalTo: feedImageView.heightAnchor),
             
@@ -127,7 +120,6 @@ public final class FeedImageCell: UITableViewCell {
             feedImageContainer.trailingAnchor.constraint(equalTo: feedImageView.trailingAnchor),
             feedImageContainer.topAnchor.constraint(equalTo: feedImageView.topAnchor),
             feedImageContainer.bottomAnchor.constraint(equalTo: feedImageView.bottomAnchor),
-            feedImageContainer.widthAnchor.constraint(equalTo: outmostStackView.widthAnchor),
             
             feedImageRetryButton.leadingAnchor.constraint(equalTo: feedImageContainer.leadingAnchor),
             feedImageRetryButton.trailingAnchor.constraint(equalTo: feedImageContainer.trailingAnchor),
