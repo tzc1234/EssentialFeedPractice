@@ -8,10 +8,17 @@
 import UIKit
 import EssentialFeedPractice
 
+public protocol CellController {
+    func view(in tableView: UITableView) -> UITableViewCell
+    func startLoading(for cell: UITableViewCell)
+    func cancelLoading()
+    func preload()
+}
+
 public final class FeedViewController: UITableViewController {
     public let errorView = ErrorView()
     
-    private var models = [FeedImageCellController]() {
+    private var models = [CellController]() {
         didSet { tableView.reloadData() }
     }
     
@@ -64,7 +71,7 @@ public final class FeedViewController: UITableViewController {
         onViewIsAppearing?(self)
     }
     
-    public func display(_ cellControllers: [FeedImageCellController]) {
+    public func display(_ cellControllers: [CellController]) {
         models = cellControllers
     }
     
@@ -73,14 +80,14 @@ public final class FeedViewController: UITableViewController {
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        cellController(forRowAt: indexPath).view(for: tableView)
+        cellController(forRowAt: indexPath).view(in: tableView)
     }
     
     public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).startImageDataLoad(for: cell)
+        cellController(forRowAt: indexPath).startLoading(for: cell)
     }
     
-    private func cellController(forRowAt indexPath: IndexPath) -> FeedImageCellController {
+    private func cellController(forRowAt indexPath: IndexPath) -> CellController {
         models[indexPath.row]
     }
     
@@ -89,7 +96,7 @@ public final class FeedViewController: UITableViewController {
     }
     
     private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).cancelImageDataLoad()
+        cellController(forRowAt: indexPath).cancelLoading()
     }
 }
 

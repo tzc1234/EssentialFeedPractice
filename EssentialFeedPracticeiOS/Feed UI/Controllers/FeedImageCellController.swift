@@ -14,7 +14,7 @@ public protocol FeedImageCellControllerDelegate {
     func didCancelImageRequest()
 }
 
-public final class FeedImageCellController {
+public final class FeedImageCellController: CellController {
     static let cellClass: AnyClass = FeedImageCell.self
     static let cellIdentifier = FeedImageCell.identifier
     
@@ -28,14 +28,14 @@ public final class FeedImageCellController {
         self.delegate = delegate
     }
     
-    func view(for tableView: UITableView) -> UITableViewCell {
+    public func view(in tableView: UITableView) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellIdentifier) as! FeedImageCell
         setup(cell)
         startImageDataLoad()
         return cell
     }
     
-    func startImageDataLoad(for cell: UITableViewCell) {
+    public func startLoading(for cell: UITableViewCell) {
         guard shouldStartANewImageDataLoad(for: cell) else {
             return
         }
@@ -71,15 +71,15 @@ public final class FeedImageCellController {
         delegate.didRequestImage()
     }
     
-    func preload() {
+    public func preload() {
         delegate.didRequestImage()
     }
     
     deinit {
-        cancelImageDataLoad()
+        cancelLoading()
     }
     
-    func cancelImageDataLoad() {
+    public func cancelLoading() {
         releaseCellForReuse()
         delegate.didCancelImageRequest()
     }
