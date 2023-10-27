@@ -379,6 +379,7 @@
 		BE248B672ABC5151008EDB4E /* EssentialFeedPracticeiOS */ = {
 			isa = PBXGroup;
 			children = (
+				BE2B9FC12AEBC6DB007AB4EB /* Shared UI */,
 				BE6AB8A92AC1ECC30057E7F7 /* Feed UI */,
 			);
 			path = EssentialFeedPracticeiOS;
@@ -407,6 +408,43 @@
 				BE0A8EB42AD2DB7E00EB0E3B /* FeedImageDataStore.swift */,
 			);
 			path = "Feed Cache";
+			sourceTree = "<group>";
+		};
+		BE2B9FC12AEBC6DB007AB4EB /* Shared UI */ = {
+			isa = PBXGroup;
+			children = (
+				BE2B9FC22AEBC6EE007AB4EB /* Controllers */,
+				BE2B9FC32AEBC731007AB4EB /* Views */,
+			);
+			path = "Shared UI";
+			sourceTree = "<group>";
+		};
+		BE2B9FC22AEBC6EE007AB4EB /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				BEF6DEA82ABD88250088BABB /* ListViewController.swift */,
+				BE6AB8B22AC1FCA90057E7F7 /* RefreshViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		BE2B9FC32AEBC731007AB4EB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BE2B9FC42AEBC790007AB4EB /* Helpers */,
+				BE8E01D82ACC48D100ED126A /* ErrorView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BE2B9FC42AEBC790007AB4EB /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BE3A355B2AD5667500DB4159 /* UITableView+HeaderSizing.swift */,
+				BE3A35592AD5655300DB4159 /* UIView+Container.swift */,
+				BE20A6292AD7DF0400F08E09 /* NSLayoutConstraint+Priority.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		BE2DE0EA2AE6BDC800DB815D /* Image Comments Feature */ = {
@@ -470,9 +508,6 @@
 			isa = PBXGroup;
 			children = (
 				BE3A35572AD55A1B00DB4159 /* UIImageView+Animations.swift */,
-				BE3A35592AD5655300DB4159 /* UIView+Container.swift */,
-				BE3A355B2AD5667500DB4159 /* UITableView+HeaderSizing.swift */,
-				BE20A6292AD7DF0400F08E09 /* NSLayoutConstraint+Priority.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -602,8 +637,6 @@
 			isa = PBXGroup;
 			children = (
 				BE6AB8B42AC208C80057E7F7 /* FeedImageCellController.swift */,
-				BE6AB8B22AC1FCA90057E7F7 /* RefreshViewController.swift */,
-				BEF6DEA82ABD88250088BABB /* ListViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -614,7 +647,6 @@
 				BE3A35562AD559FF00DB4159 /* Helpers */,
 				BEF6DEAB2ABDB93D0088BABB /* FeedImageCell.swift */,
 				BEF6DEB02ABDFDF30088BABB /* ShimmeringView.swift */,
-				BE8E01D82ACC48D100ED126A /* ErrorView.swift */,
 				BE3A35542AD5569700DB4159 /* Feed.xcassets */,
 			);
 			path = Views;
