@@ -8,7 +8,7 @@
 import UIKit
 
 public final class FeedImageCell: UITableViewCell {
-    static var identifier: String { "\(String(describing: Self.self))" }
+    public static var identifier: String { "\(String(describing: Self.self))" }
     
     private(set) lazy var outmostStackView: UIStackView = {
         let sv = UIStackView()

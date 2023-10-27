@@ -33,6 +33,7 @@ final class ListSnapshotTests: XCTestCase {
     private func makeSUT() -> ListViewController {
         let refresh = RefreshViewController()
         let sut = ListViewController(refreshController: refresh)
+        sut.registerTableCell(UITableViewCell.self, forCellReuseIdentifier: "CELL")
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false
         sut.loadViewIfNeeded()

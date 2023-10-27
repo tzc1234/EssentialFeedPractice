@@ -44,9 +44,11 @@ public final class ListViewController: UITableViewController {
         }
     }
     
+    public func registerTableCell(_ cellClass: AnyClass, forCellReuseIdentifier identifier: String) {
+        tableView.register(cellClass, forCellReuseIdentifier: identifier)
+    }
+    
     private func configureTableView() {
-        tableView.register(FeedImageCellController.cellClass,
-                           forCellReuseIdentifier: FeedImageCellController.cellIdentifier)
         tableView.prefetchDataSource = self
         tableView.separatorStyle = .none
         tableView.tableHeaderView = errorView.makeContainer()

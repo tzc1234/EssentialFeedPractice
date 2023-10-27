@@ -15,9 +15,6 @@ public protocol FeedImageCellControllerDelegate {
 }
 
 public final class FeedImageCellController: CellController {
-    static let cellClass: AnyClass = FeedImageCell.self
-    static let cellIdentifier = FeedImageCell.identifier
-    
     private var cell: FeedImageCell?
     
     private let viewModel: FeedImageViewModel
@@ -29,7 +26,7 @@ public final class FeedImageCellController: CellController {
     }
     
     public func view(in tableView: UITableView) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellIdentifier) as! FeedImageCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: FeedImageCell.identifier) as! FeedImageCell
         setup(cell)
         startImageDataLoad()
         return cell
