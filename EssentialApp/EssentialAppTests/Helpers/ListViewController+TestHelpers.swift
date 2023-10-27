@@ -1,5 +1,5 @@
 //
-//  FeedViewController+TestHelpers.swift
+//  ListViewController+TestHelpers.swift
 //  EssentialFeedPracticeiOSTests
 //
 //  Created by Tsz-Lung on 23/09/2023.
@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeedPracticeiOS
 
-extension FeedViewController {
+extension ListViewController {
     func simulateViewIsAppearing() {
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()

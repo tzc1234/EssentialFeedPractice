@@ -1,5 +1,5 @@
 //
-//  FeedViewController.swift
+//  ListViewController.swift
 //  EssentialFeedPracticeiOS
 //
 //  Created by Tsz-Lung on 22/09/2023.
@@ -15,14 +15,14 @@ public protocol CellController {
     func preload()
 }
 
-public final class FeedViewController: UITableViewController {
+public final class ListViewController: UITableViewController {
     public let errorView = ErrorView()
     
     private var models = [CellController]() {
         didSet { tableView.reloadData() }
     }
     
-    private var onViewIsAppearing: ((FeedViewController) -> Void)?
+    private var onViewIsAppearing: ((ListViewController) -> Void)?
     
     private let refreshController: FeedRefreshViewController
     
@@ -100,7 +100,7 @@ public final class FeedViewController: UITableViewController {
     }
 }
 
-extension FeedViewController: UITableViewDataSourcePrefetching {
+extension ListViewController: UITableViewDataSourcePrefetching {
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { cellController(forRowAt: $0).preload() }
     }
@@ -110,7 +110,7 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
     }
 }
 
-extension FeedViewController: ResourceErrorView {
+extension ListViewController: ResourceErrorView {
     public func display(_ viewModel: ResourceErrorViewModel) {
         errorView.message = viewModel.message
     }

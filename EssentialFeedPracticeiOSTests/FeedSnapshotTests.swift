@@ -48,9 +48,9 @@ final class FeedSnapshotTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT() -> FeedViewController {
+    private func makeSUT() -> ListViewController {
         let refresh = FeedRefreshViewController(delegate: RefreshDelegateDummy())
-        let sut = FeedViewController(refreshController: refresh)
+        let sut = ListViewController(refreshController: refresh)
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false
         sut.loadViewIfNeeded()
@@ -86,7 +86,7 @@ final class FeedSnapshotTests: XCTestCase {
     }
 }
 
-private extension FeedViewController {
+private extension ListViewController {
     func display(_ stubs: [ImageStub]) {
         let cells = stubs.map { stub in
             let cellController = FeedImageCellController(viewModel: stub.viewModel, delegate: stub)
