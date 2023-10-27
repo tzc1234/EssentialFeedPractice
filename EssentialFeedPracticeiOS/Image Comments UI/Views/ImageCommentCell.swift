@@ -8,8 +8,6 @@
 import UIKit
 
 public final class ImageCommentCell: UITableViewCell {
-    public static var identifier: String { "\(String(describing: Self.self))" }
-    
     private lazy var outmostStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .vertical
