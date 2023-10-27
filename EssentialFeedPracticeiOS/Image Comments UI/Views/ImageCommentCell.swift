@@ -12,7 +12,6 @@ public final class ImageCommentCell: UITableViewCell {
         let sv = UIStackView()
         sv.axis = .vertical
         sv.spacing = 8
-        sv.alignment = .leading
         sv.translatesAutoresizingMaskIntoConstraints = false
         return sv
     }()
@@ -21,7 +20,6 @@ public final class ImageCommentCell: UITableViewCell {
         let sv = UIStackView()
         sv.axis = .horizontal
         sv.spacing = 6
-        sv.alignment = .center
         sv.translatesAutoresizingMaskIntoConstraints = false
         return sv
     }()
@@ -76,13 +74,6 @@ public final class ImageCommentCell: UITableViewCell {
         contentView.addSubview(outmostStackView)
         
         NSLayoutConstraint.activate([
-            usernameDateStackView.heightAnchor.constraint(equalTo: usernameLabel.heightAnchor),
-            usernameDateStackView.leadingAnchor.constraint(equalTo: outmostStackView.leadingAnchor),
-            usernameDateStackView.trailingAnchor.constraint(equalTo: outmostStackView.trailingAnchor),
-            
-            messageLabel.leadingAnchor.constraint(equalTo: outmostStackView.leadingAnchor),
-            messageLabel.trailingAnchor.constraint(equalTo: outmostStackView.trailingAnchor),
-            
             outmostStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             outmostStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             outmostStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
