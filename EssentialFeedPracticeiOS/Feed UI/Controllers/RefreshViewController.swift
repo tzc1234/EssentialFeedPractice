@@ -1,5 +1,5 @@
 //
-//  FeedRefreshViewController.swift
+//  RefreshViewController.swift
 //  EssentialFeedPracticeiOS
 //
 //  Created by Tsz-Lung on 25/09/2023.
@@ -8,29 +8,21 @@
 import UIKit
 import EssentialFeedPractice
 
-public protocol FeedRefreshViewControllerDelegate {
-    func didRequestFeedRefresh()
-}
-
-public final class FeedRefreshViewController: NSObject {
+public final class RefreshViewController: NSObject {
     private(set) lazy var view: UIRefreshControl = {
         let view = UIRefreshControl()
         view.addTarget(self, action: #selector(refresh), for: .valueChanged)
         return view
     }()
     
-    private let delegate: FeedRefreshViewControllerDelegate
-    
-    public init(delegate: FeedRefreshViewControllerDelegate) {
-        self.delegate = delegate
-    }
+    public var onRefresh: (() -> Void)?
     
     @objc func refresh() {
-        delegate.didRequestFeedRefresh()
+        onRefresh?()
     }
 }
 
-extension FeedRefreshViewController: ResourceLoadingView {
+extension RefreshViewController: ResourceLoadingView {
     public func display(_ viewModel: ResourceLoadingViewModel) {
         if viewModel.isLoading {
             view.beginRefreshing()

@@ -49,7 +49,7 @@ final class FeedSnapshotTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT() -> ListViewController {
-        let refresh = FeedRefreshViewController(delegate: RefreshDelegateDummy())
+        let refresh = RefreshViewController(delegate: RefreshDelegateDummy())
         let sut = ListViewController(refreshController: refresh)
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false

@@ -24,9 +24,9 @@ public final class ListViewController: UITableViewController {
     
     private var onViewIsAppearing: ((ListViewController) -> Void)?
     
-    private let refreshController: FeedRefreshViewController
+    private let refreshController: RefreshViewController
     
-    public init(refreshController: FeedRefreshViewController) {
+    public init(refreshController: RefreshViewController) {
         self.refreshController = refreshController
         super.init(nibName: nil, bundle: nil)
     }
