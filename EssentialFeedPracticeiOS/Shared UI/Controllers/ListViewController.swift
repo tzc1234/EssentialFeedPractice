@@ -15,6 +15,12 @@ public protocol CellController {
     func preload()
 }
 
+public extension CellController {
+    func startLoading(for cell: UITableViewCell) {}
+    func cancelLoading() {}
+    func preload() {}
+}
+
 public final class ListViewController: UITableViewController {
     public let errorView = ErrorView()
     

@@ -22,16 +22,4 @@ public class ImageCommentCellController: CellController {
         cell.usernameLabel.text = model.username
         return cell
     }
-    
-    public func startLoading(for cell: UITableViewCell) {
-        
-    }
-    
-    public func cancelLoading() {
-        
-    }
-    
-    public func preload() {
-        
-    }
 }
