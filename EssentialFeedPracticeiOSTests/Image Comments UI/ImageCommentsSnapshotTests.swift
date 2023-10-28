@@ -51,6 +51,6 @@ final class ImageCommentsSnapshotTests: XCTestCase {
                     date: "1 hour ago",
                     username: "a.")
             )
-        ]
+        ].map { CellController($0) }
     }
 }

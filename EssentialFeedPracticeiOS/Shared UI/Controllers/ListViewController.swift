@@ -8,17 +8,22 @@
 import UIKit
 import EssentialFeedPractice
 
-public protocol CellController {
-    func view(in tableView: UITableView) -> UITableViewCell
-    func startLoading(for cell: UITableViewCell)
-    func cancelLoading()
-    func preload()
-}
-
-public extension CellController {
-    func startLoading(for cell: UITableViewCell) {}
-    func cancelLoading() {}
-    func preload() {}
+public struct CellController {
+    let dataSource: UITableViewDataSource
+    let delegate: UITableViewDelegate?
+    let dataSourcePrefetching: UITableViewDataSourcePrefetching?
+    
+    public init(_ dataSource: UITableViewDataSource & UITableViewDelegate & UITableViewDataSourcePrefetching) {
+        self.dataSource = dataSource
+        self.delegate = dataSource
+        self.dataSourcePrefetching = dataSource
+    }
+    
+    public init(_ dataSource: UITableViewDataSource) {
+        self.dataSource = dataSource
+        self.delegate = nil
+        self.dataSourcePrefetching = nil
+    }
 }
 
 public final class ListViewController: UITableViewController {
@@ -88,11 +93,11 @@ public final class ListViewController: UITableViewController {
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        cellController(forRowAt: indexPath).view(in: tableView)
+        cellController(forRowAt: indexPath).dataSource.tableView(tableView, cellForRowAt: indexPath)
     }
     
     public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).startLoading(for: cell)
+        cellController(forRowAt: indexPath).delegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
     }
     
     private func cellController(forRowAt indexPath: IndexPath) -> CellController {
@@ -100,21 +105,23 @@ public final class ListViewController: UITableViewController {
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cancelCellControllerLoad(forRowAt: indexPath)
-    }
-    
-    private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).cancelLoading()
+        cellController(forRowAt: indexPath).delegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
     }
 }
 
 extension ListViewController: UITableViewDataSourcePrefetching {
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach { cellController(forRowAt: $0).preload() }
+        indexPaths.forEach { indexPath in
+            cellController(forRowAt: indexPath).dataSourcePrefetching?.tableView(tableView, prefetchRowsAt: indexPaths)
+        }
     }
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach(cancelCellControllerLoad)
+        indexPaths.forEach { indexPath in
+            cellController(forRowAt: indexPath)
+                .dataSourcePrefetching?
+                .tableView?(tableView, cancelPrefetchingForRowsAt: indexPaths)
+        }
     }
 }
 
