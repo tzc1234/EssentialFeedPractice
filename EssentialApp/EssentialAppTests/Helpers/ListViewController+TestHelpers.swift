@@ -1,5 +1,5 @@
 //
-//  FeedViewController+TestHelpers.swift
+//  ListViewController+TestHelpers.swift
 //  EssentialFeedPracticeiOSTests
 //
 //  Created by Tsz-Lung on 23/09/2023.
@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeedPracticeiOS
 
-extension FeedViewController {
+extension ListViewController {
     func simulateViewIsAppearing() {
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()
@@ -35,7 +35,7 @@ extension FeedViewController {
     }
     
     func numberOfRenderedFeedImageViews() -> Int {
-        tableView.numberOfRows(inSection: feedImageSection)
+        tableView.numberOfSections > feedImageSection ? tableView.numberOfRows(inSection: feedImageSection) : 0
     }
     
     func feedImageView(at row: Int) -> FeedImageCell? {

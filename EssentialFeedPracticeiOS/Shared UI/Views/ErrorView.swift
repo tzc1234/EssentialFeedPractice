@@ -29,8 +29,9 @@ public final class ErrorView: UIButton {
     private func configure() {
         titleLabel?.numberOfLines = 0
         titleLabel?.textAlignment = .center
+        titleLabel?.adjustsFontForContentSizeCategory = true
         setTitleColor(.white, for: .normal)
-        backgroundColor = UIColor(red: 0.99951404330000004, green: 0.41759261489999999, blue: 0.4154433012, alpha: 1)
+        backgroundColor = .errorBackground
         addTarget(self, action: #selector(hideMessageAnimated), for: .touchUpInside)
         
         hideMessage()
@@ -46,7 +47,7 @@ public final class ErrorView: UIButton {
     
     private func showAnimated(_ message: String?) {
         setTitle(message, for: .normal)
-        titleLabel?.font = .systemFont(ofSize: 18)
+        titleLabel?.font = .preferredFont(forTextStyle: .body)
         UIView.animate(withDuration: 0.25) {
             self.alpha = 1
         }
@@ -68,5 +69,11 @@ public final class ErrorView: UIButton {
         setTitle(nil, for: .normal)
         titleLabel?.font = .systemFont(ofSize: 0)
         onHide?()
+    }
+}
+
+extension UIColor {
+    static var errorBackground: UIColor {
+        UIColor(red: 0.99951404330000004, green: 0.41759261489999999, blue: 0.4154433012, alpha: 1)
     }
 }

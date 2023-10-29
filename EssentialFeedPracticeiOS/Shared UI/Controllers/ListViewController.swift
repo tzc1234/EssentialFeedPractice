@@ -1,5 +1,5 @@
 //
-//  FeedViewController.swift
+//  ListViewController.swift
 //  EssentialFeedPracticeiOS
 //
 //  Created by Tsz-Lung on 22/09/2023.
@@ -8,18 +8,20 @@
 import UIKit
 import EssentialFeedPractice
 
-public final class FeedViewController: UITableViewController {
+public final class ListViewController: UITableViewController {
     public let errorView = ErrorView()
     
-    private var models = [FeedImageCellController]() {
-        didSet { tableView.reloadData() }
-    }
+    private lazy var dataSource: UITableViewDiffableDataSource<Int, CellController> = {
+        .init(tableView: tableView) { tableView, indexPath, cellController in
+            cellController.dataSource.tableView(tableView, cellForRowAt: indexPath)
+        }
+    }()
     
-    private var onViewIsAppearing: ((FeedViewController) -> Void)?
+    private var onViewIsAppearing: ((ListViewController) -> Void)?
     
-    private let refreshController: FeedRefreshViewController
+    private let refreshController: RefreshViewController
     
-    public init(refreshController: FeedRefreshViewController) {
+    public init(refreshController: RefreshViewController) {
         self.refreshController = refreshController
         super.init(nibName: nil, bundle: nil)
     }
@@ -37,9 +39,12 @@ public final class FeedViewController: UITableViewController {
         }
     }
     
+    public func registerTableCell(_ cellClass: AnyClass, forCellReuseIdentifier identifier: String) {
+        tableView.register(cellClass, forCellReuseIdentifier: identifier)
+    }
+    
     private func configureTableView() {
-        tableView.register(FeedImageCellController.cellClass,
-                           forCellReuseIdentifier: FeedImageCellController.cellIdentifier)
+        tableView.dataSource = dataSource
         tableView.prefetchDataSource = self
         tableView.separatorStyle = .none
         tableView.tableHeaderView = errorView.makeContainer()
@@ -64,46 +69,43 @@ public final class FeedViewController: UITableViewController {
         onViewIsAppearing?(self)
     }
     
-    public func display(_ cellControllers: [FeedImageCellController]) {
-        models = cellControllers
-    }
-    
-    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        models.count
-    }
-    
-    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        cellController(forRowAt: indexPath).view(for: tableView)
+    public func display(_ cellControllers: [CellController]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(cellControllers, toSection: 0)
+        dataSource.applySnapshotUsingReloadData(snapshot)
     }
     
     public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).startImageDataLoad(for: cell)
-    }
-    
-    private func cellController(forRowAt indexPath: IndexPath) -> FeedImageCellController {
-        models[indexPath.row]
+        cellController(at: indexPath)?.delegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cancelCellControllerLoad(forRowAt: indexPath)
+        cellController(at: indexPath)?.delegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
     }
     
-    private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).cancelImageDataLoad()
+    private func cellController(at indexPath: IndexPath) -> CellController? {
+        dataSource.itemIdentifier(for: indexPath)
     }
 }
 
-extension FeedViewController: UITableViewDataSourcePrefetching {
+extension ListViewController: UITableViewDataSourcePrefetching {
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach { cellController(forRowAt: $0).preload() }
+        indexPaths.forEach { indexPath in
+            cellController(at: indexPath)?.dataSourcePrefetching?.tableView(tableView, prefetchRowsAt: indexPaths)
+        }
     }
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach(cancelCellControllerLoad)
+        indexPaths.forEach { indexPath in
+            cellController(at: indexPath)?
+                .dataSourcePrefetching?
+                .tableView?(tableView, cancelPrefetchingForRowsAt: indexPaths)
+        }
     }
 }
 
-extension FeedViewController: ResourceErrorView {
+extension ListViewController: ResourceErrorView {
     public func display(_ viewModel: ResourceErrorViewModel) {
         errorView.message = viewModel.message
     }
