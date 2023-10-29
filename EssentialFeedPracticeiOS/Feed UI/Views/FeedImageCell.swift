@@ -40,7 +40,8 @@ public final class FeedImageCell: UITableViewCell {
     
     public private(set) lazy var locationLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 15)
+        lbl.font = .preferredFont(forTextStyle: .subheadline)
+        lbl.adjustsFontForContentSizeCategory = true
         lbl.numberOfLines = 0
         lbl.textColor = .secondaryLabel
         lbl.translatesAutoresizingMaskIntoConstraints = false
@@ -65,7 +66,8 @@ public final class FeedImageCell: UITableViewCell {
     
     public private(set) lazy var descriptionLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 16)
+        lbl.font = .preferredFont(forTextStyle: .body)
+        lbl.adjustsFontForContentSizeCategory = true
         lbl.numberOfLines = 0
         lbl.textColor = .secondaryLabel
         lbl.translatesAutoresizingMaskIntoConstraints = false

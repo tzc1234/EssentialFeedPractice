@@ -26,7 +26,8 @@ public final class ImageCommentCell: UITableViewCell {
     
     public private(set) lazy var messageLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 15)
+        lbl.font = .preferredFont(forTextStyle: .body)
+        lbl.adjustsFontForContentSizeCategory = true
         lbl.numberOfLines = 0
         lbl.textColor = .label
         lbl.translatesAutoresizingMaskIntoConstraints = false
@@ -35,7 +36,8 @@ public final class ImageCommentCell: UITableViewCell {
     
     public private(set) lazy var usernameLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .boldSystemFont(ofSize: 15)
+        lbl.font = .preferredFont(forTextStyle: .headline)
+        lbl.adjustsFontForContentSizeCategory = true
         lbl.numberOfLines = 1
         lbl.textColor = .label
         lbl.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +48,8 @@ public final class ImageCommentCell: UITableViewCell {
     
     public private(set) lazy var dateLabel: UILabel = {
         let lbl = UILabel()
-        lbl.font = .systemFont(ofSize: 15)
+        lbl.font = .preferredFont(forTextStyle: .subheadline)
+        lbl.adjustsFontForContentSizeCategory = true
         lbl.numberOfLines = 1
         lbl.textColor = .secondaryLabel
         lbl.textAlignment = .right
