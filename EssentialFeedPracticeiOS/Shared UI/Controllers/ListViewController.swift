@@ -82,12 +82,12 @@ public final class ListViewController: UITableViewController {
         cellController(forRowAt: indexPath).delegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
     }
     
-    private func cellController(forRowAt indexPath: IndexPath) -> CellController {
-        models[indexPath.row]
-    }
-    
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cellController(forRowAt: indexPath).delegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
+    }
+    
+    private func cellController(forRowAt indexPath: IndexPath) -> CellController {
+        models[indexPath.row]
     }
 }
 
