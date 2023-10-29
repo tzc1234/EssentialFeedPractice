@@ -83,7 +83,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         assertThat(sut, isRendering: [image0])
     }
     
-    func test_loadFeedCompletion_rendersErrorMessageOnErrorUntilNextReload() {
+    func test_loadFeedErrorView_rendersErrorMessageOnErrorUntilNextReload() {
         let (sut, loader) = makeSUT()
         
         sut.simulateViewIsAppearing()
@@ -96,7 +96,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         XCTAssertNil(sut.errorMessage)
     }
     
-    func test_loadFeedErrorView_doesNotRenderErrorMessageAfterUserDismissedIt() {
+    func test_loadFeedErrorView_dismissesRenderErrorMessageAfterUserDismissedIt() {
         let (sut, loader) = makeSUT()
         
         sut.simulateViewIsAppearing()
