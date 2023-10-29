@@ -11,9 +11,11 @@ import EssentialFeedPractice
 public final class ListViewController: UITableViewController {
     public let errorView = ErrorView()
     
-    private var models = [CellController]() {
-        didSet { tableView.reloadData() }
-    }
+    private lazy var dataSource: UITableViewDiffableDataSource<Int, CellController> = {
+        .init(tableView: tableView) { tableView, indexPath, cellController in
+            cellController.dataSource.tableView(tableView, cellForRowAt: indexPath)
+        }
+    }()
     
     private var onViewIsAppearing: ((ListViewController) -> Void)?
     
@@ -42,6 +44,7 @@ public final class ListViewController: UITableViewController {
     }
     
     private func configureTableView() {
+        tableView.dataSource = dataSource
         tableView.prefetchDataSource = self
         tableView.separatorStyle = .none
         tableView.tableHeaderView = errorView.makeContainer()
@@ -67,40 +70,35 @@ public final class ListViewController: UITableViewController {
     }
     
     public func display(_ cellControllers: [CellController]) {
-        models = cellControllers
-    }
-    
-    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        models.count
-    }
-    
-    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        cellController(forRowAt: indexPath).dataSource.tableView(tableView, cellForRowAt: indexPath)
+        var snapshot = NSDiffableDataSourceSnapshot<Int, CellController>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(cellControllers, toSection: 0)
+        dataSource.applySnapshotUsingReloadData(snapshot)
     }
     
     public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).delegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
+        cellController(at: indexPath)?.delegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).delegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
+        cellController(at: indexPath)?.delegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
     }
     
-    private func cellController(forRowAt indexPath: IndexPath) -> CellController {
-        models[indexPath.row]
+    private func cellController(at indexPath: IndexPath) -> CellController? {
+        dataSource.itemIdentifier(for: indexPath)
     }
 }
 
 extension ListViewController: UITableViewDataSourcePrefetching {
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
-            cellController(forRowAt: indexPath).dataSourcePrefetching?.tableView(tableView, prefetchRowsAt: indexPaths)
+            cellController(at: indexPath)?.dataSourcePrefetching?.tableView(tableView, prefetchRowsAt: indexPaths)
         }
     }
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
-            cellController(forRowAt: indexPath)
+            cellController(at: indexPath)?
                 .dataSourcePrefetching?
                 .tableView?(tableView, cancelPrefetchingForRowsAt: indexPaths)
         }
