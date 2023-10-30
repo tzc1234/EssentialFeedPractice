@@ -12,7 +12,7 @@ import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 import EssentialApp
 
-final class CommentsUIIntegrationTests: FeedUIIntegrationTests {
+final class CommentsUIIntegrationTests: XCTestCase {
     func test_commentsView_hasTitle() {
         let (sut, _) = makeSUT()
         
@@ -94,7 +94,7 @@ final class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         wait(for: [exp], timeout: 1)
     }
     
-    override func test_loadFeedErrorView_rendersErrorMessageOnErrorUntilNextReload() {
+    func test_loadCommentsErrorView_rendersErrorMessageOnErrorUntilNextReload() {
         let (sut, loader) = makeSUT()
         
         sut.simulateViewIsAppearing()
@@ -107,7 +107,7 @@ final class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         XCTAssertNil(sut.errorMessage)
     }
     
-    override func test_loadFeedErrorView_dismissesRenderErrorMessageAfterUserDismissedIt() {
+    func test_loadCommentsErrorView_dismissesRenderErrorMessageAfterUserDismissedIt() {
         let (sut, loader) = makeSUT()
         
         sut.simulateViewIsAppearing()
@@ -117,7 +117,7 @@ final class CommentsUIIntegrationTests: FeedUIIntegrationTests {
         XCTAssertEqual(sut.errorMessage, loadError)
         
         sut.simulateUserDismissedErrorView()
-        XCTAssertNil(sut.errorMessage, "Expect no feed error message after user dismissed the feed error view")
+        XCTAssertNil(sut.errorMessage, "Expect no error message after user dismissed the comments error view")
     }
     
     // MARK: - Helpers
