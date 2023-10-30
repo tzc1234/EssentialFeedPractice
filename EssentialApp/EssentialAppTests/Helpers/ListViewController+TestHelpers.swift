@@ -111,5 +111,9 @@ extension ListViewController {
         tableView.numberOfSections > commentsSection ? tableView.numberOfRows(inSection: commentsSection) : 0
     }
     
+    func commentMessage(at row: Int) -> String? {
+        commentView(at: row)?.messageText
+    }
+    
     private var commentsSection: Int { 0 }
 }

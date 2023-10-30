@@ -16,7 +16,7 @@ public enum FeedUIComposer {
     public static func feedComposedWith(
         feedLoader: @escaping () -> AnyPublisher<[FeedImage], Error>,
         imageLoader: @escaping (URL) -> FeedImageDataLoader.Publisher,
-        selection: @escaping (FeedImage) -> Void = { _ in }) -> ListViewController {
+        selection: @escaping (FeedImage) -> Void) -> ListViewController {
             let presentationAdapter = FeedPresentationAdapter(loader: feedLoader)
             let refreshController = RefreshViewController()
             refreshController.onRefresh = presentationAdapter.loadResource
