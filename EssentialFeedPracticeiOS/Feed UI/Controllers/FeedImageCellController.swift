@@ -19,10 +19,14 @@ public final class FeedImageCellController: NSObject {
     
     private let viewModel: FeedImageViewModel
     private let delegate: FeedImageCellControllerDelegate
+    private let selection: (() -> Void)
     
-    public init(viewModel: FeedImageViewModel, delegate: FeedImageCellControllerDelegate) {
+    public init(viewModel: FeedImageViewModel,
+                delegate: FeedImageCellControllerDelegate,
+                selection: @escaping (() -> Void)) {
         self.viewModel = viewModel
         self.delegate = delegate
+        self.selection = selection
     }
     
     private func startLoading(for cell: UITableViewCell) {
@@ -109,6 +113,10 @@ extension FeedImageCellController: UITableViewDataSource {
         setup(cell)
         startImageDataLoad()
         return cell
+    }
+    
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selection()
     }
 }
 
