@@ -120,6 +120,27 @@ final class CommentsUIIntegrationTests: XCTestCase {
         XCTAssertNil(sut.errorMessage, "Expect no error message after user dismissed the comments error view")
     }
     
+    func test_deinit_cancelsRunningRequest() {
+        var cancelCallCount = 0
+        var sut: ListViewController?
+        
+        autoreleasepool {
+            sut = CommentsUIComposer.commentsComposedWith(commentsLoader: {
+                PassthroughSubject<[ImageComment], Error>()
+                    .handleEvents(receiveCancel: { cancelCallCount += 1 })
+                    .eraseToAnyPublisher()
+            })
+            
+            sut?.simulateViewIsAppearing()
+        }
+        
+        XCTAssertEqual(cancelCallCount, 0)
+        
+        sut = nil
+        
+        XCTAssertEqual(cancelCallCount, 1)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath,
