@@ -5,7 +5,7 @@
 //  Created by Tsz-Lung on 23/09/2023.
 //
 
-import Foundation
+import UIKit
 import EssentialFeedPracticeiOS
 
 extension ListViewController {
@@ -29,6 +29,20 @@ extension ListViewController {
     func simulateUserDismissedErrorView() {
         errorView.simulate(event: .touchUpInside)
     }
+    
+    func numberOfRows(in section: Int) -> Int {
+        tableView.numberOfSections > section ? tableView.numberOfRows(inSection: section) : 0
+    }
+    
+    func cell(atRow row: Int, inSection section: Int) -> UITableViewCell? {
+        guard numberOfRows(in: section) > row else {
+            return nil
+        }
+        
+        let ds = tableView.dataSource
+        let indexPath = IndexPath(row: row, section: section)
+        return ds?.tableView(tableView, cellForRowAt: indexPath)
+    }
 }
 
 extension ListViewController {
@@ -37,17 +51,11 @@ extension ListViewController {
     }
     
     func numberOfRenderedFeedImageViews() -> Int {
-        tableView.numberOfSections > feedImageSection ? tableView.numberOfRows(inSection: feedImageSection) : 0
+        numberOfRows(in: feedImageSection)
     }
     
     func feedImageView(at row: Int) -> FeedImageCell? {
-        guard numberOfRenderedFeedImageViews() > row else {
-            return nil
-        }
-        
-        let ds = tableView.dataSource
-        let indexPath = IndexPath(row: row, section: feedImageSection)
-        return ds?.tableView(tableView, cellForRowAt: indexPath) as? FeedImageCell
+        cell(atRow: row, inSection: feedImageSection) as? FeedImageCell
     }
     
     @discardableResult
@@ -98,17 +106,11 @@ extension ListViewController {
 
 extension ListViewController {
     func commentView(at row: Int) -> ImageCommentCell? {
-        guard numberOfRenderedCommentViews() > row else {
-            return nil
-        }
-        
-        let ds = tableView.dataSource
-        let indexPath = IndexPath(row: row, section: commentsSection)
-        return ds?.tableView(tableView, cellForRowAt: indexPath) as? ImageCommentCell
+        cell(atRow: row, inSection: commentsSection) as? ImageCommentCell
     }
     
     func numberOfRenderedCommentViews() -> Int {
-        tableView.numberOfSections > commentsSection ? tableView.numberOfRows(inSection: commentsSection) : 0
+        numberOfRows(in: commentsSection)
     }
     
     func commentMessage(at row: Int) -> String? {
