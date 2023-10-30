@@ -26,10 +26,12 @@ extension ListViewController {
         errorView.message
     }
     
-    func simulateUserDismissedFeedErrorView() {
+    func simulateUserDismissedErrorView() {
         errorView.simulate(event: .touchUpInside)
     }
-    
+}
+
+extension ListViewController {
     func renderedFeedImageData(at index: Int) -> Data? {
         simulateFeedImageViewVisible(at: index)?.renderedImage
     }
@@ -86,4 +88,22 @@ extension ListViewController {
     }
     
     private var feedImageSection: Int { 0 }
+}
+
+extension ListViewController {
+    func commentView(at row: Int) -> ImageCommentCell? {
+        guard numberOfRenderedCommentViews() > row else {
+            return nil
+        }
+        
+        let ds = tableView.dataSource
+        let indexPath = IndexPath(row: row, section: commentsSection)
+        return ds?.tableView(tableView, cellForRowAt: indexPath) as? ImageCommentCell
+    }
+    
+    func numberOfRenderedCommentViews() -> Int {
+        tableView.numberOfSections > commentsSection ? tableView.numberOfRows(inSection: commentsSection) : 0
+    }
+    
+    private var commentsSection: Int { 0 }
 }

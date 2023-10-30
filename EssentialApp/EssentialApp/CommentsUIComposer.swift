@@ -11,26 +11,40 @@ import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 
 public enum CommentsUIComposer {
-    private typealias FeedPresentationAdapter = LoadResourcePresentationAdapter<[FeedImage], FeedViewAdapter>
+    private typealias CommentsPresentationAdapter = LoadResourcePresentationAdapter<[ImageComment], CommentsViewAdapter>
     
     public static func commentsComposedWith(
-        commentsLoader: @escaping () -> AnyPublisher<[FeedImage], Error>) -> ListViewController {
-            let presentationAdapter = FeedPresentationAdapter(loader: commentsLoader)
+        commentsLoader: @escaping () -> AnyPublisher<[ImageComment], Error>) -> ListViewController {
+            let presentationAdapter = CommentsPresentationAdapter(loader: commentsLoader)
             let refreshController = RefreshViewController()
             refreshController.onRefresh = presentationAdapter.loadResource
             
-            let feedViewController = ListViewController(refreshController: refreshController)
-            feedViewController.title = ImageCommentsPresenter.title
-            feedViewController.registerTableCell(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.identifier)
+            let commentsViewController = ListViewController(refreshController: refreshController)
+            commentsViewController.title = ImageCommentsPresenter.title
+            commentsViewController.registerTableCell(
+                ImageCommentCell.self,
+                forCellReuseIdentifier: ImageCommentCell.identifier)
             
-            presentationAdapter.presenter = LoadResourcePresenter<[FeedImage], FeedViewAdapter>(
-                view: FeedViewAdapter(
-                    controller: feedViewController,
-                    imageLoader: { _ in Empty<Data, Error>().eraseToAnyPublisher() }),
+            presentationAdapter.presenter = LoadResourcePresenter(
+                view: CommentsViewAdapter(controller: commentsViewController),
                 loadingView: WeakRefProxy(refreshController),
-                errorView: WeakRefProxy(feedViewController),
-                mapper: FeedPresenter.map)
+                errorView: WeakRefProxy(commentsViewController),
+                mapper: { ImageCommentsPresenter.map($0) })
             
-            return feedViewController
+            return commentsViewController
         }
+}
+
+final class CommentsViewAdapter: ResourceView {
+    private weak var controller: ListViewController?
+    
+    init(controller: ListViewController) {
+        self.controller = controller
+    }
+    
+    func display(_ viewModel: ImageCommentsViewModel) {
+        controller?.display(viewModel.comments.map { viewModel in
+            CellController(id: viewModel, ImageCommentCellController(model: viewModel))
+        })
+    }
 }
