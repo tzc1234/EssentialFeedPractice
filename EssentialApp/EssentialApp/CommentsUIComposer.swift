@@ -20,7 +20,7 @@ public enum CommentsUIComposer {
             refreshController.onRefresh = presentationAdapter.loadResource
             
             let feedViewController = ListViewController(refreshController: refreshController)
-            feedViewController.title = FeedPresenter.title
+            feedViewController.title = ImageCommentsPresenter.title
             feedViewController.registerTableCell(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.identifier)
             
             presentationAdapter.presenter = LoadResourcePresenter<[FeedImage], FeedViewAdapter>(

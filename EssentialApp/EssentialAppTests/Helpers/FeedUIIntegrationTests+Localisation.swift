@@ -1,5 +1,5 @@
 //
-//  FeedViewControllerTests+Localisation.swift
+//  FeedUIIntegrationTests+Localisation.swift
 //  EssentialFeedPracticeiOSTests
 //
 //  Created by Tsz-Lung on 01/10/2023.
@@ -20,5 +20,9 @@ extension FeedUIIntegrationTests {
     
     var feedTitle: String {
         FeedPresenter.title
+    }
+    
+    var commentsTitle: String {
+        ImageCommentsPresenter.title
     }
 }
