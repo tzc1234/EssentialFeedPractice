@@ -15,7 +15,8 @@ public enum FeedUIComposer {
     
     public static func feedComposedWith(
         feedLoader: @escaping () -> AnyPublisher<[FeedImage], Error>,
-        imageLoader: @escaping (URL) -> FeedImageDataLoader.Publisher) -> ListViewController {
+        imageLoader: @escaping (URL) -> FeedImageDataLoader.Publisher,
+        selection: @escaping (FeedImage) -> Void) -> ListViewController {
             let presentationAdapter = FeedPresentationAdapter(loader: feedLoader)
             let refreshController = RefreshViewController()
             refreshController.onRefresh = presentationAdapter.loadResource
@@ -25,7 +26,7 @@ public enum FeedUIComposer {
             feedViewController.registerTableCell(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.identifier)
             
             presentationAdapter.presenter = LoadResourcePresenter<[FeedImage], FeedViewAdapter>(
-                view: FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader),
+                view: FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader, selection: selection),
                 loadingView: WeakRefProxy(refreshController),
                 errorView: WeakRefProxy(feedViewController),
                 mapper: FeedPresenter.map)

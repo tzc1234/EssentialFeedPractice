@@ -5,7 +5,7 @@
 //  Created by Tsz-Lung on 23/09/2023.
 //
 
-import Foundation
+import UIKit
 import EssentialFeedPracticeiOS
 
 extension ListViewController {
@@ -14,7 +14,7 @@ extension ListViewController {
         endAppearanceTransition()
     }
     
-    func simulateUserInitiatedFeedReload() {
+    func simulateUserInitiatedReload() {
         refreshControl?.simulatePullToRefresh()
     }
     
@@ -26,26 +26,36 @@ extension ListViewController {
         errorView.message
     }
     
-    func simulateUserDismissedFeedErrorView() {
+    func simulateUserDismissedErrorView() {
         errorView.simulate(event: .touchUpInside)
     }
     
+    func numberOfRows(in section: Int) -> Int {
+        tableView.numberOfSections > section ? tableView.numberOfRows(inSection: section) : 0
+    }
+    
+    func cell(atRow row: Int, inSection section: Int) -> UITableViewCell? {
+        guard numberOfRows(in: section) > row else {
+            return nil
+        }
+        
+        let ds = tableView.dataSource
+        let indexPath = IndexPath(row: row, section: section)
+        return ds?.tableView(tableView, cellForRowAt: indexPath)
+    }
+}
+
+extension ListViewController {
     func renderedFeedImageData(at index: Int) -> Data? {
         simulateFeedImageViewVisible(at: index)?.renderedImage
     }
     
     func numberOfRenderedFeedImageViews() -> Int {
-        tableView.numberOfSections > feedImageSection ? tableView.numberOfRows(inSection: feedImageSection) : 0
+        numberOfRows(in: feedImageSection)
     }
     
     func feedImageView(at row: Int) -> FeedImageCell? {
-        guard numberOfRenderedFeedImageViews() > row else {
-            return nil
-        }
-        
-        let ds = tableView.dataSource
-        let indexPath = IndexPath(row: row, section: feedImageSection)
-        return ds?.tableView(tableView, cellForRowAt: indexPath) as? FeedImageCell
+        cell(atRow: row, inSection: feedImageSection) as? FeedImageCell
     }
     
     @discardableResult
@@ -85,5 +95,27 @@ extension ListViewController {
         pds?.tableView?(tableView, cancelPrefetchingForRowsAt: [indexPath])
     }
     
+    func simulateTapOnFeedImage(at row: Int) {
+        let d = tableView.delegate
+        let indexPath = IndexPath(row: row, section: feedImageSection)
+        d?.tableView?(tableView, didSelectRowAt: indexPath)
+    }
+    
     private var feedImageSection: Int { 0 }
+}
+
+extension ListViewController {
+    func commentView(at row: Int) -> ImageCommentCell? {
+        cell(atRow: row, inSection: commentsSection) as? ImageCommentCell
+    }
+    
+    func numberOfRenderedCommentViews() -> Int {
+        numberOfRows(in: commentsSection)
+    }
+    
+    func commentMessage(at row: Int) -> String? {
+        commentView(at: row)?.messageText
+    }
+    
+    private var commentsSection: Int { 0 }
 }

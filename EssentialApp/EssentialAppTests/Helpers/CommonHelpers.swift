@@ -28,3 +28,19 @@ func uniqueFeed() -> [FeedImage] {
 func anyURL() -> URL {
     URL(string: "https://any-url.com")!
 }
+
+var loadError: String {
+    LoadResourcePresenter<Any, DummyView>.loadError
+}
+
+private class DummyView: ResourceView {
+    func display(_ viewModel: Any) {}
+}
+
+var feedTitle: String {
+    FeedPresenter.title
+}
+
+var commentsTitle: String {
+    ImageCommentsPresenter.title
+}
