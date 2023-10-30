@@ -83,6 +83,18 @@ final class FeedUIIntegrationTests: XCTestCase {
         assertThat(sut, isRendering: [image0])
     }
     
+    func test_loadFeedCompletion_dispatchesFromBackgroundToMainThread() {
+        let (sut, loader) = makeSUT()
+        sut.simulateViewIsAppearing()
+        
+        let exp = expectation(description: "Wait for background queue")
+        DispatchQueue.global().async {
+            loader.completeFeedLoading(at: 0)
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1)
+    }
+    
     func test_loadFeedErrorView_rendersErrorMessageOnErrorUntilNextReload() {
         let (sut, loader) = makeSUT()
         
@@ -108,6 +120,8 @@ final class FeedUIIntegrationTests: XCTestCase {
         sut.simulateUserDismissedFeedErrorView()
         XCTAssertNil(sut.errorMessage, "Expect no feed error message after user dismissed the feed error view")
     }
+    
+    // MARK: - Image view tests
     
     func test_feedImageView_loadsImageURLWhenVisible() {
         let image0 = makeImage(url: URL(string: "https://url-0.com")!)
@@ -328,7 +342,7 @@ final class FeedUIIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url], "Expect 2nd image URL request once 2nd view is near visible")
     }
     
-    func test_feedImageView_cancelsImageURLWhenPreloadingWhenNotNearVisibleAnymore() {
+    func test_feedImageView_cancelsImageURLForPreloadingWhenNotNearVisibleAnymore() {
         let image0 = makeImage(url: URL(string: "https://url-0.com")!)
         let image1 = makeImage(url: URL(string: "https://url-1.com")!)
         let (sut, loader) = makeSUT()
@@ -354,18 +368,6 @@ final class FeedUIIntegrationTests: XCTestCase {
         loader.completeImageLoading(with: anyImageData(), at: 0)
         
         XCTAssertNil(view?.renderedImage, "Expect no image rendered after the image loading successfully but the view becomes not visible anymore")
-    }
-    
-    func test_loadFeedCompletion_dispatchesFromBackgroundToMainThread() {
-        let (sut, loader) = makeSUT()
-        sut.simulateViewIsAppearing()
-        
-        let exp = expectation(description: "Wait for background queue")
-        DispatchQueue.global().async {
-            loader.completeFeedLoading(at: 0)
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1)
     }
     
     func test_loadImageDataCompletion_dispatchesFromBackgroundToMainThread() {
