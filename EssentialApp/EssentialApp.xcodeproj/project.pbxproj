@@ -160,9 +160,9 @@
 			children = (
 				BE82A8DD2AD6D9E400CA1D3E /* Helpers */,
 				BE2C5B8D2ADD3D4A002AA16A /* SceneDelegateTests.swift */,
+				BE19A9DE2AEFB2E800E9597E /* CommentsUIIntegrationTests.swift */,
 				BE2C5B9D2ADD45E4002AA16A /* FeedUIIntegrationTests.swift */,
 				BE2C5BB72ADD4DE3002AA16A /* FeedAcceptanceTests.swift */,
-				BE19A9DE2AEFB2E800E9597E /* CommentsUIIntegrationTests.swift */,
 			);
 			path = EssentialAppTests;
 			sourceTree = "<group>";
