@@ -12,6 +12,7 @@ import EssentialFeedPracticeiOS
 
 final class FeedViewAdapter: ResourceView {
     private typealias ImageDataPresentationAdapter = LoadResourcePresentationAdapter<Data, WeakRefProxy<FeedImageCellController>>
+    private typealias LoadMorePresentationAdapter = LoadResourcePresentationAdapter<Paginated<FeedImage>, FeedViewAdapter>
     
     private weak var controller: ListViewController?
     private let imageLoader: (URL) -> FeedImageDataLoader.Publisher
@@ -26,7 +27,7 @@ final class FeedViewAdapter: ResourceView {
     }
     
     func display(_ viewModel: Paginated<FeedImage>) {
-        let feed: [CellController] = viewModel.items.map { model in
+        let feedSection: [CellController] = viewModel.items.map { model in
             let adapter = ImageDataPresentationAdapter(
                 loader: { [imageLoader] in
                     imageLoader(model.url)
@@ -40,7 +41,7 @@ final class FeedViewAdapter: ResourceView {
                 })
             
             adapter.presenter = LoadResourcePresenter(
-                view: WeakRefProxy(view),
+                resourceView: WeakRefProxy(view),
                 loadingView: WeakRefProxy(view),
                 errorView: WeakRefProxy(view),
                 mapper: UIImage.tryMake)
@@ -48,12 +49,23 @@ final class FeedViewAdapter: ResourceView {
             return CellController(id: model, view)
         }
         
-        let loadMore = LoadMoreCellController {
-            viewModel.loadMore?({ _ in })
+        guard let loadMorePublisher = viewModel.loadMorePublisher else {
+            controller?.display(feedSection)
+            return
         }
+        
+        let loadMoreAdapter = LoadMorePresentationAdapter(loader: loadMorePublisher)
+        let loadMore = LoadMoreCellController(callback: loadMoreAdapter.loadResource)
+        
+        loadMoreAdapter.presenter = LoadResourcePresenter(
+            resourceView: self,
+            loadingView: WeakRefProxy(loadMore),
+            errorView: WeakRefProxy(loadMore),
+            mapper: { $0 })
+        
         let loadMoreSection = [CellController(id: UUID(), loadMore)]
         
-        controller?.display(feed, loadMoreSection)
+        controller?.display(feedSection, loadMoreSection)
     }
 }
 

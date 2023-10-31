@@ -26,7 +26,7 @@ public enum CommentsUIComposer {
                 forCellReuseIdentifier: ImageCommentCell.identifier)
             
             presentationAdapter.presenter = LoadResourcePresenter(
-                view: CommentsViewAdapter(controller: commentsViewController),
+                resourceView: CommentsViewAdapter(controller: commentsViewController),
                 loadingView: WeakRefProxy(refreshController),
                 errorView: WeakRefProxy(commentsViewController),
                 mapper: { ImageCommentsPresenter.map($0) })

@@ -26,7 +26,7 @@ public enum FeedUIComposer {
             feedViewController.registerTableCell(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.identifier)
             
             presentationAdapter.presenter = LoadResourcePresenter(
-                view: FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader, selection: selection),
+                resourceView: FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader, selection: selection),
                 loadingView: WeakRefProxy(refreshController),
                 errorView: WeakRefProxy(feedViewController),
                 mapper: { $0 })
