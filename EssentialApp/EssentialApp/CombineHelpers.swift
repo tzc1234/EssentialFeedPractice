@@ -10,6 +10,20 @@ import Foundation
 import EssentialFeedPractice
 
 extension Paginated {
+     public init(items: [Item], loadMorePublisher: (() -> AnyPublisher<Self, Error>)?) {
+        self.init(items: items, loadMore: loadMorePublisher.map { publisher in
+            return { completion in
+                publisher().subscribe(Subscribers.Sink(receiveCompletion: { result in
+                    if case let .failure(error) = result {
+                        completion(.failure(error))
+                    }
+                }, receiveValue: { paginatedFeed in
+                    completion(.success(paginatedFeed))
+                }))
+            }
+        })
+    }
+    
     var loadMorePublisher: (() -> AnyPublisher<Self, Error>)? {
         guard let loadMore else { return nil }
         
