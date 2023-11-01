@@ -127,6 +127,12 @@ extension ListViewController {
         cell(atRow: 0, inSection: feedLoadMoreSection) as? LoadMoreCell
     }
     
+    func simulateTapOnLoadMoreFeedError() {
+        let d = tableView.delegate
+        let indexPath = IndexPath(row: 0, section: feedLoadMoreSection)
+        d?.tableView?(tableView, didSelectRowAt: indexPath)
+    }
+    
     private var feedImageSection: Int { 0 }
     private var feedLoadMoreSection: Int { 1 }
 }
