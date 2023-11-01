@@ -10,8 +10,14 @@ import EssentialFeedPracticeiOS
 
 extension ListViewController {
     func simulateViewIsAppearing() {
+        setFrameToPreventConstraintWarnings()
+        
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()
+    }
+    
+    private func setFrameToPreventConstraintWarnings() {
+        tableView.frame = CGRect(x: 0, y: 0, width: 390, height: 1)
     }
     
     func simulateUserInitiatedReload() {
