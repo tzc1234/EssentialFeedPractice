@@ -37,7 +37,7 @@ final class LoaderSpy: FeedImageDataLoader {
         feedRequests[index].send(completion: .failure(anyNSError()))
     }
     
-    func completeLoadMore(with feed: [FeedImage] = [], isLastPage: Bool, at index: Int = 0) {
+    func completeLoadMore(with feed: [FeedImage] = [], isLastPage: Bool = false, at index: Int = 0) {
         loadMoreRequests[index].send(makePaginatedFeed(with: feed, isLastPage: isLastPage))
         loadMoreRequests[index].send(completion: .finished)
     }
