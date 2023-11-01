@@ -23,13 +23,13 @@ public final class LoadResourcePresenter<Resource, View: ResourceView> {
             comment: "load error message")
     }
     
-    private let view: View
+    private let resourceView: View
     private let loadingView: ResourceLoadingView
     private let errorView: ResourceErrorView
     private let mapper: Mapper
     
-    public init(view: View, loadingView: ResourceLoadingView, errorView: ResourceErrorView, mapper: @escaping Mapper) {
-        self.view = view
+    public init(resourceView: View, loadingView: ResourceLoadingView, errorView: ResourceErrorView, mapper: @escaping Mapper) {
+        self.resourceView = resourceView
         self.loadingView = loadingView
         self.errorView = errorView
         self.mapper = mapper
@@ -42,7 +42,7 @@ public final class LoadResourcePresenter<Resource, View: ResourceView> {
     
     public func didFinishLoading(with resource: Resource) {
         do {
-            view.display(try mapper(resource))
+            resourceView.display(try mapper(resource))
             loadingView.display(ResourceLoadingViewModel(isLoading: false))
         } catch {
             didFinishLoading(with: error)

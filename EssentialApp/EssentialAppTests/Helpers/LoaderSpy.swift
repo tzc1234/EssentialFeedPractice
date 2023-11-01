@@ -11,24 +11,49 @@ import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 
 final class LoaderSpy: FeedImageDataLoader {
-    private var feedRequests = [PassthroughSubject<[FeedImage], Error>]()
+    private var feedRequests = [PassthroughSubject<Paginated<FeedImage>, Error>]()
+    private var loadMoreRequests = [PassthroughSubject<Paginated<FeedImage>, Error>]()
+    
     var loadFeedCallCount: Int {
         feedRequests.count
     }
     
-    func loadPublisher() -> AnyPublisher<[FeedImage], Error> {
-        let publisher = PassthroughSubject<[FeedImage], Error>()
+    var loadMoreCallCount: Int {
+        loadMoreRequests.count
+    }
+    
+    func loadPublisher() -> AnyPublisher<Paginated<FeedImage>, Error> {
+        let publisher = PassthroughSubject<Paginated<FeedImage>, Error>()
         feedRequests.append(publisher)
         return publisher.eraseToAnyPublisher()
     }
     
     func completeFeedLoading(with feed: [FeedImage] = [], at index: Int = 0) {
-        feedRequests[index].send(feed)
+        feedRequests[index].send(makePaginatedFeed(with: feed))
         feedRequests[index].send(completion: .finished)
     }
     
     func completeFeedLoadingWithError(at index: Int = 0) {
         feedRequests[index].send(completion: .failure(anyNSError()))
+    }
+    
+    func completeLoadMore(with feed: [FeedImage] = [], isLastPage: Bool = false, at index: Int = 0) {
+        loadMoreRequests[index].send(makePaginatedFeed(with: feed, isLastPage: isLastPage))
+        loadMoreRequests[index].send(completion: .finished)
+    }
+    
+    func completeLoadMoreWithError(at index: Int = 0) {
+        loadMoreRequests[index].send(completion: .failure(anyNSError()))
+    }
+    
+    private func makePaginatedFeed(with feed: [FeedImage], isLastPage: Bool = false) -> Paginated<FeedImage> {
+        Paginated(
+            items: feed,
+            loadMorePublisher: isLastPage ? nil : { [weak self] in
+                let publisher = PassthroughSubject<Paginated<FeedImage>, Error>()
+                self?.loadMoreRequests.append(publisher)
+                return publisher.eraseToAnyPublisher()
+            })
     }
     
     // MARK: - FeedImageDataLoader

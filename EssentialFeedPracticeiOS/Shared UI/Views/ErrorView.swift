@@ -9,12 +9,22 @@ import UIKit
 
 public final class ErrorView: UIButton {
     public var message: String? {
-        get { isVisible ? title(for: .normal) : nil }
+        get { isVisible ? configuration?.title : nil }
         set { setMessageAnimated(newValue) }
     }
     
     private var isVisible: Bool {
         alpha > 0
+    }
+    
+    private var titleAttributes: AttributeContainer {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        
+        return AttributeContainer([
+            .paragraphStyle: paragraphStyle,
+            .font: UIFont.preferredFont(forTextStyle: .body)
+        ])
     }
     
     public var onHide: (() -> Void)?
@@ -27,11 +37,13 @@ public final class ErrorView: UIButton {
     required init?(coder: NSCoder) { nil }
     
     private func configure() {
-        titleLabel?.numberOfLines = 0
-        titleLabel?.textAlignment = .center
-        titleLabel?.adjustsFontForContentSizeCategory = true
-        setTitleColor(.white, for: .normal)
-        backgroundColor = .errorBackground
+        var configuration = Configuration.plain()
+        configuration.titlePadding = 0
+        configuration.baseForegroundColor = .white
+        configuration.background.backgroundColor = .errorBackground
+        configuration.background.cornerRadius = 0
+        self.configuration = configuration
+        
         addTarget(self, action: #selector(hideMessageAnimated), for: .touchUpInside)
         
         hideMessage()
@@ -45,9 +57,10 @@ public final class ErrorView: UIButton {
         }
     }
     
-    private func showAnimated(_ message: String?) {
-        setTitle(message, for: .normal)
-        titleLabel?.font = .preferredFont(forTextStyle: .body)
+    private func showAnimated(_ message: String) {
+        configuration?.attributedTitle = .init(message, attributes: titleAttributes)
+        configuration?.contentInsets = .init(top: 8, leading: 8, bottom: 8, trailing: 8)
+        
         UIView.animate(withDuration: 0.25) {
             self.alpha = 1
         }
@@ -66,8 +79,8 @@ public final class ErrorView: UIButton {
     
     private func hideMessage() {
         alpha = 0
-        setTitle(nil, for: .normal)
-        titleLabel?.font = .systemFont(ofSize: 0)
+        configuration?.attributedTitle = nil
+        configuration?.contentInsets = .zero
         onHide?()
     }
 }

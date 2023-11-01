@@ -10,8 +10,14 @@ import EssentialFeedPracticeiOS
 
 extension ListViewController {
     func simulateViewIsAppearing() {
+        setFrameToPreventConstraintWarnings()
+        
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()
+    }
+    
+    private func setFrameToPreventConstraintWarnings() {
+        tableView.frame = CGRect(x: 0, y: 0, width: 390, height: 1)
     }
     
     func simulateUserInitiatedReload() {
@@ -101,7 +107,38 @@ extension ListViewController {
         d?.tableView?(tableView, didSelectRowAt: indexPath)
     }
     
+    func simulateLoadMoreFeedAction() {
+        guard let view = loadMoreFeedCell() else { return }
+        
+        let d = tableView.delegate
+        let indexPath = IndexPath(row: 0, section: feedLoadMoreSection)
+        d?.tableView?(tableView, willDisplay: view, forRowAt: indexPath)
+    }
+    
+    var isShowingLoadingMoreFeedIndicator: Bool {
+        loadMoreFeedCell()?.isLoading == true
+    }
+    
+    var loadMoreErrorMessage: String? {
+        loadMoreFeedCell()?.message
+    }
+    
+    var canLoadMoreFeed: Bool {
+        loadMoreFeedCell() != nil
+    }
+    
+    private func loadMoreFeedCell() -> LoadMoreCell? {
+        cell(atRow: 0, inSection: feedLoadMoreSection) as? LoadMoreCell
+    }
+    
+    func simulateTapOnLoadMoreFeedError() {
+        let d = tableView.delegate
+        let indexPath = IndexPath(row: 0, section: feedLoadMoreSection)
+        d?.tableView?(tableView, didSelectRowAt: indexPath)
+    }
+    
     private var feedImageSection: Int { 0 }
+    private var feedLoadMoreSection: Int { 1 }
 }
 
 extension ListViewController {
