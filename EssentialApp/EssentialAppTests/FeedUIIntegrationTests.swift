@@ -227,6 +227,21 @@ final class FeedUIIntegrationTests: XCTestCase {
         XCTAssertNil(sut.errorMessage, "Expect no feed error message after user dismissed the feed error view")
     }
     
+    func test_loadMoreCompletion_rendersErrorMessageOnError() {
+        let (sut, loader) = makeSUT()
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(at: 0)
+        
+        sut.simulateLoadMoreFeedAction()
+        XCTAssertNil(sut.loadMoreErrorMessage)
+        
+        loader.completeLoadMoreWithError(at: 0)
+        XCTAssertEqual(sut.loadMoreErrorMessage, loadError)
+        
+        sut.simulateLoadMoreFeedAction()
+        XCTAssertNil(sut.loadMoreErrorMessage)
+    }
+    
     // MARK: - Image view tests
     
     func test_feedImageView_loadsImageURLWhenVisible() {

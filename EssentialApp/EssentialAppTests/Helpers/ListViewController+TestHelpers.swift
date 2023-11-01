@@ -119,6 +119,10 @@ extension ListViewController {
         loadMoreFeedCell()?.isLoading == true
     }
     
+    var loadMoreErrorMessage: String? {
+        loadMoreFeedCell()?.message
+    }
+    
     private func loadMoreFeedCell() -> LoadMoreCell? {
         cell(atRow: 0, inSection: feedLoadMoreSection) as? LoadMoreCell
     }
