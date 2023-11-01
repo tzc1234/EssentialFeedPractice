@@ -83,13 +83,13 @@ final class FeedSnapshotTests: XCTestCase {
     }
     
     private func feedWithLoadMoreIndicator() -> [CellController] {
-        let loadMore = LoadMoreCellController()
+        let loadMore = LoadMoreCellController(callback: {})
         loadMore.display(ResourceLoadingViewModel(isLoading: true))
         return feed(with: loadMore)
     }
     
     private func feedWithLoadMoreError() -> [CellController] {
-        let loadMore = LoadMoreCellController()
+        let loadMore = LoadMoreCellController(callback: {})
         loadMore.display(ResourceErrorViewModel(message: "This is a multiline\nerror message."))
         return feed(with: loadMore)
     }
