@@ -18,6 +18,10 @@ final class ManagedFeedImage: NSManagedObject {
 }
 
 extension ManagedFeedImage {
+    static func data(with url: URL, in context: NSManagedObjectContext) throws -> Data? {
+        try first(with: url, in: context)?.data
+    }
+    
     static func first(with url: URL, in context: NSManagedObjectContext) throws -> ManagedFeedImage? {
         let request = NSFetchRequest<ManagedFeedImage>(entityName: String(describing: Self.self))
         request.predicate = NSPredicate(format: "%K = %@", argumentArray: [#keyPath(ManagedFeedImage.url), url])
