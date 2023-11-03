@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import OSLog
 import Combine
 import CoreData
 import EssentialFeedPractice
@@ -14,6 +15,8 @@ import EssentialFeedPracticeiOS
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
+    private lazy var logger = Logger(subsystem: "com.tszlung.EssentialApp", category: "main")
+    
     private lazy var localFeedLoader: LocalFeedLoader = {
         LocalFeedLoader(store: store)
     }()
@@ -39,6 +42,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     .appending(component: "feed-store.sqlite"))
         } catch {
             assertionFailure("Failed to instantiate CoreData store with error: \(error.localizedDescription)")
+            logger.fault("Failed to instantiate CoreData store with error: \(error.localizedDescription)")
             return NullStore()
         }
     }()
