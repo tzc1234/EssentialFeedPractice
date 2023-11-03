@@ -44,8 +44,13 @@ final class FeedUIIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loadFeedCallCount, 1, "Expect a loading request once view is loaded")
         
         sut.simulateUserInitiatedReload()
+        XCTAssertEqual(loader.loadFeedCallCount, 1, "Expect no loading request until previous completes")
+        
+        loader.completeFeedLoading(at: 0)
+        sut.simulateUserInitiatedReload()
         XCTAssertEqual(loader.loadFeedCallCount, 2, "Expect another loading request once user initiates a load")
         
+        loader.completeFeedLoading(at: 1)
         sut.simulateUserInitiatedReload()
         XCTAssertEqual(loader.loadFeedCallCount, 3, "Expect a third loading request once user initiates another load")
     }
@@ -323,6 +328,27 @@ final class FeedUIIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect no image URL request state change once the view becomes visible again")
     }
     
+    func test_feedImageView_doesNotLoadImageAgainUntilPreviousRequestCompletes() {
+        let image = makeImage(url: URL(string: "https://url-0.com")!)
+        let (sut, loader) = makeSUT()
+        sut.simulateViewIsAppearing()
+        loader.completeFeedLoading(with: [image])
+        
+        sut.simulateFeedImageViewNearVisible(at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect first when view near visible")
+        
+        sut.simulateFeedImageViewVisible(at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect no image URL until previous complete")
+        
+        loader.completeImageLoading(at: 0)
+        sut.simulateFeedImageViewVisible(at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image.url, image.url], "Expect second request when visible after previous complete")
+        
+        sut.simulateFeedImageViewNotVisible(at: 0)
+        sut.simulateFeedImageViewVisible(at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image.url, image.url, image.url], "Expect third request when visible after canceling previous complete")
+    }
+    
     func test_feedImageView_rendersImageWhileViewVisibleAgainOnDifferentPosition() {
         let image0 = makeImage(description: "desc0", location: "location0", url: URL(string: "https://url-0.com")!)
         let image1 = makeImage(description: "desc1", location: "location1", url: URL(string: "https://url-1.com")!)
@@ -457,9 +483,9 @@ final class FeedUIIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url], "Expect only 2 image URL requests after the views become not visible")
         
         sut.simulateFeedImageViewVisibleAgain(for: view1, at: 0)
-        loader.completeImageLoadingWithError(at: 0)
         XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url], "Expect a 1st image URL request after 2nd view visible again on 1st position")
         
+        loader.completeImageLoadingWithError(at: 2)
         view1.simulateRetryAction()
         XCTAssertEqual(loader.loadedImageURLs, [image0.url, image1.url, image0.url, image0.url], "Expect a 1st image URL retry request after 2nd view visible again on 1st position retry action")
     }
