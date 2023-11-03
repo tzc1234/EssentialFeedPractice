@@ -338,15 +338,20 @@ final class FeedUIIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect first when view near visible")
         
         sut.simulateFeedImageViewVisible(at: 0)
-        XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect no image URL until previous complete")
+        XCTAssertEqual(loader.loadedImageURLs, [image.url], "Expect no image URL until previous completes")
         
         loader.completeImageLoading(at: 0)
         sut.simulateFeedImageViewVisible(at: 0)
-        XCTAssertEqual(loader.loadedImageURLs, [image.url, image.url], "Expect second request when visible after previous complete")
+        XCTAssertEqual(loader.loadedImageURLs, [image.url, image.url], "Expect second request when visible after previous completes")
         
         sut.simulateFeedImageViewNotVisible(at: 0)
         sut.simulateFeedImageViewVisible(at: 0)
-        XCTAssertEqual(loader.loadedImageURLs, [image.url, image.url, image.url], "Expect third request when visible after canceling previous complete")
+        XCTAssertEqual(loader.loadedImageURLs, [image.url, image.url, image.url], "Expect third request when visible after canceling previous completes")
+        
+        sut.simulateLoadMoreFeedAction()
+        loader.completeLoadMore(with: [image, makeImage()])
+        sut.simulateFeedImageViewVisible(at: 0)
+        XCTAssertEqual(loader.loadedImageURLs, [image.url, image.url, image.url], "Expect no request when visible until previous completes")
     }
     
     func test_feedImageView_rendersImageWhileViewVisibleAgainOnDifferentPosition() {
