@@ -12,6 +12,7 @@ import EssentialFeedPracticeiOS
 final class LoadResourcePresentationAdapter<Resource, View: ResourceView> {
     var presenter: LoadResourcePresenter<Resource, View>?
     private var cancellable: AnyCancellable?
+    private var isLoading = false
     
     private let loader: () -> AnyPublisher<Resource, Error>
     
@@ -20,16 +21,22 @@ final class LoadResourcePresentationAdapter<Resource, View: ResourceView> {
     }
     
     func loadResource() {
+        guard !isLoading else { return }
+        
         presenter?.didStartLoading()
+        isLoading = true
+        
         cancellable = loader()
             .dispatchOnMainQueue()
-            .sink { [weak presenter] completion in
+            .sink { [weak self] completion in
                 switch completion {
                 case .finished:
                     break
                 case let .failure(error):
-                    presenter?.didFinishLoading(with: error)
+                    self?.presenter?.didFinishLoading(with: error)
                 }
+                
+                self?.isLoading = false
             } receiveValue: { [weak presenter] resource in
                 presenter?.didFinishLoading(with: resource)
             }
@@ -48,5 +55,6 @@ extension LoadResourcePresentationAdapter: FeedImageCellControllerDelegate {
     func didCancelImageRequest() {
         cancellable?.cancel()
         cancellable = nil
+        isLoading = false
     }
 }
