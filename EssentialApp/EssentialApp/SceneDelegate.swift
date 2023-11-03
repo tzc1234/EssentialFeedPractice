@@ -123,11 +123,47 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func makeLocalImageLoaderWithRemoteFallback(url: URL) -> FeedImageDataLoader.Publisher {
         localImageLoader
             .loadImageDataPublisher(from: url)
-            .fallback(to: { [httpClient, localImageLoader] in
+            .logCacheMisses(url: url, logger: logger)
+            .fallback(to: { [httpClient, localImageLoader, logger] in
                 httpClient
                     .getPublisher(url: url)
+                    .logError(url: url, logger: logger)
+                    .logElapsedTime(url: url, logger: logger)
                     .tryMap(FeedImageDataMapper.map)
                     .caching(to: localImageLoader, using: url)
             })
+    }
+}
+
+extension Publisher {
+    func logCacheMisses(url: URL, logger: Logger) -> AnyPublisher<Output, Failure> {
+        handleEvents(receiveCompletion: { result in
+            if case .failure = result {
+                logger.trace("Cache miss for url: \(url)")
+            }
+        })
+        .eraseToAnyPublisher()
+    }
+    
+    func logError(url: URL, logger: Logger) ->  AnyPublisher<Output, Failure> {
+        handleEvents(receiveCompletion: { result in
+            if case let .failure(error) = result {
+                logger.trace("Failed to load url: \(url) with error: \(error)")
+            }
+        })
+        .eraseToAnyPublisher()
+    }
+    
+    func logElapsedTime(url: URL, logger: Logger) -> AnyPublisher<Output, Failure> {
+        var startTime = CACurrentMediaTime()
+        
+        return handleEvents(receiveSubscription: { _ in
+            logger.trace("Started loading url: \(url)")
+            startTime = CACurrentMediaTime()
+        }, receiveCompletion: { _ in
+            let elapsed = CACurrentMediaTime() - startTime
+            logger.trace("Finished loading url: \(url) in \(elapsed) seconds")
+        })
+        .eraseToAnyPublisher()
     }
 }
