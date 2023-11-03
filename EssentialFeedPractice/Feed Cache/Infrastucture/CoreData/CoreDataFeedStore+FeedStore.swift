@@ -54,13 +54,16 @@ extension CoreDataFeedStore: FeedStore {
 
 private extension [LocalFeedImage] {
     func toManagedFeed(in context: NSManagedObjectContext) -> NSOrderedSet {
-        NSOrderedSet(array: map { local in
+        let feed = NSOrderedSet(array: map { local in
             let managed = ManagedFeedImage(context: context)
             managed.id = local.id
             managed.imageDescription = local.description
             managed.location = local.location
             managed.url = local.url
+            managed.data = context.userInfo[local.url] as? Data
             return managed
         })
+        context.userInfo.removeAllObjects()
+        return feed
     }
 }
