@@ -32,10 +32,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private lazy var httpClient: HTTPClient = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
     private lazy var store: FeedStore & FeedImageDataStore = {
-        try! CoreDataFeedStore(
-            storeURL: NSPersistentContainer
-                .defaultDirectoryURL()
-                .appending(component: "feed-store.sqlite"))
+        do {
+            return try CoreDataFeedStore(
+                storeURL: NSPersistentContainer
+                    .defaultDirectoryURL()
+                    .appending(component: "feed-store.sqlite"))
+        } catch {
+            return NullStore()
+        }
     }()
     
     convenience init(httpClient: HTTPClient, store: FeedStore & FeedImageDataStore) {
@@ -85,10 +89,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func makeRemoteLoadMoreLoader(items: [FeedImage],
                                           last: FeedImage?) -> AnyPublisher<Paginated<FeedImage>, Error> {
-        localFeedLoader.loadPublisher()
-            .zip(makeRemoteFeedLoader(after: last))
-            .map { (cachedItems, newItems) in
-                (cachedItems + newItems, newItems.last)
+        makeRemoteFeedLoader(after: last)
+            .map { newItems in
+                (items + newItems, newItems.last)
             }
             .map(makePage)
             .caching(to: localFeedLoader)
