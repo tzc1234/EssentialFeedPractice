@@ -20,7 +20,7 @@ public class CoreDataFeedStore {
         self.context = container.newBackgroundContext()
     }
     
-    func perform(_ block: @escaping (NSManagedObjectContext) -> Void) {
+    func performAsync(_ block: @escaping (NSManagedObjectContext) -> Void) {
         context.perform { [context] in
             block(context)
         }
