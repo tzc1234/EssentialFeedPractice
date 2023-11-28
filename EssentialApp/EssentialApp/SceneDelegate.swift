@@ -16,6 +16,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     private lazy var logger = Logger(subsystem: "com.tszlung.EssentialApp", category: "main")
+    private lazy var scheduler = DispatchQueue(
+        label: "com.tszlung.infra.queue",
+        qos: .userInitiated,
+        attributes: .concurrent)
+        .eraseToAnyScheduler()
     
     private lazy var localFeedLoader: LocalFeedLoader = {
         LocalFeedLoader(store: store)
@@ -47,10 +52,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }()
     
-    convenience init(httpClient: HTTPClient, store: FeedStore & FeedImageDataStore) {
+    convenience init(httpClient: HTTPClient,
+                     store: FeedStore & FeedImageDataStore,
+                     scheduler: AnyDispatchQueueScheduler) {
         self.init()
         self.httpClient = httpClient
         self.store = store
+        self.scheduler = scheduler
     }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -123,12 +131,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func makeLocalImageLoaderWithRemoteFallback(url: URL) -> FeedImageDataLoader.Publisher {
         localImageLoader
             .loadImageDataPublisher(from: url)
-            .fallback(to: { [httpClient, localImageLoader] in
+            .fallback(to: { [httpClient, localImageLoader, scheduler] in
                 httpClient
                     .getPublisher(url: url)
                     .tryMap(FeedImageDataMapper.map)
                     .caching(to: localImageLoader, using: url)
+                    .subscribe(on: scheduler)
+                    .eraseToAnyPublisher()
             })
+            .subscribe(on: scheduler)
+            .eraseToAnyPublisher()
     }
 }
 
