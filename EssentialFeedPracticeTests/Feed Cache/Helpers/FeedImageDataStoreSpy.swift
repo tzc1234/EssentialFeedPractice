@@ -16,19 +16,19 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
     
     private(set) var messages = [Message]()
     
-    private var insertionCompletions = [(InsertionResult) -> Void]()
+    private var insertionResult: InsertionResult?
     
-    func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> Void) {
+    func insert(_ data: Data, for url: URL) throws {
         messages.append(.insert(data: data, for: url))
-        insertionCompletions.append(completion)
+        try insertionResult?.get()
     }
     
     func completeInsertion(with error: Error, at index: Int = 0) {
-        insertionCompletions[index](.failure(error))
+        insertionResult = .failure(error)
     }
     
     func completeInsertionSuccessfully(at index: Int = 0) {
-        insertionCompletions[index](.success(()))
+        insertionResult = .success(())
     }
     
     private var retrievalCompletions = [(RetrievalResult) -> Void]()
