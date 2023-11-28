@@ -23,26 +23,26 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
         try insertionResult?.get()
     }
     
-    func completeInsertion(with error: Error, at index: Int = 0) {
+    func completeInsertion(with error: Error) {
         insertionResult = .failure(error)
     }
     
-    func completeInsertionSuccessfully(at index: Int = 0) {
+    func completeInsertionSuccessfully() {
         insertionResult = .success(())
     }
     
-    private var retrievalCompletions = [(RetrievalResult) -> Void]()
+    private var retrievalResult: RetrievalResult?
     
-    func retrieveData(for url: URL, completion: @escaping (RetrievalResult) -> Void) {
+    func retrieveData(for url: URL) throws -> Data? {
         messages.append(.retrieveData(for: url))
-        retrievalCompletions.append(completion)
+        return try retrievalResult?.get()
     }
     
-    func completeRetrieval(with error: Error, at index: Int = 0) {
-        retrievalCompletions[index](.failure(error))
+    func completeRetrieval(with error: Error) {
+        retrievalResult = .failure(error)
     }
     
-    func completeRetrieval(with data: Data?, at index: Int = 0) {
-        retrievalCompletions[index](.success(data))
+    func completeRetrieval(with data: Data?) {
+        retrievalResult = .success(data)
     }
 }
