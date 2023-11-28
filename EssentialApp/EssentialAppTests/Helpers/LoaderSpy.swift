@@ -10,7 +10,7 @@ import Foundation
 import EssentialFeedPractice
 import EssentialFeedPracticeiOS
 
-final class LoaderSpy: FeedImageDataLoader {
+final class LoaderSpy {
     private var feedRequests = [PassthroughSubject<Paginated<FeedImage>, Error>]()
     private var loadMoreRequests = [PassthroughSubject<Paginated<FeedImage>, Error>]()
     
@@ -59,32 +59,27 @@ final class LoaderSpy: FeedImageDataLoader {
     // MARK: - FeedImageDataLoader
     
     private(set) var cancelledImageURLs = [URL]()
-    private(set) var imageRequests = [(url: URL, completion: (FeedImageDataLoader.Result) -> Void)]()
+    private(set) var imageRequests = [(url: URL, publisher: PassthroughSubject<Data, Error>)]()
     var loadedImageURLs: [URL] {
         imageRequests.map(\.url)
     }
     
-    private struct Task: FeedImageDataLoaderTask {
-        let afterCancel: () -> Void
-        
-        func cancel() {
-            afterCancel()
-        }
-    }
-    
-    func loadImageData(from url: URL,
-                       completion: @escaping (FeedImageDataLoader.Result) -> Void) -> FeedImageDataLoaderTask {
-        imageRequests.append((url, completion))
-        return Task { [weak self] in
-            self?.cancelledImageURLs.append(url)
-        }
+    func loadImageDataPublisher(from url: URL) -> AnyPublisher<Data, Error> {
+        let publisher = PassthroughSubject<Data, Error>()
+        imageRequests.append((url, publisher))
+        return publisher
+            .handleEvents(receiveCancel: { [weak self] in
+                self?.cancelledImageURLs.append(url)
+            })
+            .eraseToAnyPublisher()
     }
     
     func completeImageLoading(with data: Data = Data(), at index: Int = 0) {
-        imageRequests[index].completion(.success(data))
+        imageRequests[index].publisher.send(data)
+        imageRequests[index].publisher.send(completion: .finished)
     }
     
     func completeImageLoadingWithError(at index: Int = 0) {
-        imageRequests[index].completion(.failure(anyNSError()))
+        imageRequests[index].publisher.send(completion: .failure(anyNSError()))
     }
 }
