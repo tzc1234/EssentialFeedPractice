@@ -16,7 +16,7 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
     
     private(set) var messages = [Message]()
     
-    private var insertionResult: InsertionResult?
+    private var insertionResult: Result<Void, Error>?
     
     func insert(_ data: Data, for url: URL) throws {
         messages.append(.insert(data: data, for: url))
@@ -31,7 +31,7 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
         insertionResult = .success(())
     }
     
-    private var retrievalResult: RetrievalResult?
+    private var retrievalResult: Result<Data?, Error>?
     
     func retrieveData(for url: URL) throws -> Data? {
         messages.append(.retrieveData(for: url))
