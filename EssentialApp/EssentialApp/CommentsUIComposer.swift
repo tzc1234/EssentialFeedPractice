@@ -21,9 +21,7 @@ public enum CommentsUIComposer {
             
             let commentsViewController = ListViewController(refreshController: refreshController)
             commentsViewController.title = ImageCommentsPresenter.title
-            commentsViewController.registerTableCell(
-                ImageCommentCell.self,
-                forCellReuseIdentifier: ImageCommentCell.identifier)
+            commentsViewController.registerTableCell(ImageCommentCell.self)
             
             presentationAdapter.presenter = LoadResourcePresenter(
                 resourceView: CommentsViewAdapter(controller: commentsViewController),

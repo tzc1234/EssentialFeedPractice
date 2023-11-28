@@ -39,8 +39,8 @@ public final class ListViewController: UITableViewController {
         }
     }
     
-    public func registerTableCell(_ cellClass: AnyClass, forCellReuseIdentifier identifier: String) {
-        tableView.register(cellClass, forCellReuseIdentifier: identifier)
+    public func registerTableCell(_ cellClass: UITableViewCell.Type) {
+        tableView.register(cellClass, forCellReuseIdentifier: cellClass.identifier)
     }
     
     private func configureTableView() {
