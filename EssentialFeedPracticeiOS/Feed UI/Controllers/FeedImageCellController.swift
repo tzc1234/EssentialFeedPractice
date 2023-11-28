@@ -47,6 +47,7 @@ public final class FeedImageCellController: NSObject {
         cell.locationLabel.text = viewModel.location
         cell.descriptionLabel.isHidden = (viewModel.description == nil)
         cell.descriptionLabel.text = viewModel.description
+        cell.feedImageRetryButton.isHidden = true
         cell.feedImageView.setImage(nil)
         cell.onRetry = { [weak self] in
             self?.startImageDataLoad()
