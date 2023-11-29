@@ -35,10 +35,12 @@ extension LocalFeedLoader {
 }
 
 extension LocalFeedLoader {
+    private struct InvalidCache: Error {}
+    
     public func validateCache() throws {
         do {
             if let cache = try store.retrieve(), !FeedCachePolicy.validate(cache.timestamp, against: currentDate()) {
-                try store.deleteCachedFeed()
+                throw InvalidCache()
             }
         } catch {
             try store.deleteCachedFeed()
