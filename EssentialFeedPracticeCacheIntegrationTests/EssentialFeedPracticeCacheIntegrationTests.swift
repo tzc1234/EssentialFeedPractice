@@ -126,77 +126,49 @@ final class EssentialFeedPracticeCacheIntegrationTests: XCTestCase {
     }
     
     private func validateCache(with sut: LocalFeedLoader, file: StaticString = #filePath, line: UInt = #line) {
-        let exp = expectation(description: "Wait for validation")
-        sut.validateCache { result in
-            switch result {
-            case .success:
-                break
-            case let .failure(error):
-                XCTFail("Expect to validate feed successfully, got \(error) instead", file: file, line: line)
-            }
-            exp.fulfill()
+        do {
+            try sut.validateCache()
+        } catch {
+            XCTFail("Expect to validate feed successfully, got \(error) instead", file: file, line: line)
         }
-        wait(for: [exp], timeout: 5)
     }
     
     private func save(_ feed: [FeedImage], with sut: LocalFeedLoader,
                       file: StaticString = #filePath, line: UInt = #line) {
-        let exp = expectation(description: "Wait for save completion")
-        sut.save(feed) { result in
-            switch result {
-            case .success:
-                break
-            case let .failure(error):
-                XCTFail("Expect a success, got \(error) instead", file: file, line: line)
-            }
-            exp.fulfill()
+        do {
+            try sut.save(feed)
+        } catch {
+            XCTFail("Expect a success, got \(error) instead", file: file, line: line)
         }
-        wait(for: [exp], timeout: 5)
     }
     
     private func save(_ data: Data, for url: URL, with sut: LocalFeedImageDataLoader,
                       file: StaticString = #filePath, line: UInt = #line) {
-        let exp = expectation(description: "Wait for save completion")
-        sut.save(data, for: url) { result in
-            switch result {
-            case .success:
-                break
-            case let .failure(error):
-                XCTFail("Expect to save image data successfully, got \(error) instead", file: file, line: line)
-            }
-            exp.fulfill()
+        do {
+            try sut.save(data, for: url)
+        } catch {
+            XCTFail("Expect to save image data successfully, got \(error) instead", file: file, line: line)
         }
-        wait(for: [exp], timeout: 5)
     }
     
     private func expect(_ sut: LocalFeedLoader, toLoad feed: [FeedImage],
                         file: StaticString = #filePath, line: UInt = #line) {
-        let exp = expectation(description: "Wait for load completion")
-        sut.load { result in
-            switch result {
-            case let .success(receivedFeed):
-                XCTAssertEqual(receivedFeed, feed, file: file, line: line)
-            case let .failure(error):
-                XCTFail("Expect a success, got \(error) instead", file: file, line: line)
-            }
-            exp.fulfill()
+        do {
+            let receivedFeed = try sut.load()
+            XCTAssertEqual(receivedFeed, feed, file: file, line: line)
+        } catch {
+            XCTFail("Expect a success, got \(error) instead", file: file, line: line)
         }
-        wait(for: [exp], timeout: 5)
     }
     
     private func expect(_ sut: LocalFeedImageDataLoader, toLoad data: Data, for url: URL,
                         file: StaticString = #filePath, line: UInt = #line) {
-        let exp = expectation(description: "Wait for load completion")
-        _ = sut.loadImageData(from: url) { result in
-            switch result {
-            case let .success(receivedData):
-                XCTAssertEqual(receivedData, data, file: file, line: line)
-            case let .failure(error):
-                XCTFail("Expect a successful image data, got \(error) instead", file: file, line: line)
-            }
-            exp.fulfill()
+        do {
+            let receivedData = try sut.loadImageData(from: url)
+            XCTAssertEqual(receivedData, data, file: file, line: line)
+        } catch {
+            XCTFail("Expect a successful image data, got \(error) instead", file: file, line: line)
         }
-        wait(for: [exp], timeout: 5)
     }
     
     private func setupEmptyStoreState() {
