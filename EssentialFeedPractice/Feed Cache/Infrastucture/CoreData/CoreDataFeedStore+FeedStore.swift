@@ -13,7 +13,7 @@ extension CoreDataFeedStore: FeedStore {
             Result {
                 try ManagedCache.find(in: context)
             }.map { cache in
-                cache == nil ? .none : cache.map { ($0.localFeed, $0.timestamp) }
+                cache.map { ($0.localFeed, $0.timestamp) }
             }
         }
     }
