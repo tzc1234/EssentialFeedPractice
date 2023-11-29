@@ -26,7 +26,7 @@ final class ImageCommentsSnapshotTests: XCTestCase {
     private func makeSUT() -> ListViewController {
         let refresh = RefreshViewController()
         let sut = ListViewController(refreshController: refresh)
-        sut.registerTableCell(ImageCommentCell.self, forCellReuseIdentifier: ImageCommentCell.identifier)
+        sut.registerTableCell(ImageCommentCell.self)
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false
         sut.loadViewIfNeeded()

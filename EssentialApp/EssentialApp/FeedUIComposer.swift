@@ -23,7 +23,7 @@ public enum FeedUIComposer {
             
             let feedViewController = ListViewController(refreshController: refreshController)
             feedViewController.title = FeedPresenter.title
-            feedViewController.registerTableCell(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.identifier)
+            feedViewController.registerTableCell(FeedImageCell.self)
             
             presentationAdapter.presenter = LoadResourcePresenter(
                 resourceView: FeedViewAdapter(controller: feedViewController, imageLoader: imageLoader, selection: selection),

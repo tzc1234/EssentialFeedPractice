@@ -8,45 +8,38 @@
 import CoreData
 
 extension CoreDataFeedStore: FeedStore {
-    public func retrieve(completion: @escaping RetrieveCompletion) {
-        perform { context in
-            do {
-                guard let managedCache = try ManagedCache.find(in: context) else {
-                    completion(.success(.none))
-                    return
-                }
-                
-                completion(.success((managedCache.localFeed, managedCache.timestamp)))
-            } catch {
-                completion(.failure(error))
+    public func retrieve() throws -> CachedFeed? {
+        try performSync { context in
+            Result {
+                try ManagedCache.find(in: context)
+            }.map { cache in
+                cache.map { ($0.localFeed, $0.timestamp) }
             }
         }
     }
     
-    public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertCompletion) {
-        perform { context in
-            do {
+    public func insert(_ feed: [LocalFeedImage], timestamp: Date) throws {
+        try performSync { context in
+            Result {
                 let managedCache = try ManagedCache.newUniqueInstance(in: context)
                 managedCache.timestamp = timestamp
                 managedCache.feed = feed.toManagedFeed(in: context)
                 
                 try context.save()
-                completion(.success(()))
-            } catch {
+            }.mapError { error in
                 context.rollback()
-                completion(.failure(error))
+                return error
             }
         }
     }
     
-    public func deleteCachedFeed(completion: @escaping DeleteCompletion) {
-        perform { context in
-            do {
+    public func deleteCachedFeed() throws {
+        try performSync { context in
+            Result {
                 try ManagedCache.deleteCache(in: context)
-                completion(.success(()))
-            } catch {
+            }.mapError { error in
                 context.rollback()
-                completion(.failure(error))
+                return error
             }
         }
     }

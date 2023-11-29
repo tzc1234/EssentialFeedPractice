@@ -132,12 +132,6 @@ final class CoreDataFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         expect(sut, toRetrieve: .success((feed, timestamp)))
     }
     
-    func test_storeSideEffects_runSerially() {
-        let sut = makeSUT()
-        
-        assertThatStoreSideEffectsRunSerially(on: sut)
-    }
-    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> FeedStore {

@@ -55,7 +55,7 @@ final class FeedSnapshotTests: XCTestCase {
     private func makeSUT() -> ListViewController {
         let refresh = RefreshViewController()
         let sut = ListViewController(refreshController: refresh)
-        sut.registerTableCell(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.identifier)
+        sut.registerTableCell(FeedImageCell.self)
         sut.tableView.showsVerticalScrollIndicator = false
         sut.tableView.showsHorizontalScrollIndicator = false
         sut.loadViewIfNeeded()

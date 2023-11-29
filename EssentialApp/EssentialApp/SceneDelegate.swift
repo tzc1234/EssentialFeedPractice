@@ -16,6 +16,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     private lazy var logger = Logger(subsystem: "com.tszlung.EssentialApp", category: "main")
+    private lazy var scheduler = DispatchQueue(
+        label: "com.tszlung.infra.queue",
+        qos: .userInitiated,
+        attributes: .concurrent)
+        .eraseToAnyScheduler()
     
     private lazy var localFeedLoader: LocalFeedLoader = {
         LocalFeedLoader(store: store)
@@ -47,10 +52,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }()
     
-    convenience init(httpClient: HTTPClient, store: FeedStore & FeedImageDataStore) {
+    convenience init(httpClient: HTTPClient,
+                     store: FeedStore & FeedImageDataStore,
+                     scheduler: AnyDispatchQueueScheduler) {
         self.init()
         self.httpClient = httpClient
         self.store = store
+        self.scheduler = scheduler
     }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -66,7 +74,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
-        localFeedLoader.validateCache { _ in }
+        do {
+            try localFeedLoader.validateCache()
+        } catch {
+            logger.error("Failed to validate cache with error: \(error.localizedDescription)")
+        }
     }
     
     private func showComments(for image: FeedImage) {
@@ -89,6 +101,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             .caching(to: localFeedLoader)
             .fallback(to: localFeedLoader.loadPublisher)
             .map(makeFirstPage)
+            .subscribe(on: scheduler)
             .eraseToAnyPublisher()
     }
     
@@ -99,6 +112,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 (items + newItems, newItems.last)
             }
             .map(makePage)
+            .subscribe(on: scheduler)
             .caching(to: localFeedLoader)
     }
     
@@ -123,44 +137,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func makeLocalImageLoaderWithRemoteFallback(url: URL) -> FeedImageDataLoader.Publisher {
         localImageLoader
             .loadImageDataPublisher(from: url)
-            .fallback(to: { [httpClient, localImageLoader] in
+            .fallback(to: { [httpClient, localImageLoader, scheduler] in
                 httpClient
                     .getPublisher(url: url)
                     .tryMap(FeedImageDataMapper.map)
                     .caching(to: localImageLoader, using: url)
+                    .subscribe(on: scheduler)
+                    .eraseToAnyPublisher()
             })
-    }
-}
-
-extension Publisher {
-    func logCacheMisses(url: URL, logger: Logger) -> AnyPublisher<Output, Failure> {
-        handleEvents(receiveCompletion: { result in
-            if case .failure = result {
-                logger.trace("Cache miss for url: \(url)")
-            }
-        })
-        .eraseToAnyPublisher()
-    }
-    
-    func logError(url: URL, logger: Logger) ->  AnyPublisher<Output, Failure> {
-        handleEvents(receiveCompletion: { result in
-            if case let .failure(error) = result {
-                logger.trace("Failed to load url: \(url) with error: \(error)")
-            }
-        })
-        .eraseToAnyPublisher()
-    }
-    
-    func logElapsedTime(url: URL, logger: Logger) -> AnyPublisher<Output, Failure> {
-        var startTime = CACurrentMediaTime()
-        
-        return handleEvents(receiveSubscription: { _ in
-            logger.trace("Started loading url: \(url)")
-            startTime = CACurrentMediaTime()
-        }, receiveCompletion: { _ in
-            let elapsed = CACurrentMediaTime() - startTime
-            logger.trace("Finished loading url: \(url) in \(elapsed) seconds")
-        })
-        .eraseToAnyPublisher()
+            .subscribe(on: scheduler)
+            .eraseToAnyPublisher()
     }
 }

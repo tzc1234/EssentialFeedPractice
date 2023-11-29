@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeedPractice
 
-final class InMemoryFeedStore: FeedStore, FeedImageDataStore {
+final class InMemoryFeedStore: FeedStore {
     private var feedImageDataCache = [URL: Data]()
     
     private(set) var feedCache: CachedFeed?
@@ -17,27 +17,26 @@ final class InMemoryFeedStore: FeedStore, FeedImageDataStore {
         self.feedCache = feedCache
     }
     
-    func retrieve(completion: @escaping RetrieveCompletion) {
-        completion(.success(feedCache))
+    func retrieve() throws -> CachedFeed? {
+       feedCache
     }
     
-    func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertCompletion) {
+    func insert(_ feed: [LocalFeedImage], timestamp: Date) throws {
         feedCache = (feed, timestamp)
-        completion(.success(()))
     }
     
-    func deleteCachedFeed(completion: @escaping DeleteCompletion) {
+    func deleteCachedFeed() throws {
         feedCache = nil
-        completion(.success(()))
     }
-    
-    func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> Void) {
+}
+
+extension InMemoryFeedStore: FeedImageDataStore {
+    func insert(_ data: Data, for url: URL) throws {
         feedImageDataCache[url] = data
-        completion(.success(()))
     }
-    
-    func retrieveData(for url: URL, completion: @escaping (RetrievalResult) -> Void) {
-        completion(.success(feedImageDataCache[url]))
+
+    func retrieveData(for url: URL) throws -> Data? {
+        feedImageDataCache[url]
     }
 }
 
