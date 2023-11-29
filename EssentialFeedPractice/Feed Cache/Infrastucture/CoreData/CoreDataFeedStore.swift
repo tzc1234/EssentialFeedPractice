@@ -20,12 +20,6 @@ public class CoreDataFeedStore {
         self.context = container.newBackgroundContext()
     }
     
-    func performAsync(_ block: @escaping (NSManagedObjectContext) -> Void) {
-        context.perform { [context] in
-            block(context)
-        }
-    }
-    
     func performSync<T>(_ block: (NSManagedObjectContext) -> Result<T, Error>) throws -> T {
         var result: Result<T, Error>!
         context.performAndWait { [context] in
