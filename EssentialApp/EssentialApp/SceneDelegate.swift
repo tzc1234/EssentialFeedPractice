@@ -16,11 +16,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     private lazy var logger = Logger(subsystem: "com.tszlung.EssentialApp", category: "main")
-    private lazy var scheduler = DispatchQueue(
+    private lazy var scheduler: any Scheduler = DispatchQueue(
         label: "com.tszlung.infra.queue",
         qos: .userInitiated,
         attributes: .concurrent)
-        .eraseToAnyScheduler()
     
     private lazy var localFeedLoader: LocalFeedLoader = {
         LocalFeedLoader(store: store)
@@ -52,9 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }()
     
-    convenience init(httpClient: HTTPClient,
-                     store: FeedStore & FeedImageDataStore,
-                     scheduler: AnyDispatchQueueScheduler) {
+    convenience init(httpClient: HTTPClient, store: FeedStore & FeedImageDataStore, scheduler: some Scheduler) {
         self.init()
         self.httpClient = httpClient
         self.store = store
@@ -101,8 +98,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             .caching(to: localFeedLoader)
             .fallback(to: localFeedLoader.loadPublisher)
             .map(makeFirstPage)
-            .subscribe(on: scheduler)
-            .eraseToAnyPublisher()
+            .subscribe(onSome: scheduler)
     }
     
     private func makeRemoteLoadMoreLoader(items: [FeedImage],
@@ -112,7 +108,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 (items + newItems, newItems.last)
             }
             .map(makePage)
-            .subscribe(on: scheduler)
+            .subscribe(onSome: scheduler)
             .caching(to: localFeedLoader)
     }
     
@@ -138,14 +134,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         localImageLoader
             .loadImageDataPublisher(from: url)
             .fallback(to: { [httpClient, localImageLoader, scheduler] in
-                httpClient
+                let publisher = httpClient
                     .getPublisher(url: url)
                     .tryMap(FeedImageDataMapper.map)
                     .caching(to: localImageLoader, using: url)
-                    .subscribe(on: scheduler)
-                    .eraseToAnyPublisher()
+                    .subscribe(onSome: scheduler)
+                
+                return publisher
             })
-            .subscribe(on: scheduler)
-            .eraseToAnyPublisher()
+            .subscribe(onSome: scheduler)
     }
 }
