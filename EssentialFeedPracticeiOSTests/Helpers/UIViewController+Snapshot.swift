@@ -52,11 +52,11 @@ extension UIViewController {
         }
         
         override var safeAreaInsets: UIEdgeInsets {
-            configuration.layoutMargins
+            configuration.safeAreaInsets
         }
         
         override var traitCollection: UITraitCollection {
-            UITraitCollection(traitsFrom: [super.traitCollection, configuration.traitCollection])
+            configuration.traitCollection
         }
         
         func snapshot() -> UIImage {
